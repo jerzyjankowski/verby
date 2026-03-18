@@ -1,0 +1,52 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-verby-bg: #373958;
+  --color-verby-text: #eae2f3;
+  --color-verby-secondary: #1a3a3a;
+  --color-verby-error-text: #dd9393;
+  --color-verby-error-bg: #932626;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Fallbacks for non-tailwind usage */
+  --verby-bg: #373958;
+  --verby-text: #eae2f3;
+  --verby-secondary: #1a3a3a;
+  --verby-error-text: #dd9393;
+  --verby-error-bg: #932626;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    @apply bg-verby-bg text-verby-text font-sans antialiased;
+  }
+
+  button {
+    color: inherit;
+    font: inherit;
+  }
+}
+
+@layer components {
+  .verby-card {
+    @apply bg-verby-bg border border-verby-secondary rounded-xl;
+  }
+
+  .verby-button {
+    @apply bg-verby-bg border border-verby-secondary text-verby-text rounded-lg px-3 py-2 transition-colors;
+  }
+
+  .verby-button:hover {
+    @apply bg-verby-secondary/30;
+  }
+}
+
