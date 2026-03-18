@@ -1,6 +1,7 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import type { Config } from '../types/config'
+import { loadVerbsFromJson } from '../utils/jsonVerbsLoader'
 import {
   CONFIG_STORAGE_KEY,
   LANGUAGE_LABELS,
@@ -27,6 +28,12 @@ function ConfigDisplayRow({
 }
 
 export default function LessonPage() {
+  useEffect(() => {
+    loadVerbsFromJson('/data/esp/verbs-demo.json')
+      .then((verbs) => console.log('[JJ]', verbs))
+      .catch((err) => console.error('[JJ]Failed to load verbs:', err))
+  }, [])
+
   const config = useMemo<Config | null>(() => {
     try {
       const raw = localStorage.getItem(CONFIG_STORAGE_KEY)
