@@ -2,7 +2,7 @@
 export type Language = 'ESP' | 'ENG' | 'GER' | 'ITA' | 'FRA' | 'RUS'
 export type Pool = 'all' | 'saved' | 'irregular'
 export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1'
-export type Direction = 'to_foreign' | 'to_native' | 'conjugation'
+export type Direction = 'to_foreign' | 'to_native' | 'conjugation' | 'form'
 export type Speed = 'same' | 'random'
 export type Batch = 10 | 20 | 30 | 40 | 50 | 'ALL'
 
@@ -34,6 +34,7 @@ export const DIRECTION_LABELS: Record<Direction, string> = {
   to_foreign: 'To Foreign',
   to_native: 'To Native',
   conjugation: 'Conjugation',
+  form: 'Form'
 }
 
 export const SPEED_LABELS: Record<Speed, string> = {
@@ -79,3 +80,12 @@ export type ConfigFormState = {
 }
 
 export const CONFIG_STORAGE_KEY = 'config-_new'
+
+export type LessonConfig = {
+  config: Config
+  file: string
+  name: string
+  verbs: number[]
+  learnt: boolean[]
+  repeated: number[]
+}

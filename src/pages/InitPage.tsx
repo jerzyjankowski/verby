@@ -6,7 +6,6 @@ import type { DropdownItem } from '../components/shared/types'
 import {
   type Config,
   type ConfigFormState,
-  CONFIG_STORAGE_KEY,
   LANGUAGE_OPTIONS,
   LANGUAGE_LABELS,
   POOL_OPTIONS,
@@ -20,6 +19,7 @@ import {
   BATCH_OPTIONS,
   BATCH_LABELS,
 } from '../types/config'
+import {initLesson} from "../utils/initLesson.ts";
 
 function ConfigRow({
   label,
@@ -100,7 +100,7 @@ export default function InitPage() {
       speed: form.speed!,
       batch: form.batch!,
     }
-    localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config))
+    initLesson(config)
     navigate('/lesson/_new')
   }
 

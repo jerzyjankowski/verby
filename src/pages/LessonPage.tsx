@@ -1,9 +1,8 @@
 import { useEffect, useMemo } from 'react'
 
-import type { Config } from '../types/config'
+import type {LessonConfig} from '../types/config'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader'
 import {
-  CONFIG_STORAGE_KEY,
   LANGUAGE_LABELS,
   POOL_LABELS,
   LEVEL_LABELS,
@@ -11,6 +10,7 @@ import {
   SPEED_LABELS,
   BATCH_LABELS,
 } from '../types/config'
+import {loadLessonFromLocalStorage} from "../utils/localStorage.ts";
 
 function ConfigDisplayRow({
   label,
@@ -34,17 +34,11 @@ export default function LessonPage() {
       .catch((err) => console.error('[JJ]Failed to load verbs:', err))
   }, [])
 
-  const config = useMemo<Config | null>(() => {
-    try {
-      const raw = localStorage.getItem(CONFIG_STORAGE_KEY)
-      if (!raw) return null
-      return JSON.parse(raw) as Config
-    } catch {
-      return null
-    }
+  const lessonConfig = useMemo<LessonConfig | null>(() => {
+    return loadLessonFromLocalStorage('_new')
   }, [])
 
-  if (!config) {
+  if (!lessonConfig) {
     return (
       <div className="min-h-screen bg-primary text-primary-text p-4">
         <p className="text-primary-text">No config found. Start from the init page.</p>
@@ -58,18 +52,18 @@ export default function LessonPage() {
         <div className="verby-card flex flex-col gap-4 p-4">
           <ConfigDisplayRow
             label="language:"
-            value={LANGUAGE_LABELS[config.language]}
+            value={LANGUAGE_LABELS[lessonConfig.config.language]}
           />
-          <ConfigDisplayRow label="pool:" value={POOL_LABELS[config.pool]} />
-          <ConfigDisplayRow label="level:" value={LEVEL_LABELS[config.level]} />
+          <ConfigDisplayRow label="pool:" value={POOL_LABELS[lessonConfig.config.pool]} />
+          <ConfigDisplayRow label="level:" value={LEVEL_LABELS[lessonConfig.config.level]} />
           <ConfigDisplayRow
             label="directions:"
-            value={DIRECTION_LABELS[config.direction]}
+            value={DIRECTION_LABELS[lessonConfig.config.direction]}
           />
-          <ConfigDisplayRow label="speed:" value={SPEED_LABELS[config.speed]} />
+          <ConfigDisplayRow label="speed:" value={SPEED_LABELS[lessonConfig.config.speed]} />
           <ConfigDisplayRow
             label="batch:"
-            value={BATCH_LABELS[config.batch]}
+            value={BATCH_LABELS[lessonConfig.config.batch]}
           />
         </div>
       </div>
