@@ -1,22 +1,24 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-verby-bg: #373958;
-  --color-verby-text: #eae2f3;
-  --color-verby-secondary: #1a3a3a;
-  --color-verby-error-text: #dd9393;
-  --color-verby-error-bg: #932626;
+  --color-primary: #373958;
+  --color-primary-text: #eae2f3;
+  --color-primary-darker: #27293F;
+  --color-primary-darkest: #101019;
+  --color-text-error: #dd9393;
+  --color-functional-error: #932626;
 }
 
 :root {
   color-scheme: dark;
 
   /* Fallbacks for non-tailwind usage */
-  --verby-bg: #373958;
-  --verby-text: #eae2f3;
-  --verby-secondary: #1a3a3a;
-  --verby-error-text: #dd9393;
-  --verby-error-bg: #932626;
+  --primary: #373958;
+  --primary-text: #eae2f3;
+  --primary-darker: #27293F;
+  --primary-darkest: #101019;
+  --text-error: #dd9393;
+  --functional-error: #932626;
 }
 
 @layer base {
@@ -27,7 +29,7 @@
 
   body {
     margin: 0;
-    @apply bg-verby-bg text-verby-text font-sans antialiased;
+    @apply bg-primary text-primary-text font-sans antialiased;
   }
 
   button {
@@ -38,15 +40,15 @@
 
 @layer components {
   .verby-card {
-    @apply bg-verby-bg border border-verby-secondary rounded-xl;
+    @apply bg-primary border border-primary-darkest rounded-xl;
   }
 
   .verby-button {
-    @apply bg-verby-bg border border-verby-secondary text-verby-text rounded-lg px-3 py-2 transition-colors;
+    @apply bg-primary border border-primary-darkest text-primary-text rounded-lg px-3 py-2 transition-colors;
   }
 
   .verby-button:hover {
-    @apply bg-verby-secondary/30;
+    @apply bg-primary-darker/30;
   }
 }
 

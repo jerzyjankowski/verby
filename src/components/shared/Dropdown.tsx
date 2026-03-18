@@ -1,5 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import type { ReactElement } from 'react'
+import { useState, type ReactElement } from 'react'
 
 import type { DropdownItem } from './types'
 
@@ -10,26 +10,30 @@ export type DropdownProps = {
 }
 
 export default function Dropdown({ trigger, items, align = 'start' }: DropdownProps) {
+  const [open, setOpen] = useState(false)
+
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root open={open} onOpenChange={setOpen}>
       <DropdownMenu.Trigger asChild>{trigger}</DropdownMenu.Trigger>
 
       <DropdownMenu.Content
         align={align}
-        className="z-50 w-[92vw] max-w-[18rem] rounded-xl border border-verby-secondary bg-verby-bg p-1 text-verby-text shadow-lg"
+        className="z-50 w-[92vw] max-w-[18rem] rounded-xl border border-primary-darkest bg-primary p-1 text-primary-text shadow-lg"
       >
         {items.map((item) => (
           <DropdownMenu.Item
             key={item.key}
             disabled={item.disabled}
-            onSelect={(event) => {
-              event.preventDefault()
-              if (!item.disabled) item.onSelect()
+            onSelect={() => {
+              if (!item.disabled) {
+                item.onSelect()
+                setOpen(false)
+              }
             }}
             className={[
               'cursor-pointer select-none rounded-lg px-3 py-2 text-sm outline-none',
               'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-              'hover:bg-verby-secondary/30 focus:bg-verby-secondary/30',
+            'hover:bg-primary-darker focus:bg-primary-darker cursor-pointer',
             ].join(' ')}
           >
             {item.label}
