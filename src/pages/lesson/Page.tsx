@@ -21,6 +21,7 @@ import {
 } from '../../types/config.ts'
 import { spanishConfig } from '../../configs/esp.ts'
 import {initLesson} from "../../utils/initLesson.ts";
+import { loadLessonFromLocalStorage } from '../../utils/localStorage.ts'
 
 function ConfigRow({
   label,
@@ -65,7 +66,10 @@ function ConfigRow({
 
 export default function Page() {
   const navigate = useNavigate()
-  const [form, setForm] = useState<LessonConfigFormState>({})
+  const [form, setForm] = useState<LessonConfigFormState>(() => {
+    const savedLesson = loadLessonFromLocalStorage('_new')
+    return savedLesson?.config ?? {}
+  })
   const conjugationOptions = spanishConfig.irregularConjugationsLabels.map((_, idx) => idx)
   const formOptions = spanishConfig.irregularFormsLabels.map((_, idx) => idx)
   const conjugationLabelMap: Record<string, string> =

@@ -35,13 +35,13 @@ export default function Page() {
   useEffect(() => {
     loadVerbsFromJson('/data/esp/verbs-demo.json')
       .then((verbs) => {
-        console.log('[JJ]', verbs)
-        for (let i = 0; i < spanishConfig.irregularConjugationsLabels.length; i++) {
-          console.log('[JJ]', i, spanishConfig.irregularConjugationsLabels[i], JSON.stringify(conjugate(verbs[3], i), null, 2))
-        }
-        for (let i = 0; i < spanishConfig.irregularFormsLabels.length; i++) {
-          console.log('[JJ]', i, spanishConfig.irregularFormsLabels[i], JSON.stringify(getCorrectForm(verbs[3], i), null, 2))
-        }
+        // console.log('[JJ]', verbs)
+        // for (let i = 0; i < spanishConfig.irregularConjugationsLabels.length; i++) {
+        //   console.log('[JJ]', i, spanishConfig.irregularConjugationsLabels[i], JSON.stringify(conjugate(verbs[3], i), null, 2))
+        // }
+        // for (let i = 0; i < spanishConfig.irregularFormsLabels.length; i++) {
+        //   console.log('[JJ]', i, spanishConfig.irregularFormsLabels[i], JSON.stringify(getCorrectForm(verbs[3], i), null, 2))
+        // }
       })
       .catch((err) => console.error('[JJ]Failed to load verbs:', err))
   }, [])
