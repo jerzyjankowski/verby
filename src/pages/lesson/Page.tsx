@@ -19,6 +19,7 @@ import {
   BATCH_OPTIONS,
   BATCH_LABELS,
 } from '../../types/config.ts'
+import { spanishConfig } from '../../configs/esp.ts'
 import {initLesson} from "../../utils/initLesson.ts";
 
 function ConfigRow({
@@ -65,6 +66,12 @@ function ConfigRow({
 export default function Page() {
   const navigate = useNavigate()
   const [form, setForm] = useState<LessonConfigFormState>({})
+  const conjugationOptions = spanishConfig.irregularConjugationsLabels.map((_, idx) => idx)
+  const formOptions = spanishConfig.irregularFormsLabels.map((_, idx) => idx)
+  const conjugationLabelMap: Record<string, string> =
+    Object.fromEntries(spanishConfig.irregularConjugationsLabels.map((label, idx) => [String(idx), label]))
+  const formLabelMap: Record<string, string> =
+    Object.fromEntries(spanishConfig.irregularFormsLabels.map((label, idx) => [String(idx), label]))
 
   const setLanguage = (v: string) =>
     setForm((prev) => ({ ...prev, language: v as LessonConfig['language'] }))
@@ -73,7 +80,16 @@ export default function Page() {
   const setLevel = (v: string) =>
     setForm((prev) => ({ ...prev, level: v as LessonConfig['level'] }))
   const setDirection = (v: string) =>
-    setForm((prev) => ({ ...prev, direction: v as LessonConfig['direction'] }))
+    setForm((prev) => ({
+      ...prev,
+      direction: v as LessonConfig['direction'],
+      directionConjugation: v === 'conjugation' ? prev.directionConjugation : undefined,
+      directionForm: v === 'form' ? prev.directionForm : undefined,
+    }))
+  const setDirectionConjugation = (v: string) =>
+    setForm((prev) => ({ ...prev, directionConjugation: Number(v) }))
+  const setDirectionForm = (v: string) =>
+    setForm((prev) => ({ ...prev, directionForm: Number(v) }))
   const setSpeed = (v: string) =>
     setForm((prev) => ({ ...prev, speed: v as LessonConfig['speed'] }))
   const setBatch = (v: string) =>
@@ -87,6 +103,8 @@ export default function Page() {
     form.pool &&
     form.level &&
     form.direction &&
+    (form.direction !== 'conjugation' || form.directionConjugation !== undefined) &&
+    (form.direction !== 'form' || form.directionForm !== undefined) &&
     form.speed &&
     form.batch !== undefined
 
@@ -97,6 +115,8 @@ export default function Page() {
       pool: form.pool!,
       level: form.level!,
       direction: form.direction!,
+      directionConjugation: form.direction === 'conjugation' ? form.directionConjugation : undefined,
+      directionForm: form.direction === 'form' ? form.directionForm : undefined,
       speed: form.speed!,
       batch: form.batch!,
     }
@@ -136,6 +156,24 @@ export default function Page() {
             labelMap={DIRECTION_LABELS as Record<string, string>}
             onSelect={setDirection}
           />
+          {form.direction === 'conjugation' && (
+            <ConfigRow
+              label="conjugation:"
+              value={form.directionConjugation}
+              options={conjugationOptions}
+              labelMap={conjugationLabelMap}
+              onSelect={setDirectionConjugation}
+            />
+          )}
+          {form.direction === 'form' && (
+            <ConfigRow
+              label="form:"
+              value={form.directionForm}
+              options={formOptions}
+              labelMap={formLabelMap}
+              onSelect={setDirectionForm}
+            />
+          )}
           <ConfigRow
             label="speed:"
             value={form.speed}

@@ -75,6 +75,14 @@ export default function Page() {
             label="directions:"
             value={DIRECTION_LABELS[lesson.config.direction]}
           />
+           {lesson.config.directionConjugation !== undefined && <ConfigDisplayRow
+            label="direction conjugation:"
+            value={lesson.config.directionConjugation}
+          />}
+           {lesson.config.directionForm !== undefined && <ConfigDisplayRow
+            label="direction form:"
+            value={lesson.config.directionForm}
+          />}
           <ConfigDisplayRow label="speed:" value={SPEED_LABELS[lesson.config.speed]} />
           <ConfigDisplayRow
             label="batch:"
