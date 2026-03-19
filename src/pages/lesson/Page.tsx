@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import Dropdown from '../../components/shared/Dropdown.tsx'
 import type { DropdownItem } from '../../components/shared/types.ts'
 import {
-  type Config,
-  type ConfigFormState,
+  type LessonConfig,
+  type LessonConfigFormState,
   LANGUAGE_OPTIONS,
   LANGUAGE_LABELS,
   POOL_OPTIONS,
@@ -64,22 +64,22 @@ function ConfigRow({
 
 export default function Page() {
   const navigate = useNavigate()
-  const [form, setForm] = useState<ConfigFormState>({})
+  const [form, setForm] = useState<LessonConfigFormState>({})
 
   const setLanguage = (v: string) =>
-    setForm((prev) => ({ ...prev, language: v as Config['language'] }))
+    setForm((prev) => ({ ...prev, language: v as LessonConfig['language'] }))
   const setPool = (v: string) =>
-    setForm((prev) => ({ ...prev, pool: v as Config['pool'] }))
+    setForm((prev) => ({ ...prev, pool: v as LessonConfig['pool'] }))
   const setLevel = (v: string) =>
-    setForm((prev) => ({ ...prev, level: v as Config['level'] }))
+    setForm((prev) => ({ ...prev, level: v as LessonConfig['level'] }))
   const setDirection = (v: string) =>
-    setForm((prev) => ({ ...prev, direction: v as Config['direction'] }))
+    setForm((prev) => ({ ...prev, direction: v as LessonConfig['direction'] }))
   const setSpeed = (v: string) =>
-    setForm((prev) => ({ ...prev, speed: v as Config['speed'] }))
+    setForm((prev) => ({ ...prev, speed: v as LessonConfig['speed'] }))
   const setBatch = (v: string) =>
     setForm((prev) => ({
       ...prev,
-      batch: (v === 'ALL' ? 'ALL' : Number(v)) as Config['batch'],
+      batch: (v === 'ALL' ? 'ALL' : Number(v)) as LessonConfig['batch'],
     }))
 
   const allSelected =
@@ -92,7 +92,7 @@ export default function Page() {
 
   const handleStart = () => {
     if (!allSelected) return
-    const config: Config = {
+    const config: LessonConfig = {
       language: form.language!,
       pool: form.pool!,
       level: form.level!,

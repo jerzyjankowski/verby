@@ -59,8 +59,22 @@ export const DIRECTION_OPTIONS: Direction[] = ['to_foreign', 'to_native', 'conju
 export const SPEED_OPTIONS: Speed[] = ['same', 'random']
 export const BATCH_OPTIONS: Batch[] = [10, 20, 30, 40, 50, 'ALL']
 
+export type LanguageConfig = {
+  code: string,
+  personsLabels: {
+    s1: string,
+    s2: string,
+    s3: string,
+    p1: string,
+    p2: string,
+    p3: string,
+  }
+  irregularFormsLabels: string[]
+  irregularConjugationsLabels: string[]
+}
+
 // Config type (all required when saving)
-export type Config = {
+export type LessonConfig = {
   language: Language
   pool: Pool
   level: Level
@@ -70,7 +84,7 @@ export type Config = {
 }
 
 // Form state (optional until all selected)
-export type ConfigFormState = {
+export type LessonConfigFormState = {
   language?: Language
   pool?: Pool
   level?: Level
@@ -81,8 +95,8 @@ export type ConfigFormState = {
 
 export const CONFIG_STORAGE_KEY = 'config-_new'
 
-export type LessonConfig = {
-  config: Config
+export type LessonSave = {
+  config: LessonConfig
   file: string
   name: string
   verbs: number[]
