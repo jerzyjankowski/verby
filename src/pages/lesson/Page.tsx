@@ -20,7 +20,7 @@ import {
   BATCH_LABELS,
 } from '../../types/config.ts'
 import { spanishConfig } from '../../configs/esp.ts'
-import {initLesson} from "../../utils/initLesson.ts";
+import { initLesson } from '../../utils/initLesson.ts'
 import { loadLessonFromLocalStorage } from '../../utils/localStorage.ts'
 
 function ConfigRow({
@@ -66,6 +66,7 @@ function ConfigRow({
 
 export default function Page() {
   const navigate = useNavigate()
+  const [isStarting, setIsStarting] = useState(false)
   const [form, setForm] = useState<LessonConfigFormState>(() => {
     const savedLesson = loadLessonFromLocalStorage('_new')
     return savedLesson?.config ?? {}
@@ -112,8 +113,8 @@ export default function Page() {
     form.speed &&
     form.batch !== undefined
 
-  const handleStart = () => {
-    if (!allSelected) return
+  const handleStart = async () => {
+    if (!allSelected || isStarting) return
     const config: LessonConfig = {
       language: form.language!,
       pool: form.pool!,
@@ -124,8 +125,13 @@ export default function Page() {
       speed: form.speed!,
       batch: form.batch!,
     }
-    initLesson(config)
-    navigate('/lesson/_new')
+    try {
+      setIsStarting(true)
+      await initLesson(config)
+      navigate('/lesson/_new')
+    } finally {
+      setIsStarting(false)
+    }
   }
 
   return (
@@ -197,10 +203,10 @@ export default function Page() {
             <button
               type="button"
               onClick={handleStart}
-              disabled={!allSelected}
+              disabled={!allSelected || isStarting}
               className="verby-button w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary-darker"
             >
-              Start
+              {isStarting ? 'Starting...' : 'Start'}
             </button>
           </div>
         </div>
