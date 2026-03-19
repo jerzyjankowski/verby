@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import Dropdown from '../components/shared/Dropdown'
-import type { DropdownItem } from '../components/shared/types'
+import Dropdown from '../../components/shared/Dropdown.tsx'
+import type { DropdownItem } from '../../components/shared/types.ts'
 import {
   type Config,
   type ConfigFormState,
@@ -18,8 +18,8 @@ import {
   SPEED_LABELS,
   BATCH_OPTIONS,
   BATCH_LABELS,
-} from '../types/config'
-import {initLesson} from "../utils/initLesson.ts";
+} from '../../types/config.ts'
+import {initLesson} from "../../utils/initLesson.ts";
 
 function ConfigRow({
   label,
@@ -62,7 +62,7 @@ function ConfigRow({
   )
 }
 
-export default function InitPage() {
+export default function Page() {
   const navigate = useNavigate()
   const [form, setForm] = useState<ConfigFormState>({})
 

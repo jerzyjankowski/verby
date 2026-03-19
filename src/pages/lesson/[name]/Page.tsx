@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react'
+import { useParams } from 'react-router-dom'
 
-import type {LessonConfig} from '../types/config'
-import { loadVerbsFromJson } from '../utils/jsonVerbsLoader'
+import type {LessonConfig} from '../../../types/config.ts'
+import { loadVerbsFromJson } from '../../../utils/jsonVerbsLoader.ts'
 import {
   LANGUAGE_LABELS,
   POOL_LABELS,
@@ -9,8 +10,8 @@ import {
   DIRECTION_LABELS,
   SPEED_LABELS,
   BATCH_LABELS,
-} from '../types/config'
-import {loadLessonFromLocalStorage} from "../utils/localStorage.ts";
+} from '../../../types/config.ts'
+import { loadLessonFromLocalStorage } from '../../../utils/localStorage.ts'
 
 function ConfigDisplayRow({
   label,
@@ -27,7 +28,9 @@ function ConfigDisplayRow({
   )
 }
 
-export default function LessonPage() {
+export default function Page() {
+  const { name } = useParams<{ name: string }>()
+
   useEffect(() => {
     loadVerbsFromJson('/data/esp/verbs-demo.json')
       .then((verbs) => console.log('[JJ]', verbs))
@@ -35,13 +38,16 @@ export default function LessonPage() {
   }, [])
 
   const lessonConfig = useMemo<LessonConfig | null>(() => {
-    return loadLessonFromLocalStorage('_new')
-  }, [])
+    if (!name) return null
+    return loadLessonFromLocalStorage(name)
+  }, [name])
 
   if (!lessonConfig) {
     return (
       <div className="min-h-screen bg-primary text-primary-text p-4">
-        <p className="text-primary-text">No config found. Start from the init page.</p>
+        <p className="text-primary-text">
+          No config found for lesson "{name ?? 'unknown'}". Start from the init page.
+        </p>
       </div>
     )
   }
