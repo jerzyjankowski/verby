@@ -194,7 +194,7 @@ export default function Page() {
               type="button"
               onClick={handleStart}
               disabled={!allSelected}
-              className="verby-button w-full disabled:opacity-50 disabled:cursor-not-allowed"
+              className="verby-button w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary-darker"
             >
               Start
             </button>
