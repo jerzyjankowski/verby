@@ -138,7 +138,6 @@ export function useLesson(name?: string) {
   }, [verbs])
 
   const onContinue = useCallback((correct: boolean) => {
-    console.log('[JJ]onContinue', correct)
     if (!lesson || !round) {
       return
     }
@@ -171,5 +170,5 @@ export function useLesson(name?: string) {
 
   }, [round, lesson, setLesson, setLastVerbsIds, lastVerbsIds, randomizeVerb, setRound])
 
-  return { lesson, verbs, round, updateRoundHiddenFlags, canContinue, onContinue }
+  return { lesson, verbs, round, lastVerbsIds, updateRoundHiddenFlags, canContinue, onContinue }
 }

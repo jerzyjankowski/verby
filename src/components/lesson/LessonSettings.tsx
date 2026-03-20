@@ -7,17 +7,19 @@ import Button from '../shared/Button.tsx'
 import Sheet from '../shared/Sheet.tsx'
 import ConfigSummary from './settings/ConfigSummary.tsx'
 import Confirmation from './settings/Confirmation.tsx'
+import HistoryView from './settings/HistoryView.tsx'
 import type { LessonSave } from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
 
 type LessonSettingsProps = {
   lesson: LessonSave
   verbs: Verb[]
+  lastVerbsIds: number[]
 }
 
-type SettingsView = 'menu' | 'config-summary' | 'verbs' | 'close-questions'
+type SettingsView = 'menu' | 'config-summary' | 'verbs' | 'history' | 'close-questions'
 
-export default function LessonSettings({ lesson, verbs }: LessonSettingsProps) {
+export default function LessonSettings({ lesson, verbs, lastVerbsIds }: LessonSettingsProps) {
   const navigate = useNavigate()
   const toast = useToast()
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -68,6 +70,7 @@ export default function LessonSettings({ lesson, verbs }: LessonSettingsProps) {
     menu: 'Lesson settings',
     'config-summary': 'Config Summary',
     verbs: `Verbs (${lesson.verbs.length})`,
+    history: `History (${lastVerbsIds.length})`,
     'close-questions': 'Close Questions',
   }
 
@@ -103,6 +106,7 @@ export default function LessonSettings({ lesson, verbs }: LessonSettingsProps) {
           <div className="flex flex-col gap-2">
             <Button label="Config Summary" onClick={() => setView('config-summary')} />
             <Button label={`Verbs (${lesson.verbs.length})`} onClick={() => setView('verbs')} />
+            <Button label={`History (${lastVerbsIds.length})`} onClick={() => setView('history')} />
             <Button label="Reverse Questions" onClick={handleReverseQuestions} />
             <Button label="Close Questions" onClick={() => setView('close-questions')} />
           </div>
@@ -132,6 +136,8 @@ export default function LessonSettings({ lesson, verbs }: LessonSettingsProps) {
             </table>
           </div>
         ) : null}
+
+        {view === 'history' ? <HistoryView lesson={lesson} verbs={verbs} lastVerbsIds={lastVerbsIds} /> : null}
 
         {view === 'close-questions' ? (
           <Confirmation
