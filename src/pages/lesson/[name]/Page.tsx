@@ -1,7 +1,8 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import type {LessonSave} from '../../../types/config.ts'
+import type { Verb } from '../../../types/verb.ts'
 import { loadVerbsFromJson } from '../../../utils/jsonVerbsLoader.ts'
 import {
   LANGUAGE_LABELS,
@@ -12,7 +13,6 @@ import {
   BATCH_LABELS,
 } from '../../../types/config.ts'
 import { loadLessonFromLocalStorage } from '../../../utils/localStorage.ts'
-import {conjugate, getCorrectForm, spanishConfig} from '../../../configs/esp.ts'
 
 function ConfigDisplayRow({
   label,
@@ -31,25 +31,34 @@ function ConfigDisplayRow({
 
 export default function Page() {
   const { name } = useParams<{ name: string }>()
-
-  useEffect(() => {
-    loadVerbsFromJson('/data/esp/verbs-demo.json')
-      .then((verbs) => {
-        // console.log('[JJ]', verbs)
-        // for (let i = 0; i < spanishConfig.irregularConjugationsLabels.length; i++) {
-        //   console.log('[JJ]', i, spanishConfig.irregularConjugationsLabels[i], JSON.stringify(conjugate(verbs[3], i), null, 2))
-        // }
-        // for (let i = 0; i < spanishConfig.irregularFormsLabels.length; i++) {
-        //   console.log('[JJ]', i, spanishConfig.irregularFormsLabels[i], JSON.stringify(getCorrectForm(verbs[3], i), null, 2))
-        // }
-      })
-      .catch((err) => console.error('[JJ]Failed to load verbs:', err))
-  }, [])
+  const [verbs, setVerbs] = useState<Verb[]>([])
 
   const lesson = useMemo<LessonSave | null>(() => {
     if (!name) return null
     return loadLessonFromLocalStorage(name)
   }, [name])
+
+  useEffect(() => {
+    if (!lesson) {
+      setVerbs([])
+      return
+    }
+
+    const lessonFile =
+      (lesson as LessonSave & { config: LessonSave['config'] & { file?: string } }).config.file ??
+      lesson.file
+
+    loadVerbsFromJson(lessonFile)
+      .then((loadedVerbs) => {
+        const lessonVerbIds = new Set(lesson.verbs)
+        const filteredVerbs = loadedVerbs.filter((verb) => lessonVerbIds.has(verb.id))
+        setVerbs(filteredVerbs)
+      })
+      .catch((err) => {
+        console.error('Failed to load verbs:', err)
+        setVerbs([])
+      })
+  }, [lesson])
 
   if (!lesson) {
     return (
@@ -88,6 +97,7 @@ export default function Page() {
             label="batch:"
             value={BATCH_LABELS[lesson.config.batch]}
           />
+          <ConfigDisplayRow label="verbs loaded:" value={verbs.length} />
         </div>
       </div>
     </div>
