@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { useNavigate } from 'react-router-dom'
 
 import Button from '../../components/shared/Button.tsx'
@@ -200,8 +201,9 @@ export default function Page() {
             onSelect={setBatch}
           />
 
-          <div className="col-span-2 mt-4">
-            <Button onClick={handleStart} disabled={!allSelected || isStarting} label={isStarting ? 'Starting...' : 'Start'} />
+          <div className="col-span-2 mt-4 flex items-center gap-3">
+            <Button onClick={() => navigate('/')} label="Back" icon={<ArrowLeftIcon className="size-4" />} fullWidth={false} />
+            <Button onClick={handleStart} disabled={!allSelected || isStarting} label={isStarting ? 'Starting...' : 'Start'} main />
           </div>
         </div>
       </div>

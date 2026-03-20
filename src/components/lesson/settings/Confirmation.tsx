@@ -19,8 +19,8 @@ export default function Confirmation({
     <div className="space-y-4">
       <p className="text-sm text-primary-text">{message}</p>
       <div className="flex gap-2">
-        <Button label={confirmLabel} onClick={onConfirm} />
         <Button label={cancelLabel} onClick={onCancel} />
+        <Button label={confirmLabel} onClick={onConfirm} main />
       </div>
     </div>
   )

@@ -2,7 +2,10 @@
 
 @theme {
   --color-primary: #373958;
+  --color-reverted: #eae2f3;
+  --color-reverted-darker: #CBB7E1;
   --color-primary-text: #eae2f3;
+  --color-reverted-text: #373958;
   --color-primary-darker: #27293F;
   --color-primary-darkest: #101019;
   --color-text-error: #dd9393;
@@ -45,14 +48,6 @@
 @layer components {
   .verby-card {
     @apply bg-primary border border-primary-darkest rounded-xl;
-  }
-
-  .verby-button {
-    @apply bg-primary border border-primary-darkest text-primary-text rounded-lg px-3 py-2 transition-colors;
-  }
-
-  .verby-button:hover {
-    @apply bg-primary-darker/30;
   }
 }
 
