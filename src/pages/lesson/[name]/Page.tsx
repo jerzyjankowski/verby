@@ -27,7 +27,7 @@ export default function Page() {
   }
 
   return (
-    <div className="h-screen bg-primary text-primary-text p-4">
+    <div className="h-dvh bg-primary text-primary-text p-4">
       <div className="mx-auto flex h-full max-w-2xl flex-col gap-3">
         <LessonSettings lesson={lesson} verbsCount={verbs.length} />
 
