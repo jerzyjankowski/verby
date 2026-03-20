@@ -4,13 +4,11 @@ import { CheckIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 import Cards from '../../../components/lesson/Cards'
 import LessonSettings from '../../../components/lesson/LessonSettings.tsx'
 import Button from '../../../components/shared/Button.tsx'
-import { useToast } from '../../../components/shared/Toast.tsx'
 import { useLesson } from '../../../hooks/useLesson.ts'
 
 export default function Page() {
   const { name } = useParams<{ name: string }>()
-  const { lesson, verbs, round, updateRoundHiddenFlags, canContinue } = useLesson(name)
-  const toast = useToast()
+  const { lesson, verbs, round, updateRoundHiddenFlags, canContinue, onContinue } = useLesson(name)
 
   console.log('[JJ]verbs:', verbs)
   console.log('[JJ]lesson:', lesson)
@@ -44,14 +42,14 @@ export default function Page() {
             <Button
               icon={<ArrowRightIcon className="size-5" />}
               rounded={false}
-              onClick={() => toast.success('Next', 'Moved to next round.')}
+              onClick={() => onContinue(false)}
               disabled={!canContinue}
             />
             <Button
               icon={<CheckIcon className="size-5" />}
               rounded={false}
               main
-              onClick={() => toast.success('Learnt', 'Marked as learnt.')}
+              onClick={() => onContinue(true)}
               disabled={!canContinue}
             />
           </div>

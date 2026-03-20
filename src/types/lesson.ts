@@ -1,6 +1,7 @@
 import type {Conjugation, ConjugationFlags} from "./verb.ts";
 
 export type Round = {
+  verbId: number,
   question: string,
   isConjugation: boolean,
   answer: string,
