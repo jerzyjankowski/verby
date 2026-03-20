@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import Button from '../../components/shared/Button.tsx'
 import Dropdown from '../../components/shared/Dropdown.tsx'
 import type { DropdownItem } from '../../components/shared/types.ts'
 import {
@@ -200,14 +201,7 @@ export default function Page() {
           />
 
           <div className="col-span-2 mt-4">
-            <button
-              type="button"
-              onClick={handleStart}
-              disabled={!allSelected || isStarting}
-              className="verby-button w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary-darker"
-            >
-              {isStarting ? 'Starting...' : 'Start'}
-            </button>
+            <Button onClick={handleStart} disabled={!allSelected || isStarting} label={isStarting ? 'Starting...' : 'Start'} />
           </div>
         </div>
       </div>

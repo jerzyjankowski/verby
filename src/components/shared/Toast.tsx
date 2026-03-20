@@ -1,7 +1,7 @@
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import * as ToastPrimitive from '@radix-ui/react-toast'
 
-type ToastVariant = 'error'
+type ToastVariant = 'error' | 'success'
 
 type ToastMessage = {
   id: string
@@ -12,6 +12,7 @@ type ToastMessage = {
 
 type ToastContextValue = {
   error: (title: string, description?: string) => void
+  success: (title: string, description?: string) => void
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null)
@@ -24,6 +25,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setMessages((current) => [...current, { id, title, description, variant: 'error' }])
   }, [])
 
+  const success = useCallback((title: string, description?: string) => {
+    const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`
+    setMessages((current) => [...current, { id, title, description, variant: 'success' }])
+  }, [])
+
   const removeMessage = useCallback((id: string) => {
     setMessages((current) => current.filter((message) => message.id !== id))
   }, [])
@@ -31,8 +37,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const contextValue = useMemo<ToastContextValue>(
     () => ({
       error,
+      success,
     }),
-    [error],
+    [error, success],
   )
 
   return (
@@ -48,9 +55,16 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             onOpenChange={(open) => {
               if (!open) removeMessage(message.id)
             }}
-            className="verby-card data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] border-functional-error bg-primary-darker p-3 shadow-lg"
+            className={[
+              'verby-card data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] bg-primary-darker p-3 shadow-lg',
+              message.variant === 'error' ? 'border-functional-error' : 'border-functional-success',
+            ].join(' ')}
           >
-            <ToastPrimitive.Title className="text-sm font-semibold text-text-error">
+            <ToastPrimitive.Title
+              className={`text-sm font-semibold ${
+                message.variant === 'error' ? 'text-text-error' : 'text-text-success'
+              }`}
+            >
               {message.title}
             </ToastPrimitive.Title>
             {message.description ? (

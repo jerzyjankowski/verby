@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import { GearIcon } from '@radix-ui/react-icons'
 import { useParams } from 'react-router-dom'
 
-import type {LessonSave} from '../../../types/config.ts'
+import Button from '../../../components/shared/Button.tsx'
+import type { LessonSave } from '../../../types/config.ts'
 import type { Verb } from '../../../types/verb.ts'
 import { loadVerbsFromJson } from '../../../utils/jsonVerbsLoader.ts'
 import {
@@ -34,6 +36,9 @@ export default function Page() {
   const { name } = useParams<{ name: string }>()
   const [verbs, setVerbs] = useState<Verb[]>([])
   const toast = useToast()
+  const handleGearClick = () => {
+    toast.success('Settings opened', 'Lesson settings action is ready.')
+  }
 
   const lesson = useMemo<LessonSave | null>(() => {
     if (!name) return null
@@ -76,7 +81,15 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-primary text-primary-text p-4">
       <div className="mx-auto max-w-2xl">
-         <div className="verby-card flex flex-col gap-4 p-4">
+        <div className="mb-3 flex justify-end">
+          <Button
+            aria-label="Open lesson settings"
+            title="Settings"
+            onClick={handleGearClick}
+            icon={<GearIcon className="size-5" />}
+          />
+        </div>
+        <div className="verby-card flex flex-col gap-4 p-4">
           <ConfigDisplayRow
             label="language:"
             value={LANGUAGE_LABELS[lesson.config.language]}
@@ -87,14 +100,15 @@ export default function Page() {
             label="directions:"
             value={DIRECTION_LABELS[lesson.config.direction]}
           />
-           {lesson.config.directionConjugation !== undefined && <ConfigDisplayRow
-            label="direction conjugation:"
-            value={lesson.config.directionConjugation}
-          />}
-           {lesson.config.directionForm !== undefined && <ConfigDisplayRow
-            label="direction form:"
-            value={lesson.config.directionForm}
-          />}
+          {lesson.config.directionConjugation !== undefined && (
+            <ConfigDisplayRow
+              label="direction conjugation:"
+              value={lesson.config.directionConjugation}
+            />
+          )}
+          {lesson.config.directionForm !== undefined && (
+            <ConfigDisplayRow label="direction form:" value={lesson.config.directionForm} />
+          )}
           <ConfigDisplayRow label="speed:" value={SPEED_LABELS[lesson.config.speed]} />
           <ConfigDisplayRow
             label="batch:"

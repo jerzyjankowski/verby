@@ -7,6 +7,8 @@
   --color-primary-darkest: #101019;
   --color-text-error: #dd9393;
   --color-functional-error: #932626;
+  --color-text-success: #9dd8a6;
+  --color-functional-success: #2f7a3e;
 }
 
 :root {
@@ -19,6 +21,8 @@
   --primary-darkest: #101019;
   --text-error: #dd9393;
   --functional-error: #932626;
+  --text-success: #9dd8a6;
+  --functional-success: #2f7a3e;
 }
 
 @layer base {
