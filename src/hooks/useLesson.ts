@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import {useCallback, useEffect, useMemo, useState} from 'react'
 
 import { useToast } from '../components/shared/Toast.tsx'
 import type {LessonConfig, LessonSave} from '../types/config.ts'
-import type { Verb } from '../types/verb.ts'
+import type {ConjugationFlags, Verb} from '../types/verb.ts'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
 import { loadLessonFromLocalStorage } from '../utils/localStorage.ts'
-import type {Round} from "../types/lesson.ts";
+import type {Round, UpdateRoundHiddenFlags} from "../types/lesson.ts";
 import {conjugate, getCorrectForm} from "../configs/esp.ts";
 
 const prepareRound = (verb: Verb, config: LessonConfig): Round => {
@@ -82,5 +82,16 @@ export function useLesson(name?: string) {
       })
   }, [lesson, toast])
 
-  return { lesson, verbs, round }
+  const updateRoundHiddenFlags: UpdateRoundHiddenFlags = useCallback((answerHidden: boolean, conjugationAnswersHidden?: ConjugationFlags) => {
+    setRound(currentRound => {
+      return currentRound ? { ...currentRound, answerHidden, conjugationAnswersHidden } : undefined
+    })
+  }, [setRound])
+
+  const canContinue = useMemo(() => {
+    const cah = round?.conjugationAnswersHidden
+    return round && (!round.answerHidden || (cah && !(cah.s1 && cah.s2 && cah.s3 && cah.p1 && cah.p2 && cah.p3)))
+  }, [round])
+
+  return { lesson, verbs, round, updateRoundHiddenFlags, canContinue }
 }

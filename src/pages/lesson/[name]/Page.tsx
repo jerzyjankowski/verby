@@ -1,15 +1,20 @@
 import { useParams } from 'react-router-dom'
 
+import Cards from '../../../components/lesson/Cards'
 import LessonSettings from '../../../components/lesson/LessonSettings.tsx'
+import Button from '../../../components/shared/Button.tsx'
+import { useToast } from '../../../components/shared/Toast.tsx'
 import { useLesson } from '../../../hooks/useLesson.ts'
 
 export default function Page() {
   const { name } = useParams<{ name: string }>()
-  const { lesson, verbs, round } = useLesson(name)
+  const { lesson, verbs, round, updateRoundHiddenFlags, canContinue } = useLesson(name)
+  const toast = useToast()
 
   console.log('[JJ]verbs:', verbs)
   console.log('[JJ]lesson:', lesson)
   console.log('[JJ]round:', round)
+  console.log('[JJ]canRate:', canContinue)
 
   if (!lesson) {
     return (
@@ -22,9 +27,32 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen bg-primary text-primary-text p-4">
-      <div className="mx-auto max-w-2xl">
+    <div className="h-screen bg-primary text-primary-text p-4">
+      <div className="mx-auto flex h-full max-w-2xl flex-col gap-3">
         <LessonSettings lesson={lesson} verbsCount={verbs.length} />
+
+        {round && (
+          <Cards
+            round={round}
+            updateRoundHiddenFlags={updateRoundHiddenFlags}
+          />
+        )}
+
+        {round && (
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              label="Next"
+              onClick={() => toast.success('Next', 'Moved to next round.')}
+              disabled={!canContinue}
+            />
+            <Button
+              label="Learnt"
+              main
+              onClick={() => toast.success('Learnt', 'Marked as learnt.')}
+              disabled={!canContinue}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
