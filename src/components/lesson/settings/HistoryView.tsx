@@ -49,7 +49,7 @@ export default function HistoryView({ lesson, verbs, lastVerbsIds }: HistoryView
               <td className="px-3 py-2 tabular-nums">{row.order}</td>
               <td className="px-3 py-2 tabular-nums">{row.id}</td>
               <td className="px-3 py-2">{row.verb}</td>
-              <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">{row.appeared}</td>
+              <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">×{row.appeared}</td>
               <td className="w-px whitespace-nowrap px-3 py-2">
                 {row.learnt ? (
                   <CheckIcon aria-label="Learnt on last appearance" className="size-4" />
