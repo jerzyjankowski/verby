@@ -10,10 +10,9 @@ import type { LessonSave } from '../../../types/config.ts'
 
 type ConfigSummaryProps = {
   lesson: LessonSave
-  verbsCount: number
 }
 
-export default function ConfigSummary({ lesson, verbsCount }: ConfigSummaryProps) {
+export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
   const rows: Array<{ label: string; value: string | number }> = [
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
     { label: 'pool', value: POOL_LABELS[lesson.config.pool] },
@@ -21,7 +20,6 @@ export default function ConfigSummary({ lesson, verbsCount }: ConfigSummaryProps
     { label: 'directions', value: DIRECTION_LABELS[lesson.config.direction] },
     { label: 'speed', value: SPEED_LABELS[lesson.config.speed] },
     { label: 'batch', value: BATCH_LABELS[lesson.config.batch] },
-    { label: 'verbs loaded', value: verbsCount },
   ]
 
   if (lesson.config.directionConjugation !== undefined) {
