@@ -5,9 +5,12 @@ import { useLesson } from '../../../hooks/useLesson.ts'
 
 export default function Page() {
   const { name } = useParams<{ name: string }>()
-  const { lesson, verbs } = useLesson(name)
+  const { lesson, verbs, round } = useLesson(name)
 
-  console.log('[JJ]', lesson, verbs)
+  console.log('[JJ]verbs:', verbs)
+  console.log('[JJ]lesson:', lesson)
+  console.log('[JJ]round:', round)
+
   if (!lesson) {
     return (
       <div className="min-h-screen bg-primary text-primary-text p-4">

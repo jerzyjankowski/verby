@@ -5,6 +5,8 @@ export type Round = {
   isConjugation: boolean,
   answer?: string,
   answerHidden?: boolean,
+  answerIrregular?: boolean,
   conjugationAnswers?: Conjugation,
   conjugationAnswersHidden?: ConjugationFlags
+  conjugationAnswersIrregulars?: ConjugationFlags
 }
