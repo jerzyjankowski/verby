@@ -14,7 +14,10 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
     answer: verb.verb,
     isConjugation: false,
     answerHidden: true,
-    answerIrregular: false
+    answerIrregular: false,
+    conjugationAnswers: { s1: '-', s2: '-', s3: '-', p1: '-', p2: '-', p3: '-'},
+    conjugationAnswersHidden: { s1: true, s2: true, s3: true, p1: true, p2: true, p3: true},
+    conjugationAnswersIrregulars: { s1: false, s2: false, s3: false, p1: false, p2: false, p3: false},
   }
   switch (config.direction) {
     case 'to_foreign':
@@ -39,10 +42,8 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
     case 'form':
       const correctForm = getCorrectForm(verb, config.directionForm ?? 0)
       return {
-        question: verb.meaning,
+        ...defaultValues,
         answer: correctForm.form,
-        isConjugation: false,
-        answerHidden: true,
         answerIrregular: correctForm.irregularity,
       }
   }
@@ -82,7 +83,7 @@ export function useLesson(name?: string) {
       })
   }, [lesson, toast])
 
-  const updateRoundHiddenFlags: UpdateRoundHiddenFlags = useCallback((answerHidden: boolean, conjugationAnswersHidden?: ConjugationFlags) => {
+  const updateRoundHiddenFlags: UpdateRoundHiddenFlags = useCallback((answerHidden: boolean, conjugationAnswersHidden: ConjugationFlags) => {
     setRound(currentRound => {
       return currentRound ? { ...currentRound, answerHidden, conjugationAnswersHidden } : undefined
     })

@@ -6,9 +6,9 @@ export type Round = {
   answer: string,
   answerHidden: boolean,
   answerIrregular: boolean,
-  conjugationAnswers?: Conjugation,
-  conjugationAnswersHidden?: ConjugationFlags
-  conjugationAnswersIrregulars?: ConjugationFlags
+  conjugationAnswers: Conjugation,
+  conjugationAnswersHidden: ConjugationFlags
+  conjugationAnswersIrregulars: ConjugationFlags
 }
 
-export type UpdateRoundHiddenFlags = (answerHidden: boolean, conjugationAnswersHidden?: ConjugationFlags) => void
+export type UpdateRoundHiddenFlags = (answerHidden: boolean, conjugationAnswersHidden: ConjugationFlags) => void
