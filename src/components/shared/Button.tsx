@@ -5,9 +5,10 @@ export type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'childre
   icon?: ReactNode
   fullWidth?: boolean
   main?: boolean
+  rounded?: boolean
 }
 
-export default function Button({ label, icon, fullWidth = true, main = false, type = 'button', ...props }: ButtonProps) {
+export default function Button({ label, icon, fullWidth = true, main = false, rounded = false, type = 'button', ...props }: ButtonProps) {
   const hasOnlyIcon = !!icon && !label
 
   return (
@@ -17,8 +18,12 @@ export default function Button({ label, icon, fullWidth = true, main = false, ty
         ' border border-primary-darkest  rounded-lg px-3 py-2 transition-colors',
         main ? 'text-reverted-text bg-reverted hover:bg-reverted-darker' : 'text-primary-text bg-primary hover:bg-primary-darker',
         'verby-button cursor-pointer disabled:cursor-not-allowed disabled:opacity-50',
-        label && fullWidth ? 'w-full' : '',
-        hasOnlyIcon ? 'inline-flex size-10 items-center justify-center rounded-full px-0 py-0' : '',
+        fullWidth ? 'w-full' : '',
+        hasOnlyIcon
+          ? fullWidth
+            ? `flex h-10 items-center justify-center px-0 py-0 ${rounded ? 'rounded-full' : 'rounded-lg'}`
+            : `inline-flex size-10 items-center justify-center px-0 py-0 ${rounded ? 'rounded-full' : 'rounded-lg'}`
+          : '',
         icon && label ? 'flex flex-row items-center gap-2' : ''
       ].join(' ')}
       {...props}

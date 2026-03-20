@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import { CheckIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 
 import Cards from '../../../components/lesson/Cards'
 import LessonSettings from '../../../components/lesson/LessonSettings.tsx'
@@ -41,12 +42,14 @@ export default function Page() {
         {round && (
           <div className="grid grid-cols-2 gap-3">
             <Button
-              label="Next"
+              icon={<ArrowRightIcon className="size-5" />}
+              rounded={false}
               onClick={() => toast.success('Next', 'Moved to next round.')}
               disabled={!canContinue}
             />
             <Button
-              label="Learnt"
+              icon={<CheckIcon className="size-5" />}
+              rounded={false}
               main
               onClick={() => toast.success('Learnt', 'Marked as learnt.')}
               disabled={!canContinue}

@@ -64,6 +64,8 @@ export default function LessonSettings({ lesson, verbsCount }: LessonSettingsPro
           title="Settings"
           onClick={handleOpenSettings}
           icon={<GearIcon className="size-5" />}
+          fullWidth={false}
+          rounded
         />
       </div>
 

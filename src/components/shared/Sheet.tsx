@@ -41,6 +41,8 @@ export default function Sheet({
                 title={headerAction.title}
                 onClick={headerAction.onAction}
                 icon={headerAction.icon}
+                fullWidth={false}
+                rounded
               />
             ) : (
               <Dialog.Close asChild>
@@ -48,6 +50,8 @@ export default function Sheet({
                   aria-label="Close sheet"
                   title="Close"
                   icon={<Cross1Icon className="size-4" />}
+                  fullWidth={false}
+                  rounded
                 />
               </Dialog.Close>
             )}
