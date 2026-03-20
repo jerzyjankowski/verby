@@ -1,4 +1,4 @@
-import type { Verb } from '../types/lesson'
+import type { Verb } from '../types/verb'
 
 /** Raw verb from JSON; may use "translation" instead of "meaning" for backward compatibility */
 type RawVerb = Omit<Verb, 'meaning'> & { meaning?: string; translation?: string }

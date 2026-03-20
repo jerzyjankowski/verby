@@ -13,6 +13,7 @@ import {
   BATCH_LABELS,
 } from '../../../types/config.ts'
 import { loadLessonFromLocalStorage } from '../../../utils/localStorage.ts'
+import { useToast } from '../../../components/shared/Toast.tsx'
 
 function ConfigDisplayRow({
   label,
@@ -32,6 +33,7 @@ function ConfigDisplayRow({
 export default function Page() {
   const { name } = useParams<{ name: string }>()
   const [verbs, setVerbs] = useState<Verb[]>([])
+  const toast = useToast()
 
   const lesson = useMemo<LessonSave | null>(() => {
     if (!name) return null
@@ -55,10 +57,11 @@ export default function Page() {
         setVerbs(filteredVerbs)
       })
       .catch((err) => {
-        console.error('Failed to load verbs:', err)
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        toast.error('Failed to load verbs', errorMessage)
         setVerbs([])
       })
-  }, [lesson])
+  }, [lesson, toast])
 
   if (!lesson) {
     return (

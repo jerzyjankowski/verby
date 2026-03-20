@@ -1,7 +1,7 @@
-import React from 'react'
 import { BrowserRouter, useRoutes } from 'react-router-dom'
 
 import { buildFileSystemRoutes } from './routing/fileSystemRoutes'
+import { ToastProvider } from './components/shared/Toast'
 
 const routes = buildFileSystemRoutes()
 
@@ -11,9 +11,11 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <ToastProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </ToastProvider>
   )
 }
 
