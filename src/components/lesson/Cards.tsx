@@ -18,7 +18,7 @@ type ConjugationAnswerCardProps = {
 }
 
 function getCardTextSize(text: string, defaultSize: string) {
-  return text.length > 40 ? 'text-xl' : defaultSize
+  return text.length > 40 ? 'text-2xl' : defaultSize
 }
 
 function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: ConjugationAnswerCardProps) {
