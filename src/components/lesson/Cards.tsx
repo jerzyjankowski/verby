@@ -1,6 +1,9 @@
 import type {Round, UpdateRoundHiddenFlags} from '../../types/lesson.ts'
+import { useState } from 'react'
 import type {Conjugation} from "../../types/verb.ts";
 import {spanishConfig} from "../../configs/esp.ts";
+import AnswerDetails from './settings/AnswerDetails.tsx'
+import ClampText from '../shared/ClampText.tsx'
 
 type CardsProps = {
   round: Round
@@ -14,7 +17,13 @@ type ConjugationAnswerCardProps = {
   onClick: () => void
 }
 
+function getCardTextSize(text: string, defaultSize: string) {
+  return text.length > 40 ? 'text-xl' : defaultSize
+}
+
 function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: ConjugationAnswerCardProps) {
+  const answerTextSize = getCardTextSize(answer, 'text-2xl')
+
   return (
     <div
       className="bg-primary-darker border border-primary-darkest rounded-xl flex min-h-20 items-center justify-center p-4"
@@ -23,7 +32,7 @@ function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: Conju
       {isHidden ? (
         <p className="text-center text-lg italic">{placeholder}</p>
       ) : (
-        <p className="text-center text-2xl font-semibold">{answer}</p>
+        <ClampText className={`w-full overflow-hidden text-center ${answerTextSize} font-semibold`} text={answer} lines={1} />
       )}
     </div>
   )
@@ -31,24 +40,45 @@ function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: Conju
 
 export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
   const personsLabels: Conjugation = spanishConfig.personsLabels
+  const questionTextSize = getCardTextSize(round.question, 'text-4xl')
+  const answerTextSize = getCardTextSize(round.answer, round.isConjugation ? 'text-2xl' : 'text-4xl')
+  const [isFullTextSheetOpen, setIsFullTextSheetOpen] = useState(false)
+  const [fullText, setFullText] = useState('')
+  const [fullTextTitle, setFullTextTitle] = useState('Full text')
+
+  function openFullTextSheet(text: string, title: string) {
+    setFullText(text)
+    setFullTextTitle(title)
+    setIsFullTextSheetOpen(true)
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
-      <div className="bg-primary-darker border border-primary-darkest rounded-xl flex flex-1 items-center justify-center p-4">
-        <p className="text-center text-4xl font-semibold">{round.question}</p>
+      <div
+        className="bg-primary-darker border border-primary-darkest rounded-xl flex flex-1 cursor-pointer items-center justify-center p-4"
+        onClick={() => openFullTextSheet(round.question, 'Question')}
+      >
+        <ClampText className={`w-full overflow-hidden text-center ${questionTextSize} font-semibold`} text={round.question} />
       </div>
 
       <div
-        className={`bg-primary-darker border border-primary-darkest rounded-xl flex items-center justify-center p-4 ${
+        className={`bg-primary-darker border border-primary-darkest rounded-xl flex cursor-pointer items-center justify-center p-4 ${
           round.isConjugation ? 'min-h-20' : 'flex-1'
         }`}
-        onClick={() => {updateRoundHiddenFlags(false, round?.conjugationAnswersHidden)}}
+        onClick={() => {
+          if (round.answerHidden) {
+            updateRoundHiddenFlags(false, round?.conjugationAnswersHidden)
+            return
+          }
+
+          openFullTextSheet(round.answer, 'Answer')
+        }}
       >
         {round.answerHidden ? (
           <p className="text-center text-lg italic">???</p>
         ) : (
-          <p className={`text-center ${round.isConjugation ? 'text-2xl' : 'text-4xl'} font-semibold`}>{round.answer}</p>
-        )}
+          <ClampText className={`w-full overflow-hidden text-center ${answerTextSize} font-semibold`} text={round.answer} />
+          )}
       </div>
 
       {round.isConjugation && (
@@ -57,40 +87,91 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
             placeholder={personsLabels.s1}
             answer={round.conjugationAnswers.s1}
             isHidden={round.conjugationAnswersHidden.s1}
-            onClick={() => updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s1: false })}
+            onClick={() => {
+              if (round.conjugationAnswersHidden.s1) {
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s1: false })
+                return
+              }
+
+              openFullTextSheet(round.conjugationAnswers.s1, personsLabels.s1)
+            }}
           />
           <ConjugationAnswerCard
             placeholder={personsLabels.p1}
             answer={round.conjugationAnswers.p1}
             isHidden={round.conjugationAnswersHidden.p1}
-            onClick={() => updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p1: false })}
+            onClick={() => {
+              if (round.conjugationAnswersHidden.p1) {
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p1: false })
+                return
+              }
+
+              openFullTextSheet(round.conjugationAnswers.p1, personsLabels.p1)
+            }}
           />
           <ConjugationAnswerCard
             placeholder={personsLabels.s2}
             answer={round.conjugationAnswers.s2}
             isHidden={round.conjugationAnswersHidden.s2}
-            onClick={() => updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s2: false })}
+            onClick={() => {
+              if (round.conjugationAnswersHidden.s2) {
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s2: false })
+                return
+              }
+
+              openFullTextSheet(round.conjugationAnswers.s2, personsLabels.s2)
+            }}
           />
           <ConjugationAnswerCard
             placeholder={personsLabels.p2}
             answer={round.conjugationAnswers.p2}
             isHidden={round.conjugationAnswersHidden.p2}
-            onClick={() => updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p2: false })}
+            onClick={() => {
+              if (round.conjugationAnswersHidden.p2) {
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p2: false })
+                return
+              }
+
+              openFullTextSheet(round.conjugationAnswers.p2, personsLabels.p2)
+            }}
           />
           <ConjugationAnswerCard
             placeholder={personsLabels.s3}
             answer={round.conjugationAnswers.s3}
             isHidden={round.conjugationAnswersHidden.s3}
-            onClick={() => updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s3: false })}
+            onClick={() => {
+              if (round.conjugationAnswersHidden.s3) {
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s3: false })
+                return
+              }
+
+              openFullTextSheet(round.conjugationAnswers.s3, personsLabels.s3)
+            }}
           />
           <ConjugationAnswerCard
             placeholder={personsLabels.p3}
             answer={round.conjugationAnswers.p3}
             isHidden={round.conjugationAnswersHidden.p3}
-            onClick={() => updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p3: false })}
+            onClick={() => {
+              if (round.conjugationAnswersHidden.p3) {
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p3: false })
+                return
+              }
+
+              openFullTextSheet(round.conjugationAnswers.p3, personsLabels.p3)
+            }}
           />
         </div>
       )}
+
+      <AnswerDetails
+        open={isFullTextSheetOpen}
+        onOpenChange={setIsFullTextSheetOpen}
+        title={fullTextTitle}
+        text={fullText}
+        round={round}
+        personsLabels={personsLabels}
+      />
     </div>
   )
 }

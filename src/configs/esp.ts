@@ -25,7 +25,7 @@ export const spanishConfig: LanguageConfig = {
     'Presente de subjuntivo',
     'Imperfecto de subjuntivo',
     'Imperfecto de subjuntivo2',
-    'Futurede subjuntivo',
+    'Future de subjuntivo',
     'Imperatife affirmative',
     'Imperatife negative',
   ]
@@ -90,7 +90,7 @@ const conjugationEndings = {
       s1: 'ase', s2: 'ases', s3: 'ase',
       p1: 'ásemos', p2: 'aseis', p3: 'asen',
     },
-    // Futurede subjuntivo
+    // Future de subjuntivo
     {
       s1: 'are', s2: 'ares', s3: 'are',
       p1: 'áremos', p2: 'areis', p3: 'aren',
@@ -147,7 +147,7 @@ const conjugationEndings = {
       s1: 'iese', s2: 'ieses', s3: 'iese',
       p1: 'iésemos', p2: 'ieseis', p3: 'iesen',
     },
-    // Futurede subjuntivo
+    // Future de subjuntivo
     {
       s1: 'iere', s2: 'ieres', s3: 'iere',
       p1: 'iéremos', p2: 'iereis', p3: 'ieren',
@@ -204,7 +204,7 @@ const conjugationEndings = {
       s1: 'iese', s2: 'ieses', s3: 'iese',
       p1: 'iésemos', p2: 'ieseis', p3: 'iesen',
     },
-    // Futurede subjuntivo
+    // Future de subjuntivo
     {
       s1: 'iere', s2: 'ieres', s3: 'iere',
       p1: 'iéremos', p2: 'iereis', p3: 'ieren',
