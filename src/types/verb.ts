@@ -9,7 +9,7 @@ export type Conjugation = {
   p3: string
 }
 
-export type ConjugationIrregularity = {
+export type ConjugationFlags = {
   s1: boolean
   s2: boolean
   s3: boolean

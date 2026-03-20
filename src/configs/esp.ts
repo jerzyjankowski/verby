@@ -1,5 +1,5 @@
 import type {Direction, LanguageConfig} from "../types/config.ts";
-import type {Conjugation, ConjugationIrregularity, Verb} from "../types/verb.ts";
+import type {Conjugation, ConjugationFlags, Verb} from "../types/verb.ts";
 
 
 export const spanishConfig: LanguageConfig = {
@@ -235,7 +235,7 @@ export const getCorrectForm = (verb: Verb, formId: number): {
 
 export const conjugate = (verb: Verb, conjugationId: number): {
   conjugation: Conjugation,
-  irregularity: ConjugationIrregularity
+  irregularity: ConjugationFlags
 } => {
   const irregularConjugation = verb.irregularConjugations[conjugationId]
   const endings = (conjugationEndings[verb.conjugation as SpanishConjugation] as Conjugation[])[conjugationId]
