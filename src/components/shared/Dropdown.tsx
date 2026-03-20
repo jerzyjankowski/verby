@@ -16,30 +16,34 @@ export default function Dropdown({ trigger, items, align = 'start' }: DropdownPr
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
       <DropdownMenu.Trigger asChild>{trigger}</DropdownMenu.Trigger>
 
-      <DropdownMenu.Content
-        align={align}
-        className="z-50 w-[92vw] max-w-[18rem] rounded-xl border border-primary-darkest bg-primary p-1 text-primary-text shadow-lg"
-      >
-        {items.map((item) => (
-          <DropdownMenu.Item
-            key={item.key}
-            disabled={item.disabled}
-            onSelect={() => {
-              if (!item.disabled) {
-                item.onSelect()
-                setOpen(false)
-              }
-            }}
-            className={[
-              'cursor-pointer select-none rounded-lg px-3 py-2 text-sm outline-none',
-              'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-            'hover:bg-primary-darker focus:bg-primary-darker cursor-pointer',
-            ].join(' ')}
-          >
-            {item.label}
-          </DropdownMenu.Item>
-        ))}
-      </DropdownMenu.Content>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align={align}
+          sideOffset={4}
+          collisionPadding={8}
+          className="z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] w-[var(--radix-dropdown-menu-trigger-width)] max-w-[calc(100vw-1rem)] overflow-y-auto overscroll-contain rounded-xl border border-primary-darkest bg-primary p-1 text-primary-text shadow-lg"
+        >
+          {items.map((item) => (
+            <DropdownMenu.Item
+              key={item.key}
+              disabled={item.disabled}
+              onSelect={() => {
+                if (!item.disabled) {
+                  item.onSelect()
+                  setOpen(false)
+                }
+              }}
+              className={[
+                'cursor-pointer select-none rounded-lg px-3 py-2 text-sm outline-none',
+                'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+                'hover:bg-primary-darker focus:bg-primary-darker cursor-pointer',
+              ].join(' ')}
+            >
+              {item.label}
+            </DropdownMenu.Item>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
     </DropdownMenu.Root>
   )
 }

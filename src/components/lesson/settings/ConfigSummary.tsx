@@ -7,12 +7,22 @@ import {
   BATCH_LABELS,
 } from '../../../types/config.ts'
 import type { LessonSave } from '../../../types/config.ts'
+import { spanishConfig } from '../../../configs/esp.ts'
 
 type ConfigSummaryProps = {
   lesson: LessonSave
 }
 
 export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
+  const directionConjugationLabel =
+    lesson.config.directionConjugation !== undefined
+      ? spanishConfig.irregularConjugationsLabels[lesson.config.directionConjugation]
+      : undefined
+  const directionFormLabel =
+    lesson.config.directionForm !== undefined
+      ? spanishConfig.irregularFormsLabels[lesson.config.directionForm]
+      : undefined
+
   const rows: Array<{ label: string; value: string | number }> = [
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
     { label: 'pool', value: POOL_LABELS[lesson.config.pool] },
@@ -25,14 +35,14 @@ export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
   if (lesson.config.directionConjugation !== undefined) {
     rows.splice(4, 0, {
       label: 'direction conjugation',
-      value: lesson.config.directionConjugation,
+      value: directionConjugationLabel ?? lesson.config.directionConjugation,
     })
   }
 
   if (lesson.config.directionForm !== undefined) {
     rows.splice(4, 0, {
       label: 'direction form',
-      value: lesson.config.directionForm,
+      value: directionFormLabel ?? lesson.config.directionForm,
     })
   }
 
