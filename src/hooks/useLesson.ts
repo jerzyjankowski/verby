@@ -6,7 +6,7 @@ import type {ConjugationFlags, Verb} from '../types/verb.ts'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
 import { loadLessonFromLocalStorage } from '../utils/localStorage.ts'
 import type {Round, UpdateRoundHiddenFlags} from "../types/lesson.ts";
-import {conjugate, getForms} from "../configs/esp.ts";
+import {conjugate, getForms} from "../configs/spanishConfig.ts";
 
 const prepareRound = (verb: Verb, config: LessonConfig): Round => {
   const defaultValues: Round = {

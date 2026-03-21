@@ -21,7 +21,7 @@ import {
   BATCH_OPTIONS,
   BATCH_LABELS, EXTRA_OPTIONS, EXTRA_LABELS,
 } from '../../types/config.ts'
-import { spanishConfig } from '../../configs/esp.ts'
+import { spanishConfig } from '../../configs/spanishConfig.ts'
 import { initLesson } from '../../utils/initLesson.ts'
 import { loadLessonFromLocalStorage } from '../../utils/localStorage.ts'
 

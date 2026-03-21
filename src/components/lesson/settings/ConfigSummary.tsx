@@ -7,7 +7,7 @@ import {
   BATCH_LABELS, EXTRA_LABELS,
 } from '../../../types/config.ts'
 import type { LessonSave } from '../../../types/config.ts'
-import { spanishConfig } from '../../../configs/esp.ts'
+import { spanishConfig } from '../../../configs/spanishConfig.ts'
 
 type ConfigSummaryProps = {
   lesson: LessonSave

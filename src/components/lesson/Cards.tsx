@@ -1,7 +1,7 @@
 import type {Round, UpdateRoundHiddenFlags} from '../../types/lesson.ts'
 import { useState } from 'react'
 import type {Conjugation} from "../../types/verb.ts";
-import {spanishConfig} from "../../configs/esp.ts";
+import {spanishConfig} from "../../configs/spanishConfig.ts";
 import AnswerDetails from './settings/AnswerDetails.tsx'
 import ClampText from '../shared/ClampText.tsx'
 

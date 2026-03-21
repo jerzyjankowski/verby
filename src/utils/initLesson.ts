@@ -3,7 +3,7 @@ import { shuffle } from 'lodash'
 
 import { loadVerbsFromJson } from './jsonVerbsLoader'
 import { saveLessonToLocalStorage } from './localStorage'
-import {isIrregular} from "../configs/esp.ts";
+import {isIrregular} from "../configs/spanishConfig.ts";
 import type {Verb} from "../types/verb.ts";
 
 const LESSON_FILE = '/data/esp/verbs.json'
