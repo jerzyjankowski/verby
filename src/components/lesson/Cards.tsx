@@ -1,13 +1,14 @@
 import type {Round, UpdateRoundHiddenFlags} from '../../types/lesson.ts'
 import { useState } from 'react'
 import type {Conjugation} from "../../types/verb.ts";
-import {spanishConfig} from "../../configs/spanishConfig.ts";
 import AnswerDetails from './settings/AnswerDetails.tsx'
 import ClampText from '../shared/ClampText.tsx'
+import type {LanguageConfig} from "../../types/config.ts";
 
 type CardsProps = {
   round: Round
   updateRoundHiddenFlags: UpdateRoundHiddenFlags
+  languageConfig: LanguageConfig
 }
 
 type ConjugationAnswerCardProps = {
@@ -38,9 +39,9 @@ function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: Conju
   )
 }
 
-export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
-  const personsLabels: Conjugation = spanishConfig.personsLabels
-  const formsLabels: string[] = spanishConfig.formsLabels
+export default function Cards({ round, updateRoundHiddenFlags, languageConfig }: CardsProps) {
+  const personsLabels: Conjugation = languageConfig.languageLabels.personsLabels
+  const formsLabels: string[] = languageConfig.languageLabels.formsLabels
   const questionTextSize = getCardTextSize(round.question, 'text-4xl')
   const answerTextSize = getCardTextSize(round.answer, round.isConjugation || round.isForms ? 'text-2xl' : 'text-4xl')
   const [isFullTextSheetOpen, setIsFullTextSheetOpen] = useState(false)

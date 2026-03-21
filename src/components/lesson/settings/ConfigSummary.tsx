@@ -4,19 +4,19 @@ import {
   LEVEL_LABELS,
   DIRECTION_LABELS,
   SPEED_LABELS,
-  BATCH_LABELS, EXTRA_LABELS,
+  BATCH_LABELS, EXTRA_LABELS, type LanguageConfig,
 } from '../../../types/config.ts'
 import type { LessonSave } from '../../../types/config.ts'
-import { spanishConfig } from '../../../configs/spanishConfig.ts'
 
 type ConfigSummaryProps = {
   lesson: LessonSave
+  languageConfig: LanguageConfig
 }
 
-export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
+export default function ConfigSummary({ lesson, languageConfig }: ConfigSummaryProps) {
   const conjugationLabel =
     lesson.config.conjugation !== undefined
-      ? spanishConfig.conjugationsLabels[lesson.config.conjugation]
+      ? languageConfig.languageLabels.conjugationsLabels[lesson.config.conjugation]
       : undefined
 
   const rows: Array<{ label: string; value: string | number }> = [

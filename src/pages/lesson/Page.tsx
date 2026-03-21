@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { useNavigate } from 'react-router-dom'
 
@@ -21,6 +21,7 @@ import {
   BATCH_OPTIONS,
   BATCH_LABELS, EXTRA_OPTIONS, EXTRA_LABELS,
 } from '../../types/config.ts'
+import { getLanguageConfig } from '../../configs/languageConfigMap.ts'
 import { initLesson } from '../../utils/initLesson.ts'
 import { loadLessonFromLocalStorage } from '../../utils/localStorage.ts'
 
@@ -72,12 +73,20 @@ export default function Page() {
     const savedLesson = loadLessonFromLocalStorage('_new')
     return savedLesson?.config ?? {}
   })
-  const conjugationOptions = languageConfig.languageLabels.conjugationsLabels.map((_, idx) => idx)
-  const conjugationLabelMap: Record<string, string> =
-    Object.fromEntries(languageConfig.languageLabels.conjugationsLabels.map((label, idx) => [String(idx), label]))
+
+  const languageConfig = useMemo(() => getLanguageConfig(form.language), [form.language])
+  const conjugationLabels = languageConfig.languageLabels.conjugationsLabels
+  const conjugationOptions = conjugationLabels.map((_, idx) => idx)
+  const conjugationLabelMap: Record<string, string> = Object.fromEntries(
+    conjugationLabels.map((label, idx) => [String(idx), label]),
+  )
 
   const setLanguage = (v: string) =>
-    setForm((prev) => ({ ...prev, language: v as LessonConfig['language'] }))
+    setForm((prev) => ({
+      ...prev,
+      language: v as LessonConfig['language'],
+      conjugation: undefined,
+    }))
   const setLevel = (v: string) =>
     setForm((prev) => ({ ...prev, level: v as LessonConfig['level'] }))
   const setDirection = (v: string) =>
@@ -113,7 +122,7 @@ export default function Page() {
 
   const handleStart = async () => {
     if (!allSelected || isStarting) return
-    const config: LessonConfig = {
+    const lessonConfig: LessonConfig = {
       language: form.language!,
       level: form.level!,
       direction: form.direction!,
@@ -125,7 +134,7 @@ export default function Page() {
     }
     try {
       setIsStarting(true)
-      await initLesson(config)
+      await initLesson(lessonConfig, languageConfig)
       navigate('/lesson/_new')
     } finally {
       setIsStarting(false)

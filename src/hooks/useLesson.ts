@@ -1,18 +1,18 @@
 import {useCallback, useEffect, useMemo, useState} from 'react'
 
 import { useToast } from '../components/shared/Toast.tsx'
-import type {LessonConfig, LessonSave} from '../types/config.ts'
+import type {LanguageConfig, LessonConfig, LessonSave} from '../types/config.ts'
 import type {ConjugationFlags, Verb} from '../types/verb.ts'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
 import { loadLessonFromLocalStorage } from '../utils/localStorage.ts'
 import type {Round, UpdateRoundHiddenFlags} from "../types/lesson.ts";
-import {conjugate, getForms} from "../configs/spanishConfig.ts";
+import {getLanguageConfig} from "../configs/languageConfigMap.ts";
 
-const prepareRound = (verb: Verb, config: LessonConfig): Round => {
+const prepareRound = (verb: Verb, lessonConfig: LessonConfig, languageConfig: LanguageConfig): Round => {
   const defaultValues: Round = {
     verbId: verb.id,
-    question: config.direction === 'to_foreign' ? verb.meaning : verb.verb,
-    answer: config.direction === 'to_foreign' ? verb.verb : verb.meaning,
+    question: lessonConfig.direction === 'to_foreign' ? verb.meaning : verb.verb,
+    answer: lessonConfig.direction === 'to_foreign' ? verb.verb : verb.meaning,
     isConjugation: false,
     isForms: false,
     answerHidden: true,
@@ -24,13 +24,13 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
     formsAnswersHidden: [],
     formsAnswersIrregulars: [],
   }
-  switch (config.extra) {
+  switch (lessonConfig.extra) {
     case 'no':
       return {
         ...defaultValues,
       }
     case 'conjugation':
-      const conjugation = conjugate(verb, config.conjugation ?? 0)
+      const conjugation = languageConfig.conjugate(verb, lessonConfig.conjugation ?? 0)
       return {
         ...defaultValues,
         isConjugation: true,
@@ -39,7 +39,7 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
         conjugationAnswersIrregulars: conjugation.irregularity,
       }
     case 'forms':
-      const forms = getForms(verb)
+      const forms = languageConfig.getForms(verb)
       return {
         ...defaultValues,
         isForms: true,
@@ -54,6 +54,7 @@ export function useLesson(name?: string) {
   const [verbs, setVerbs] = useState<Verb[]>([])
   const [round, setRound] = useState<Round | undefined>()
   const [lesson, setLesson] = useState<LessonSave | null | undefined>()
+  const [languageConfig, setLanguageConfig] = useState<LanguageConfig>(getLanguageConfig(undefined))
   const [lastVerbsIds, setLastVerbsIds] = useState<number[]>([])
   const toast = useToast()
 
@@ -68,6 +69,8 @@ export function useLesson(name?: string) {
       toast.error('Failed to load lesson from local storage by name', name)
       return
     }
+    const newLanguageConfig = getLanguageConfig(lesson.config.language)
+    setLanguageConfig(newLanguageConfig)
 
     const lessonFile =
       (lesson as LessonSave & { config: LessonSave['config'] & { file?: string } }).config.file ??
@@ -78,7 +81,7 @@ export function useLesson(name?: string) {
         const lessonVerbIds = new Set(lesson.verbs)
         const filteredVerbs = loadedVerbs.filter((verb) => lessonVerbIds.has(verb.id))
         setVerbs(filteredVerbs)
-        setRound(prepareRound(filteredVerbs[0], lesson.config))
+        setRound(prepareRound(filteredVerbs[0], lesson.config, newLanguageConfig))
       })
       .catch((err) => {
         const errorMessage = err instanceof Error ? err.message : String(err)
@@ -175,9 +178,9 @@ export function useLesson(name?: string) {
     if (!nextVerb) {
       return
     }
-    setRound(prepareRound(nextVerb, nextLesson.config))
+    setRound(prepareRound(nextVerb, nextLesson.config, languageConfig))
 
-  }, [round, lesson, setLesson, setLastVerbsIds, lastVerbsIds, randomizeVerb, setRound])
+  }, [round, lesson, setLesson, setLastVerbsIds, lastVerbsIds, randomizeVerb, setRound, languageConfig])
 
-  return { lesson, verbs, round, lastVerbsIds, updateRoundHiddenFlags, canContinue, onContinue }
+  return { lesson, verbs, round, lastVerbsIds, updateRoundHiddenFlags, canContinue, onContinue, languageConfig }
 }

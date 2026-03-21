@@ -1,15 +1,17 @@
-import type { LessonConfig, LessonSave } from '../types/config.ts'
+import type { LanguageConfig, LessonConfig, LessonSave } from '../types/config.ts'
 import { shuffle } from 'lodash'
 
 import { loadVerbsFromJson } from './jsonVerbsLoader'
 import { saveLessonToLocalStorage } from './localStorage'
-import {isIrregular} from "../configs/spanishConfig.ts";
-import type {Verb} from "../types/verb.ts";
+import type { Verb } from '../types/verb.ts'
 
 const LESSON_FILE = '/data/esp/verbs.json'
 const LESSON_NAME = '_new'
 
-export async function initLesson(config: LessonConfig): Promise<LessonSave> {
+export async function initLesson(
+  config: LessonConfig,
+  languageConfig: LanguageConfig,
+): Promise<LessonSave> {
   const verbsData = await loadVerbsFromJson(LESSON_FILE)
 
   const filteredVerbsByLevels = config.level === 'ALL' ? [...verbsData]
@@ -17,7 +19,11 @@ export async function initLesson(config: LessonConfig): Promise<LessonSave> {
       : config.level === 'A0' ? verbsData.filter(verb => verb.sublevel === 'main' || verb.sublevel === 'A0')
         : verbsData.filter(verb => verb.level === config.level)
   const filteredVerbsByRegularity = filteredVerbsByLevels.filter(verb => {
-    const irregular = isIrregular(verb, config.extra, config.extra === 'conjugation' ? config.conjugation : undefined)
+    const irregular = languageConfig.isIrregular(
+      verb,
+      config.extra,
+      config.extra === 'conjugation' ? config.conjugation : undefined,
+    )
     return config.regularity === 'irregular' ? irregular : config.regularity === 'regular' ? !irregular : true
   })
 

@@ -9,18 +9,19 @@ import ConfigSummary from './settings/ConfigSummary.tsx'
 import Confirmation from './settings/Confirmation.tsx'
 import HistoryView from './settings/HistoryView.tsx'
 import VerbsView from './settings/VerbsView.tsx'
-import type { LessonSave } from '../../types/config.ts'
+import type {LanguageConfig, LessonSave} from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
 
 type LessonSettingsProps = {
   lesson: LessonSave
   verbs: Verb[]
   lastVerbsIds: number[]
+  languageConfig: LanguageConfig
 }
 
 type SettingsView = 'menu' | 'config-summary' | 'verbs' | 'history' | 'close-questions'
 
-export default function LessonSettings({ lesson, verbs, lastVerbsIds }: LessonSettingsProps) {
+export default function LessonSettings({ lesson, verbs, lastVerbsIds, languageConfig }: LessonSettingsProps) {
   const navigate = useNavigate()
   const toast = useToast()
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -106,7 +107,7 @@ export default function LessonSettings({ lesson, verbs, lastVerbsIds }: LessonSe
           </div>
         ) : null}
 
-        {view === 'config-summary' ? <ConfigSummary lesson={lesson} /> : null}
+        {view === 'config-summary' ? <ConfigSummary lesson={lesson} languageConfig={languageConfig} /> : null}
 
         {view === 'verbs' ? <VerbsView lesson={lesson} verbs={verbs} /> : null}
 
