@@ -21,7 +21,6 @@ import {
   BATCH_OPTIONS,
   BATCH_LABELS, EXTRA_OPTIONS, EXTRA_LABELS,
 } from '../../types/config.ts'
-import { spanishConfig } from '../../configs/spanishConfig.ts'
 import { initLesson } from '../../utils/initLesson.ts'
 import { loadLessonFromLocalStorage } from '../../utils/localStorage.ts'
 
@@ -73,9 +72,9 @@ export default function Page() {
     const savedLesson = loadLessonFromLocalStorage('_new')
     return savedLesson?.config ?? {}
   })
-  const conjugationOptions = spanishConfig.conjugationsLabels.map((_, idx) => idx)
+  const conjugationOptions = languageConfig.languageLabels.conjugationsLabels.map((_, idx) => idx)
   const conjugationLabelMap: Record<string, string> =
-    Object.fromEntries(spanishConfig.conjugationsLabels.map((label, idx) => [String(idx), label]))
+    Object.fromEntries(languageConfig.languageLabels.conjugationsLabels.map((label, idx) => [String(idx), label]))
 
   const setLanguage = (v: string) =>
     setForm((prev) => ({ ...prev, language: v as LessonConfig['language'] }))

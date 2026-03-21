@@ -1,8 +1,8 @@
-import type {Extra, LanguageConfig} from "../types/config.ts";
+import type {Extra, LanguageConfig, LanguageConfigLabels} from "../types/config.ts";
 import type {Conjugation, ConjugationFlags, Verb} from "../types/verb.ts";
 
 
-export const spanishConfig: LanguageConfig = {
+const languageLabels: LanguageConfigLabels = {
   code: 'ESP',
   personsLabels: {
     s1: 'yo',
@@ -222,7 +222,7 @@ const conjugationEndings = {
   ]
 }
 
-export const getForms = (verb: Verb): {
+const getForms = (verb: Verb): {
   form: string,
   irregularity: boolean
 }[] => {
@@ -236,7 +236,7 @@ export const getForms = (verb: Verb): {
   })
 }
 
-export const conjugate = (verb: Verb, conjugationId: number): {
+const conjugate = (verb: Verb, conjugationId: number): {
   conjugation: Conjugation,
   irregularity: ConjugationFlags
 } => {
@@ -280,4 +280,11 @@ export const isIrregular = (verb: Verb, extra: Extra, id?: number): boolean => {
   } else {
     return false
   }
+}
+
+export const spanishConfig: LanguageConfig = {
+  languageLabels,
+  getForms,
+  conjugate,
+  isIrregular,
 }

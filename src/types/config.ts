@@ -1,3 +1,5 @@
+import type {Conjugation, ConjugationFlags, Verb} from "./verb.ts";
+
 export type Language = 'ESP' | 'ENG' | 'GER' | 'ITA' | 'FRA' | 'RUS'
 export type Regularity = 'all' | 'irregular' | 'regular'
 export type Level = 'ALL' | 'MAIN' | 'A0' | 'A1' | 'A2' | 'B1' | 'B2' | 'C1'
@@ -65,7 +67,7 @@ export const EXTRA_OPTIONS: Extra[] = ['no', 'conjugation', 'forms']
 export const SPEED_OPTIONS: Speed[] = ['same', 'random']
 export const BATCH_OPTIONS: Batch[] = [10, 20, 30, 40, 50, 'ALL']
 
-export type LanguageConfig = {
+export type LanguageConfigLabels = {
   code: Language,
   personsLabels: {
     s1: string,
@@ -77,6 +79,19 @@ export type LanguageConfig = {
   }
   formsLabels: string[]
   conjugationsLabels: string[]
+}
+
+export type LanguageConfig = {
+  languageLabels: LanguageConfigLabels
+  getForms: (verb: Verb) => {
+    form: string,
+    irregularity: boolean
+  }[],
+  conjugate: (verb: Verb, conjugationId: number) => {
+    conjugation: Conjugation,
+    irregularity: ConjugationFlags
+  },
+  isIrregular: (verb: Verb, extra: Extra, id?: number) => boolean
 }
 
 export type LessonConfig = {
