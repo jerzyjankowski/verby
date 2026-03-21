@@ -5,14 +5,13 @@ import { loadVerbsFromJson } from './jsonVerbsLoader'
 import { saveLessonToLocalStorage } from './localStorage'
 import type { Verb } from '../types/verb.ts'
 
-const LESSON_FILE = '/data/esp/verbs.json'
 const LESSON_NAME = '_new'
 
 export async function initLesson(
   config: LessonConfig,
   languageConfig: LanguageConfig,
 ): Promise<LessonSave> {
-  const verbsData = await loadVerbsFromJson(LESSON_FILE)
+  const verbsData = await loadVerbsFromJson(languageConfig.verbsFilePath)
 
   const filteredVerbsByLevels = config.level === 'ALL' ? [...verbsData]
     : config.level === 'MAIN' ? verbsData.filter(verb => verb.sublevel === 'main')
@@ -42,7 +41,6 @@ export async function initLesson(
 
   const lesson: LessonSave = {
     config,
-    file: LESSON_FILE,
     name: LESSON_NAME,
     verbs,
     learnt,

@@ -68,7 +68,6 @@ export const SPEED_OPTIONS: Speed[] = ['same', 'random']
 export const BATCH_OPTIONS: Batch[] = [10, 20, 30, 40, 50, 'ALL']
 
 export type LanguageConfigLabels = {
-  code: Language,
   personsLabels: {
     s1: string,
     s2: string,
@@ -82,6 +81,8 @@ export type LanguageConfigLabels = {
 }
 
 export type LanguageConfig = {
+  code: Language,
+  verbsFilePath: string
   languageLabels: LanguageConfigLabels
   getForms: (verb: Verb) => {
     form: string,
@@ -118,7 +119,6 @@ export type LessonConfigFormState = {
 
 export type LessonSave = {
   config: LessonConfig
-  file: string
   name: string
   verbs: number[]
   learnt: boolean[]

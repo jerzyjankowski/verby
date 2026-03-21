@@ -1,13 +1,9 @@
-- selecting other language uses configs for other languages
-- if there are no verbs don't let start a lesson - show modal, if there are less verbs than batch selected ask to continue, or maybe always show the modal to tell how much would be if batch ALL
-- no extra option if arrays are empty
-
 - topbar: time, turn (in same speed mode), cards left
 - modal when turn changes (in same speed mode)
 - mark question and save it in local storage
 - reverse direction mid lesson
 - restart questions
-- zakończenie lekcji kiedy słówa się skończyły
+- zakończenie lekcji kiedy słówka się skończyły
 - /init and /lesson, no need for lesson name in url since always will start with _new? (rename _new)
 - urls in file
 
@@ -19,7 +15,9 @@
     - let continue from save
 
 - deploy
-
+- 
+- if there are no verbs don't let start a lesson - show modal, if there are less verbs than batch selected ask to continue, or maybe always show the modal to tell how much would be if batch ALL
+- no extra option if arrays are empty
 - [TECH] linter, prettier, TS check on commit
 - go back to previous question or change decision for previous question (or for any question) or click verb from verbs or history and then see details, level, edit learnt
 - conjugation display as one column - UI settings

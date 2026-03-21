@@ -72,11 +72,7 @@ export function useLesson(name?: string) {
     const newLanguageConfig = getLanguageConfig(lesson.config.language)
     setLanguageConfig(newLanguageConfig)
 
-    const lessonFile =
-      (lesson as LessonSave & { config: LessonSave['config'] & { file?: string } }).config.file ??
-      lesson.file
-
-    loadVerbsFromJson(lessonFile)
+    loadVerbsFromJson(newLanguageConfig.verbsFilePath)
       .then((loadedVerbs) => {
         const lessonVerbIds = new Set(lesson.verbs)
         const filteredVerbs = loadedVerbs.filter((verb) => lessonVerbIds.has(verb.id))

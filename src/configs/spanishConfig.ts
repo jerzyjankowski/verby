@@ -3,7 +3,6 @@ import type {Conjugation, ConjugationFlags, Verb} from "../types/verb.ts";
 
 
 const languageLabels: LanguageConfigLabels = {
-  code: 'ESP',
   personsLabels: {
     s1: 'yo',
     s2: 'tú',
@@ -283,6 +282,8 @@ export const isIrregular = (verb: Verb, extra: Extra, id?: number): boolean => {
 }
 
 export const spanishConfig: LanguageConfig = {
+  code: 'ESP',
+  verbsFilePath: '/data/esp/verbs.json',
   languageLabels,
   getForms,
   conjugate,
