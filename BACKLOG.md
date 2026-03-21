@@ -1,4 +1,3 @@
-- conjugation and forms not in direction but separately
 - direction "forms" shows all the forms
 - show levels in verbs view
 - level: ALL option

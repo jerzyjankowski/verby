@@ -58,7 +58,7 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
         className="bg-primary-darker border border-primary-darkest rounded-xl flex flex-1 cursor-pointer items-center justify-center p-4"
         onClick={() => openFullTextSheet(round.question, 'Question')}
       >
-        <ClampText className={`w-full overflow-hidden text-center ${questionTextSize} font-semibold`} text={round.question} />
+        <ClampText className={`w-full overflow-hidden text-center ${questionTextSize} leading-normal font-semibold`} text={round.question} />
       </div>
 
       <div
