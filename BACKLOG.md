@@ -1,6 +1,3 @@
-- level: ALL option
-- mark main verbs and let filter them (3 regular ar,er,ir, + ser, estar, tener, etc.)
-
 - add other languages
 - selecting other language uses configs for other languages
 - if there are no verbs don't let start a lesson - show modal, if there are less verbs than batch selected ask to continue, or maybe always show the modal to tell how much would be if batch ALL
@@ -10,6 +7,7 @@
 - mark question and save it in local storage
 - reverse direction mid lesson
 - restart questions
+- zakończenie lekcji kiedy słówa się skończyły
 
 - saving functionality
     - save _new

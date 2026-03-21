@@ -144,6 +144,13 @@ export default function Page() {
             onSelect={setLanguage}
           />
           <ConfigRow
+            label="level:"
+            value={form.level}
+            options={LEVEL_OPTIONS}
+            labelMap={LEVEL_LABELS as Record<string, string>}
+            onSelect={setLevel}
+          />
+          <ConfigRow
             label="direction:"
             value={form.direction}
             options={DIRECTION_OPTIONS}
@@ -166,13 +173,6 @@ export default function Page() {
               onSelect={setDirectionConjugation}
             />
           )}
-          <ConfigRow
-            label="level:"
-            value={form.level}
-            options={LEVEL_OPTIONS}
-            labelMap={LEVEL_LABELS as Record<string, string>}
-            onSelect={setLevel}
-          />
           <ConfigRow
             label="regularity:"
             value={form.regularity}

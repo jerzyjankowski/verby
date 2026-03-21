@@ -21,9 +21,9 @@ export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
 
   const rows: Array<{ label: string; value: string | number }> = [
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
+    { label: 'level', value: LEVEL_LABELS[lesson.config.level] },
     { label: 'direction', value: DIRECTION_LABELS[lesson.config.direction] },
     { label: 'extra', value: EXTRA_LABELS[lesson.config.extra] },
-    { label: 'level', value: LEVEL_LABELS[lesson.config.level] },
     { label: 'regularity', value: REGULARITY_LABELS[lesson.config.regularity] },
     { label: 'speed', value: SPEED_LABELS[lesson.config.speed] },
     { label: 'batch', value: BATCH_LABELS[lesson.config.batch] },
