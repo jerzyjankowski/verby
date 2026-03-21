@@ -79,8 +79,6 @@ export default function Page() {
 
   const setLanguage = (v: string) =>
     setForm((prev) => ({ ...prev, language: v as LessonConfig['language'] }))
-  const setRegularity = (v: string) =>
-    setForm((prev) => ({ ...prev, regularity: v as LessonConfig['regularity'] }))
   const setLevel = (v: string) =>
     setForm((prev) => ({ ...prev, level: v as LessonConfig['level'] }))
   const setDirection = (v: string) =>
@@ -89,10 +87,13 @@ export default function Page() {
     setForm((prev) => ({
       ...prev,
       extra: v as LessonConfig['extra'],
-      directionConjugation: v === 'conjugation' ? prev.directionConjugation : undefined,
+      conjugation: v === 'conjugation' ? prev.conjugation : undefined,
+      regularity: v === 'no' ? 'all' : prev.regularity,
     }))
-  const setDirectionConjugation = (v: string) =>
-    setForm((prev) => ({ ...prev, directionConjugation: Number(v) }))
+  const setConjugation = (v: string) =>
+    setForm((prev) => ({ ...prev, conjugation: Number(v) }))
+  const setRegularity = (v: string) =>
+    setForm((prev) => ({ ...prev, regularity: v as LessonConfig['regularity'] }))
   const setSpeed = (v: string) =>
     setForm((prev) => ({ ...prev, speed: v as LessonConfig['speed'] }))
   const setBatch = (v: string) =>
@@ -103,11 +104,11 @@ export default function Page() {
 
   const allSelected =
     form.language &&
-    form.regularity &&
     form.level &&
     form.direction &&
     form.extra &&
-    (form.extra !== 'conjugation' || form.directionConjugation !== undefined) &&
+    (form.extra !== 'conjugation' || form.conjugation !== undefined) &&
+    (form.extra === 'no' || form.regularity !== undefined) &&
     form.speed &&
     form.batch !== undefined
 
@@ -115,11 +116,11 @@ export default function Page() {
     if (!allSelected || isStarting) return
     const config: LessonConfig = {
       language: form.language!,
-      regularity: form.regularity!,
       level: form.level!,
       direction: form.direction!,
       extra: form.extra!,
-      directionConjugation: form.extra === 'conjugation' ? form.directionConjugation : undefined,
+      regularity: form.extra === 'no' ? 'all' : form.regularity!,
+      conjugation: form.extra === 'conjugation' ? form.conjugation : undefined,
       speed: form.speed!,
       batch: form.batch!,
     }
@@ -167,19 +168,21 @@ export default function Page() {
           {form.extra === 'conjugation' && (
             <ConfigRow
               label="conjugation:"
-              value={form.directionConjugation}
+              value={form.conjugation}
               options={conjugationOptions}
               labelMap={conjugationLabelMap}
-              onSelect={setDirectionConjugation}
+              onSelect={setConjugation}
             />
           )}
-          <ConfigRow
-            label="regularity:"
-            value={form.regularity}
-            options={REGULARITY_OPTIONS}
-            labelMap={REGULARITY_LABELS as Record<string, string>}
-            onSelect={setRegularity}
-          />
+          {form.extra === 'conjugation' || form.extra === 'forms' && (
+            <ConfigRow
+              label="regularity:"
+              value={form.regularity}
+              options={REGULARITY_OPTIONS}
+              labelMap={REGULARITY_LABELS as Record<string, string>}
+              onSelect={setRegularity}
+            />
+          )}
           <ConfigRow
             label="speed:"
             value={form.speed}

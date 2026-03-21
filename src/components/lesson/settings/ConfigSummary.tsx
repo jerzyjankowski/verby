@@ -14,9 +14,9 @@ type ConfigSummaryProps = {
 }
 
 export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
-  const directionConjugationLabel =
-    lesson.config.directionConjugation !== undefined
-      ? spanishConfig.conjugationsLabels[lesson.config.directionConjugation]
+  const conjugationLabel =
+    lesson.config.conjugation !== undefined
+      ? spanishConfig.conjugationsLabels[lesson.config.conjugation]
       : undefined
 
   const rows: Array<{ label: string; value: string | number }> = [
@@ -29,10 +29,10 @@ export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
     { label: 'batch', value: BATCH_LABELS[lesson.config.batch] },
   ]
 
-  if (lesson.config.directionConjugation !== undefined) {
+  if (lesson.config.conjugation !== undefined) {
     rows.splice(3, 0, {
       label: 'direction conjugation',
-      value: directionConjugationLabel ?? lesson.config.directionConjugation,
+      value: conjugationLabel ?? lesson.config.conjugation,
     })
   }
 

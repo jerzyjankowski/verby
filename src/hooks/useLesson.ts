@@ -30,7 +30,7 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
         ...defaultValues,
       }
     case 'conjugation':
-      const conjugation = conjugate(verb, config.directionConjugation ?? 0)
+      const conjugation = conjugate(verb, config.conjugation ?? 0)
       return {
         ...defaultValues,
         isConjugation: true,

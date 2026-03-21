@@ -84,7 +84,7 @@ export type LessonConfig = {
   level: Level
   direction: Direction
   extra: Extra
-  directionConjugation?: number
+  conjugation?: number
   speed: Speed
   batch: Batch
 }
@@ -95,7 +95,7 @@ export type LessonConfigFormState = {
   level?: Level
   direction?: Direction
   extra?: Extra
-  directionConjugation?: number
+  conjugation?: number
   speed?: Speed
   batch?: Batch
 }
