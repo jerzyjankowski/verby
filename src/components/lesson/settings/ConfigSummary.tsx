@@ -1,6 +1,6 @@
 import {
   LANGUAGE_LABELS,
-  POOL_LABELS,
+  REGULARITY_LABELS,
   LEVEL_LABELS,
   DIRECTION_LABELS,
   SPEED_LABELS,
@@ -25,7 +25,7 @@ export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
 
   const rows: Array<{ label: string; value: string | number }> = [
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
-    { label: 'pool', value: POOL_LABELS[lesson.config.pool] },
+    { label: 'regularity', value: REGULARITY_LABELS[lesson.config.regularity] },
     { label: 'level', value: LEVEL_LABELS[lesson.config.level] },
     { label: 'directions', value: DIRECTION_LABELS[lesson.config.direction] },
     { label: 'speed', value: SPEED_LABELS[lesson.config.speed] },

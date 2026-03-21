@@ -10,8 +10,8 @@ import {
   type LessonConfigFormState,
   LANGUAGE_OPTIONS,
   LANGUAGE_LABELS,
-  POOL_OPTIONS,
-  POOL_LABELS,
+  REGULARITY_OPTIONS,
+  REGULARITY_LABELS,
   LEVEL_OPTIONS,
   LEVEL_LABELS,
   DIRECTION_OPTIONS,
@@ -82,8 +82,8 @@ export default function Page() {
 
   const setLanguage = (v: string) =>
     setForm((prev) => ({ ...prev, language: v as LessonConfig['language'] }))
-  const setPool = (v: string) =>
-    setForm((prev) => ({ ...prev, pool: v as LessonConfig['pool'] }))
+  const setRegularity = (v: string) =>
+    setForm((prev) => ({ ...prev, regularity: v as LessonConfig['regularity'] }))
   const setLevel = (v: string) =>
     setForm((prev) => ({ ...prev, level: v as LessonConfig['level'] }))
   const setDirection = (v: string) =>
@@ -107,7 +107,7 @@ export default function Page() {
 
   const allSelected =
     form.language &&
-    form.pool &&
+    form.regularity &&
     form.level &&
     form.direction &&
     (form.direction !== 'conjugation' || form.directionConjugation !== undefined) &&
@@ -119,7 +119,7 @@ export default function Page() {
     if (!allSelected || isStarting) return
     const config: LessonConfig = {
       language: form.language!,
-      pool: form.pool!,
+      regularity: form.regularity!,
       level: form.level!,
       direction: form.direction!,
       directionConjugation: form.direction === 'conjugation' ? form.directionConjugation : undefined,
@@ -148,11 +148,11 @@ export default function Page() {
             onSelect={setLanguage}
           />
           <ConfigRow
-            label="pool:"
-            value={form.pool}
-            options={POOL_OPTIONS}
-            labelMap={POOL_LABELS as Record<string, string>}
-            onSelect={setPool}
+            label="regularity:"
+            value={form.regularity}
+            options={REGULARITY_OPTIONS}
+            labelMap={REGULARITY_LABELS as Record<string, string>}
+            onSelect={setRegularity}
           />
           <ConfigRow
             label="level:"

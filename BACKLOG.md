@@ -1,6 +1,6 @@
 - conjugation and forms not in direction but separately
 - direction "forms" shows all the forms
-- osobny filtr: irregular: yes, no, both
+- level: ALL option
 - mark main verbs and let filter them (3 regular ar,er,ir, + ser, estar, tener, etc.)
 
 - add other languages
