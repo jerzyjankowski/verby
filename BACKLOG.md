@@ -30,5 +30,7 @@ WILD IDEAS:
 - [TECH] unit tests
 - wybieranie poziomów słów (easy, medium, hard)
 - change lesson config like conjugation mid lesson
+- gramatyka podstawy odnośnie czasów, podpięte z przykładami do odmiany regularnej i ważniejsze od nieregularnej
+- course - powtórki, ustawianie celu
 - chrome connects to local folder and play sounds?
 - podpiąć ChatGPT, który będzie mi układał zdania z użyciem słowa w odmianie?

@@ -66,7 +66,7 @@ export const SPEED_OPTIONS: Speed[] = ['same', 'random']
 export const BATCH_OPTIONS: Batch[] = [10, 20, 30, 40, 50, 'ALL']
 
 export type LanguageConfig = {
-  code: string,
+  code: Language,
   personsLabels: {
     s1: string,
     s2: string,

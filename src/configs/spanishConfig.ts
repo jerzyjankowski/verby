@@ -3,7 +3,7 @@ import type {Conjugation, ConjugationFlags, Verb} from "../types/verb.ts";
 
 
 export const spanishConfig: LanguageConfig = {
-  code: 'esp',
+  code: 'ESP',
   personsLabels: {
     s1: 'yo',
     s2: 'tú',
