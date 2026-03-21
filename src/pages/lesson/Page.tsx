@@ -148,20 +148,6 @@ export default function Page() {
             onSelect={setLanguage}
           />
           <ConfigRow
-            label="regularity:"
-            value={form.regularity}
-            options={REGULARITY_OPTIONS}
-            labelMap={REGULARITY_LABELS as Record<string, string>}
-            onSelect={setRegularity}
-          />
-          <ConfigRow
-            label="level:"
-            value={form.level}
-            options={LEVEL_OPTIONS}
-            labelMap={LEVEL_LABELS as Record<string, string>}
-            onSelect={setLevel}
-          />
-          <ConfigRow
             label="directions:"
             value={form.direction}
             options={DIRECTION_OPTIONS}
@@ -186,6 +172,20 @@ export default function Page() {
               onSelect={setDirectionForm}
             />
           )}
+          <ConfigRow
+            label="level:"
+            value={form.level}
+            options={LEVEL_OPTIONS}
+            labelMap={LEVEL_LABELS as Record<string, string>}
+            onSelect={setLevel}
+          />
+          <ConfigRow
+            label="regularity:"
+            value={form.regularity}
+            options={REGULARITY_OPTIONS}
+            labelMap={REGULARITY_LABELS as Record<string, string>}
+            onSelect={setRegularity}
+          />
           <ConfigRow
             label="speed:"
             value={form.speed}

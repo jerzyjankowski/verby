@@ -25,22 +25,22 @@ export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
 
   const rows: Array<{ label: string; value: string | number }> = [
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
-    { label: 'regularity', value: REGULARITY_LABELS[lesson.config.regularity] },
-    { label: 'level', value: LEVEL_LABELS[lesson.config.level] },
     { label: 'directions', value: DIRECTION_LABELS[lesson.config.direction] },
+    { label: 'level', value: LEVEL_LABELS[lesson.config.level] },
+    { label: 'regularity', value: REGULARITY_LABELS[lesson.config.regularity] },
     { label: 'speed', value: SPEED_LABELS[lesson.config.speed] },
     { label: 'batch', value: BATCH_LABELS[lesson.config.batch] },
   ]
 
   if (lesson.config.directionConjugation !== undefined) {
-    rows.splice(4, 0, {
+    rows.splice(2, 0, {
       label: 'direction conjugation',
       value: directionConjugationLabel ?? lesson.config.directionConjugation,
     })
   }
 
   if (lesson.config.directionForm !== undefined) {
-    rows.splice(4, 0, {
+    rows.splice(2, 0, {
       label: 'direction form',
       value: directionFormLabel ?? lesson.config.directionForm,
     })

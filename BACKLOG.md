@@ -1,5 +1,6 @@
 - conjugation and forms not in direction but separately
 - direction "forms" shows all the forms
+- show levels in verbs view
 - level: ALL option
 - mark main verbs and let filter them (3 regular ar,er,ir, + ser, estar, tener, etc.)
 
@@ -16,7 +17,8 @@
 - saving functionality
     - save _new
     - save new save or add to old one or replace old one
-    - display all saves
+    - display all saves per language - let remove them (from main page, see saves, edit name, description, etc.)
+    - starting lesson select pool ALL or one of saves
     - let continue from save
 
 - deploy
