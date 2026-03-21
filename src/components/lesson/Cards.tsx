@@ -42,7 +42,7 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
   const personsLabels: Conjugation = spanishConfig.personsLabels
   const formsLabels: string[] = spanishConfig.formsLabels
   const questionTextSize = getCardTextSize(round.question, 'text-4xl')
-  const answerTextSize = getCardTextSize(round.answer, round.isConjugation ? 'text-2xl' : 'text-4xl')
+  const answerTextSize = getCardTextSize(round.answer, round.isConjugation || round.isForms ? 'text-2xl' : 'text-4xl')
   const [isFullTextSheetOpen, setIsFullTextSheetOpen] = useState(false)
   const [fullText, setFullText] = useState('')
   const [fullTextTitle, setFullTextTitle] = useState('Full text')

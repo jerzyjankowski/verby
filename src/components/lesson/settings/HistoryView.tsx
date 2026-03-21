@@ -25,11 +25,13 @@ export default function HistoryView({ lesson, verbs, lastVerbsIds }: HistoryView
       .map((id, index) => {
         const appeared = (appearancesById.get(id) ?? 0) + 1
         appearancesById.set(id, appeared)
+        const v = verbsById.get(id)
 
         return {
           order: index + 1,
           id,
-          verb: verbsById.get(id)?.verb ?? '-',
+          level: v?.level ?? '-',
+          verb: v?.verb ?? '-',
           appeared,
           learnt: lastIndexById.get(id) === index && (learntById.get(id) ?? false),
         }
@@ -46,8 +48,9 @@ export default function HistoryView({ lesson, verbs, lastVerbsIds }: HistoryView
               key={`${row.order}-${row.id}-${index}`}
               className="border-b border-primary-darkest last:border-b-0"
             >
-              <td className="px-3 py-2 tabular-nums">{row.order}</td>
-              <td className="px-3 py-2 tabular-nums">{row.id}</td>
+              <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">{row.order}</td>
+              <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">{row.id}</td>
+              <td className="w-px whitespace-nowrap px-3 py-2">{row.level}</td>
               <td className="px-3 py-2">{row.verb}</td>
               <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">×{row.appeared}</td>
               <td className="w-px whitespace-nowrap px-3 py-2">

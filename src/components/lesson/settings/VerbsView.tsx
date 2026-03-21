@@ -14,12 +14,16 @@ export default function VerbsView({ lesson, verbs }: VerbsViewProps) {
     const verbsById = new Map(verbs.map((verb) => [verb.id, verb]))
 
     return lesson.verbs
-      .map((id, index) => ({
-        id,
-        verb: verbsById.get(id)?.verb ?? '-',
-        repeated: lesson.repeated[index] ?? 0,
-        learnt: lesson.learnt[index] ?? false,
-      }))
+      .map((id, index) => {
+        const v = verbsById.get(id)
+        return {
+          id,
+          level: v?.level ?? '-',
+          verb: v?.verb ?? '-',
+          repeated: lesson.repeated[index] ?? 0,
+          learnt: lesson.learnt[index] ?? false,
+        }
+      })
       .sort((a, b) => a.id - b.id)
   }, [lesson, verbs])
 
@@ -29,7 +33,8 @@ export default function VerbsView({ lesson, verbs }: VerbsViewProps) {
         <tbody>
           {verbRows.map((row) => (
             <tr key={row.id} className="border-b border-primary-darkest last:border-b-0">
-              <td className="px-3 py-2 tabular-nums">{row.id}</td>
+              <td className="w-px whitespace-nowrap py-2 pl-3 pr-1 text-right tabular-nums">{row.id}</td>
+              <td className="w-px whitespace-nowrap px-3 py-2 text-right">{row.level}</td>
               <td className="px-3 py-2">{row.verb}</td>
               <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">×{row.repeated}</td>
               <td className="w-px whitespace-nowrap px-3 py-2">

@@ -1,5 +1,3 @@
-- direction "forms" shows all the forms
-- show levels in verbs view
 - level: ALL option
 - mark main verbs and let filter them (3 regular ar,er,ir, + ser, estar, tener, etc.)
 
