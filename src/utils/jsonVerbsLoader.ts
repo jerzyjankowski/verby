@@ -24,7 +24,7 @@ function normalizeVerb(row: RawVerb): Verb {
   return {
     id: row.id,
     level: row.level,
-    main: row.main,
+    sublevel: row.sublevel,
     verb: row.verb,
     meaning: row.meaning ?? row.translation ?? '',
     root: row.root,

@@ -1,6 +1,6 @@
 export type Language = 'ESP' | 'ENG' | 'GER' | 'ITA' | 'FRA' | 'RUS'
 export type Regularity = 'all' | 'irregular' | 'regular'
-export type Level = 'ALL' | 'MAIN' | 'A1' | 'A2' | 'B1' | 'B2' | 'C1'
+export type Level = 'ALL' | 'MAIN' | 'A0' | 'A1' | 'A2' | 'B1' | 'B2' | 'C1'
 export type Direction = 'to_foreign' | 'to_native'
 export type Extra = 'no' | 'conjugation' | 'forms'
 export type Speed = 'same' | 'random'
@@ -18,6 +18,7 @@ export const LANGUAGE_LABELS: Record<Language, string> = {
 export const LEVEL_LABELS: Record<Level, string> = {
   ALL: 'All',
   MAIN: 'Main',
+  A0: 'A0',
   A1: 'A1',
   A2: 'A2',
   B1: 'B1',
@@ -58,7 +59,7 @@ export const BATCH_LABELS: Record<Batch, string> = {
 
 export const LANGUAGE_OPTIONS: Language[] = ['ESP', 'ENG', 'GER', 'ITA', 'FRA', 'RUS']
 export const REGULARITY_OPTIONS: Regularity[] = ['all', 'irregular', 'regular']
-export const LEVEL_OPTIONS: Level[] = ['ALL', 'MAIN', 'A1', 'A2', 'B1', 'B2', 'C1']
+export const LEVEL_OPTIONS: Level[] = ['ALL', 'MAIN', 'A0', 'A1', 'A2', 'B1', 'B2', 'C1']
 export const DIRECTION_OPTIONS: Direction[] = ['to_foreign', 'to_native']
 export const EXTRA_OPTIONS: Extra[] = ['no', 'conjugation', 'forms']
 export const SPEED_OPTIONS: Speed[] = ['same', 'random']
