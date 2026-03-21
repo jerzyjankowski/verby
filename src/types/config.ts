@@ -2,7 +2,7 @@ export type Language = 'ESP' | 'ENG' | 'GER' | 'ITA' | 'FRA' | 'RUS'
 export type Regularity = 'all' | 'irregular' | 'regular'
 export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1'
 export type Direction = 'to_foreign' | 'to_native'
-export type Extra = 'no' | 'conjugation' | 'form'
+export type Extra = 'no' | 'conjugation' | 'forms'
 export type Speed = 'same' | 'random'
 export type Batch = 10 | 20 | 30 | 40 | 50 | 'ALL'
 
@@ -37,7 +37,7 @@ export const DIRECTION_LABELS: Record<Direction, string> = {
 export const EXTRA_LABELS: Record<Extra, string> = {
   no: 'No',
   conjugation: 'Conjugation',
-  form: 'Form'
+  forms: 'Forms'
 }
 
 export const SPEED_LABELS: Record<Speed, string> = {
@@ -58,7 +58,7 @@ export const LANGUAGE_OPTIONS: Language[] = ['ESP', 'ENG', 'GER', 'ITA', 'FRA', 
 export const REGULARITY_OPTIONS: Regularity[] = ['all', 'irregular', 'regular']
 export const LEVEL_OPTIONS: Level[] = ['A1', 'A2', 'B1', 'B2', 'C1']
 export const DIRECTION_OPTIONS: Direction[] = ['to_foreign', 'to_native']
-export const EXTRA_OPTIONS: Extra[] = ['no', 'conjugation', 'form']
+export const EXTRA_OPTIONS: Extra[] = ['no', 'conjugation', 'forms']
 export const SPEED_OPTIONS: Speed[] = ['same', 'random']
 export const BATCH_OPTIONS: Batch[] = [10, 20, 30, 40, 50, 'ALL']
 
@@ -83,7 +83,6 @@ export type LessonConfig = {
   direction: Direction
   extra: Extra
   directionConjugation?: number
-  directionForm?: number
   speed: Speed
   batch: Batch
 }
@@ -95,7 +94,6 @@ export type LessonConfigFormState = {
   direction?: Direction
   extra?: Extra
   directionConjugation?: number
-  directionForm?: number
   speed?: Speed
   batch?: Batch
 }

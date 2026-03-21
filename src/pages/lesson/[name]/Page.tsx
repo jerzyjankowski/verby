@@ -10,11 +10,6 @@ export default function Page() {
   const { name } = useParams<{ name: string }>()
   const { lesson, verbs, round, lastVerbsIds, updateRoundHiddenFlags, canContinue, onContinue } = useLesson(name)
 
-  console.log('[JJ]verbs:', verbs)
-  console.log('[JJ]lesson:', lesson)
-  console.log('[JJ]round:', round)
-  console.log('[JJ]canRate:', canContinue)
-
   if (!lesson) {
     return (
       <div className="min-h-screen bg-primary text-primary-text p-4">

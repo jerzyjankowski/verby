@@ -74,11 +74,8 @@ export default function Page() {
     return savedLesson?.config ?? {}
   })
   const conjugationOptions = spanishConfig.irregularConjugationsLabels.map((_, idx) => idx)
-  const formOptions = spanishConfig.irregularFormsLabels.map((_, idx) => idx)
   const conjugationLabelMap: Record<string, string> =
     Object.fromEntries(spanishConfig.irregularConjugationsLabels.map((label, idx) => [String(idx), label]))
-  const formLabelMap: Record<string, string> =
-    Object.fromEntries(spanishConfig.irregularFormsLabels.map((label, idx) => [String(idx), label]))
 
   const setLanguage = (v: string) =>
     setForm((prev) => ({ ...prev, language: v as LessonConfig['language'] }))
@@ -93,12 +90,9 @@ export default function Page() {
       ...prev,
       extra: v as LessonConfig['extra'],
       directionConjugation: v === 'conjugation' ? prev.directionConjugation : undefined,
-      directionForm: v === 'form' ? prev.directionForm : undefined,
     }))
   const setDirectionConjugation = (v: string) =>
     setForm((prev) => ({ ...prev, directionConjugation: Number(v) }))
-  const setDirectionForm = (v: string) =>
-    setForm((prev) => ({ ...prev, directionForm: Number(v) }))
   const setSpeed = (v: string) =>
     setForm((prev) => ({ ...prev, speed: v as LessonConfig['speed'] }))
   const setBatch = (v: string) =>
@@ -114,7 +108,6 @@ export default function Page() {
     form.direction &&
     form.extra &&
     (form.extra !== 'conjugation' || form.directionConjugation !== undefined) &&
-    (form.extra !== 'form' || form.directionForm !== undefined) &&
     form.speed &&
     form.batch !== undefined
 
@@ -127,7 +120,6 @@ export default function Page() {
       direction: form.direction!,
       extra: form.extra!,
       directionConjugation: form.extra === 'conjugation' ? form.directionConjugation : undefined,
-      directionForm: form.extra === 'form' ? form.directionForm : undefined,
       speed: form.speed!,
       batch: form.batch!,
     }
@@ -172,15 +164,6 @@ export default function Page() {
               options={conjugationOptions}
               labelMap={conjugationLabelMap}
               onSelect={setDirectionConjugation}
-            />
-          )}
-          {form.extra === 'form' && (
-            <ConfigRow
-              label="form:"
-              value={form.directionForm}
-              options={formOptions}
-              labelMap={formLabelMap}
-              onSelect={setDirectionForm}
             />
           )}
           <ConfigRow

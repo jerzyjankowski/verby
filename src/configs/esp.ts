@@ -33,7 +33,7 @@ export const spanishConfig: LanguageConfig = {
 
 type SpanishConjugation = 'ar' | 'er' | 'ir'
 
-const irregularFormsEndings = {
+const regularFormsEndings = {
   'ar': [
     'ando',
     'ado'
@@ -222,15 +222,18 @@ const conjugationEndings = {
   ]
 }
 
-export const getCorrectForm = (verb: Verb, formId: number): {
+export const getForms = (verb: Verb): {
   form: string,
   irregularity: boolean
-} => {
-  const regularForm = `${verb.root}${(irregularFormsEndings[verb.conjugation as SpanishConjugation] as string[])[formId]}`
-  return {
-    form: !!verb.irregularForms[formId] ? verb.irregularForms[formId] : regularForm,
-    irregularity: !!verb.irregularForms[formId]
-  }
+}[] => {
+  const regularEndings = regularFormsEndings[verb.conjugation as SpanishConjugation] as string[]
+  return regularEndings.map((regularEnding, index) => {
+    const regularForm = `${verb.root}${regularEnding}`
+    return {
+      form: !!verb.irregularForms[index] ? verb.irregularForms[index] : regularForm,
+      irregularity: !!verb.irregularForms[index]
+    }
+  })
 }
 
 export const conjugate = (verb: Verb, conjugationId: number): {
@@ -266,15 +269,14 @@ export const conjugate = (verb: Verb, conjugationId: number): {
 }
 
 export const isIrregular = (verb: Verb, extra: Extra, id?: number): boolean => {
-  if (id === undefined) {
-    return false
-  }
   if (extra === 'conjugation') {
+    if (id === undefined) {
+      return false
+    }
     const { irregularity } = conjugate(verb, id)
     return irregularity.s1 || irregularity.s2 || irregularity.s3 || irregularity.p1 || irregularity.p2 || irregularity.p3
-  } else if (extra === 'form') {
-    const { irregularity } = getCorrectForm(verb, id)
-    return irregularity
+  } else if (extra === 'forms') {
+    return getForms(verb).some(form => form.irregularity)
   } else {
     return false
   }

@@ -18,10 +18,6 @@ export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
     lesson.config.directionConjugation !== undefined
       ? spanishConfig.irregularConjugationsLabels[lesson.config.directionConjugation]
       : undefined
-  const directionFormLabel =
-    lesson.config.directionForm !== undefined
-      ? spanishConfig.irregularFormsLabels[lesson.config.directionForm]
-      : undefined
 
   const rows: Array<{ label: string; value: string | number }> = [
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
@@ -37,13 +33,6 @@ export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
     rows.splice(3, 0, {
       label: 'direction conjugation',
       value: directionConjugationLabel ?? lesson.config.directionConjugation,
-    })
-  }
-
-  if (lesson.config.directionForm !== undefined) {
-    rows.splice(3, 0, {
-      label: 'direction form',
-      value: directionFormLabel ?? lesson.config.directionForm,
     })
   }
 

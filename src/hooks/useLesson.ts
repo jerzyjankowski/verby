@@ -6,7 +6,7 @@ import type {ConjugationFlags, Verb} from '../types/verb.ts'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
 import { loadLessonFromLocalStorage } from '../utils/localStorage.ts'
 import type {Round, UpdateRoundHiddenFlags} from "../types/lesson.ts";
-import {conjugate, getCorrectForm} from "../configs/esp.ts";
+import {conjugate, getForms} from "../configs/esp.ts";
 
 const prepareRound = (verb: Verb, config: LessonConfig): Round => {
   const defaultValues: Round = {
@@ -19,6 +19,9 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
     conjugationAnswers: { s1: '-', s2: '-', s3: '-', p1: '-', p2: '-', p3: '-'},
     conjugationAnswersHidden: { s1: true, s2: true, s3: true, p1: true, p2: true, p3: true},
     conjugationAnswersIrregulars: { s1: false, s2: false, s3: false, p1: false, p2: false, p3: false},
+    formsAnswers: [],
+    formsAnswersHidden: [],
+    formsAnswersIrregulars: [],
   }
   switch (config.extra) {
     case 'no':
@@ -34,12 +37,13 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
         conjugationAnswersHidden: { s1: true, s2: true, s3: true, p1: true, p2: true, p3: true },
         conjugationAnswersIrregulars: conjugation.irregularity,
       }
-    case 'form':
-      const correctForm = getCorrectForm(verb, config.directionForm ?? 0)
+    case 'forms':
+      const forms = getForms(verb)
       return {
         ...defaultValues,
-        answer: correctForm.form,
-        answerIrregular: correctForm.irregularity,
+        formsAnswers: forms.map(form => form.form),
+        formsAnswersHidden: forms.map(() => true),
+        formsAnswersIrregulars: forms.map(form => form.irregularity),
       }
   }
 }
@@ -69,7 +73,9 @@ export function useLesson(name?: string) {
 
     loadVerbsFromJson(lessonFile)
       .then((loadedVerbs) => {
+        console.log('[JJ]loadedVerbs:', loadedVerbs)
         const lessonVerbIds = new Set(lesson.verbs)
+        console.log('[JJ]lessonVerbIds:', lessonVerbIds)
         const filteredVerbs = loadedVerbs.filter((verb) => lessonVerbIds.has(verb.id))
         setVerbs(filteredVerbs)
         setRound(prepareRound(filteredVerbs[0], lesson.config))
@@ -89,7 +95,12 @@ export function useLesson(name?: string) {
 
   const canContinue = useMemo(() => {
     const cah = round?.conjugationAnswersHidden
-    return round && (!round.answerHidden || (cah && !(cah.s1 && cah.s2 && cah.s3 && cah.p1 && cah.p2 && cah.p3)))
+    const fah = round?.formsAnswersHidden
+    return round && (
+      !round.answerHidden ||
+      (cah && !(cah.s1 && cah.s2 && cah.s3 && cah.p1 && cah.p2 && cah.p3)) ||
+      (fah && fah.some(hidden => !hidden))
+    )
   }, [round])
 
   const randomizeVerb = useCallback((lessonData: LessonSave, history: number[]) => {
