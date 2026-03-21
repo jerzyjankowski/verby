@@ -1,4 +1,3 @@
-- add other languages
 - selecting other language uses configs for other languages
 - if there are no verbs don't let start a lesson - show modal, if there are less verbs than batch selected ask to continue, or maybe always show the modal to tell how much would be if batch ALL
 - no extra option if arrays are empty
@@ -25,6 +24,7 @@
 - go back to previous question or change decision for previous question (or for any question) or click verb from verbs or history and then see details, level, edit learnt
 - conjugation display as one column - UI settings
 - show irregular mark after answer or before - UI settings
+- select one or more levels at the same time
 
 WILD IDEAS:
 - [TECH] unit tests
