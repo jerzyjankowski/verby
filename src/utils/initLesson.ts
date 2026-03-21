@@ -14,7 +14,7 @@ export async function initLesson(config: LessonConfig): Promise<LessonSave> {
 
   const filteredVerbsByLevels = verbsData.filter(verb => verb.level === config.level)
   const filteredVerbsByRegularity = filteredVerbsByLevels.filter(verb => {
-    const irregular = isIrregular(verb, config.direction, config.direction === 'conjugation' ? config.directionConjugation : config.directionForm)
+    const irregular = isIrregular(verb, config.extra, config.extra === 'conjugation' ? config.directionConjugation : config.directionForm)
     return config.regularity === 'irregular' ? irregular : config.regularity === 'regular' ? !irregular : true
   })
 

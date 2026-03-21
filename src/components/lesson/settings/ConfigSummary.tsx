@@ -4,7 +4,7 @@ import {
   LEVEL_LABELS,
   DIRECTION_LABELS,
   SPEED_LABELS,
-  BATCH_LABELS,
+  BATCH_LABELS, EXTRA_LABELS,
 } from '../../../types/config.ts'
 import type { LessonSave } from '../../../types/config.ts'
 import { spanishConfig } from '../../../configs/esp.ts'
@@ -25,7 +25,8 @@ export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
 
   const rows: Array<{ label: string; value: string | number }> = [
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
-    { label: 'directions', value: DIRECTION_LABELS[lesson.config.direction] },
+    { label: 'direction', value: DIRECTION_LABELS[lesson.config.direction] },
+    { label: 'extra', value: EXTRA_LABELS[lesson.config.extra] },
     { label: 'level', value: LEVEL_LABELS[lesson.config.level] },
     { label: 'regularity', value: REGULARITY_LABELS[lesson.config.regularity] },
     { label: 'speed', value: SPEED_LABELS[lesson.config.speed] },
@@ -33,14 +34,14 @@ export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
   ]
 
   if (lesson.config.directionConjugation !== undefined) {
-    rows.splice(2, 0, {
+    rows.splice(3, 0, {
       label: 'direction conjugation',
       value: directionConjugationLabel ?? lesson.config.directionConjugation,
     })
   }
 
   if (lesson.config.directionForm !== undefined) {
-    rows.splice(2, 0, {
+    rows.splice(3, 0, {
       label: 'direction form',
       value: directionFormLabel ?? lesson.config.directionForm,
     })

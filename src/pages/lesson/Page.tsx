@@ -19,7 +19,7 @@ import {
   SPEED_OPTIONS,
   SPEED_LABELS,
   BATCH_OPTIONS,
-  BATCH_LABELS,
+  BATCH_LABELS, EXTRA_OPTIONS, EXTRA_LABELS,
 } from '../../types/config.ts'
 import { spanishConfig } from '../../configs/esp.ts'
 import { initLesson } from '../../utils/initLesson.ts'
@@ -87,9 +87,11 @@ export default function Page() {
   const setLevel = (v: string) =>
     setForm((prev) => ({ ...prev, level: v as LessonConfig['level'] }))
   const setDirection = (v: string) =>
+    setForm((prev) => ({ ...prev, direction: v as LessonConfig['direction'] }))
+  const setExtra = (v: string) =>
     setForm((prev) => ({
       ...prev,
-      direction: v as LessonConfig['direction'],
+      extra: v as LessonConfig['extra'],
       directionConjugation: v === 'conjugation' ? prev.directionConjugation : undefined,
       directionForm: v === 'form' ? prev.directionForm : undefined,
     }))
@@ -110,8 +112,9 @@ export default function Page() {
     form.regularity &&
     form.level &&
     form.direction &&
-    (form.direction !== 'conjugation' || form.directionConjugation !== undefined) &&
-    (form.direction !== 'form' || form.directionForm !== undefined) &&
+    form.extra &&
+    (form.extra !== 'conjugation' || form.directionConjugation !== undefined) &&
+    (form.extra !== 'form' || form.directionForm !== undefined) &&
     form.speed &&
     form.batch !== undefined
 
@@ -122,8 +125,9 @@ export default function Page() {
       regularity: form.regularity!,
       level: form.level!,
       direction: form.direction!,
-      directionConjugation: form.direction === 'conjugation' ? form.directionConjugation : undefined,
-      directionForm: form.direction === 'form' ? form.directionForm : undefined,
+      extra: form.extra!,
+      directionConjugation: form.extra === 'conjugation' ? form.directionConjugation : undefined,
+      directionForm: form.extra === 'form' ? form.directionForm : undefined,
       speed: form.speed!,
       batch: form.batch!,
     }
@@ -148,13 +152,20 @@ export default function Page() {
             onSelect={setLanguage}
           />
           <ConfigRow
-            label="directions:"
+            label="direction:"
             value={form.direction}
             options={DIRECTION_OPTIONS}
             labelMap={DIRECTION_LABELS as Record<string, string>}
             onSelect={setDirection}
           />
-          {form.direction === 'conjugation' && (
+          <ConfigRow
+            label="extra:"
+            value={form.extra}
+            options={EXTRA_OPTIONS}
+            labelMap={EXTRA_LABELS as Record<string, string>}
+            onSelect={setExtra}
+          />
+          {form.extra === 'conjugation' && (
             <ConfigRow
               label="conjugation:"
               value={form.directionConjugation}
@@ -163,7 +174,7 @@ export default function Page() {
               onSelect={setDirectionConjugation}
             />
           )}
-          {form.direction === 'form' && (
+          {form.extra === 'form' && (
             <ConfigRow
               label="form:"
               value={form.directionForm}

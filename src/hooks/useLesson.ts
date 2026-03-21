@@ -11,8 +11,8 @@ import {conjugate, getCorrectForm} from "../configs/esp.ts";
 const prepareRound = (verb: Verb, config: LessonConfig): Round => {
   const defaultValues: Round = {
     verbId: verb.id,
-    question: verb.meaning,
-    answer: verb.verb,
+    question: config.direction === 'to_foreign' ? verb.meaning : verb.verb,
+    answer: config.direction === 'to_foreign' ? verb.verb : verb.meaning,
     isConjugation: false,
     answerHidden: true,
     answerIrregular: false,
@@ -20,16 +20,10 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
     conjugationAnswersHidden: { s1: true, s2: true, s3: true, p1: true, p2: true, p3: true},
     conjugationAnswersIrregulars: { s1: false, s2: false, s3: false, p1: false, p2: false, p3: false},
   }
-  switch (config.direction) {
-    case 'to_foreign':
+  switch (config.extra) {
+    case 'no':
       return {
         ...defaultValues,
-      }
-    case 'to_native':
-      return {
-        ...defaultValues,
-        question: verb.verb,
-        answer: verb.meaning,
       }
     case 'conjugation':
       const conjugation = conjugate(verb, config.directionConjugation ?? 0)

@@ -1,4 +1,4 @@
-import type {Direction, LanguageConfig} from "../types/config.ts";
+import type {Extra, LanguageConfig} from "../types/config.ts";
 import type {Conjugation, ConjugationFlags, Verb} from "../types/verb.ts";
 
 
@@ -265,14 +265,14 @@ export const conjugate = (verb: Verb, conjugationId: number): {
   }
 }
 
-export const isIrregular = (verb: Verb, direction: Direction, id?: number): boolean => {
+export const isIrregular = (verb: Verb, extra: Extra, id?: number): boolean => {
   if (id === undefined) {
     return false
   }
-  if (direction === 'conjugation') {
+  if (extra === 'conjugation') {
     const { irregularity } = conjugate(verb, id)
     return irregularity.s1 || irregularity.s2 || irregularity.s3 || irregularity.p1 || irregularity.p2 || irregularity.p3
-  } else if (direction === 'form') {
+  } else if (extra === 'form') {
     const { irregularity } = getCorrectForm(verb, id)
     return irregularity
   } else {
