@@ -14,6 +14,7 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
     question: config.direction === 'to_foreign' ? verb.meaning : verb.verb,
     answer: config.direction === 'to_foreign' ? verb.verb : verb.meaning,
     isConjugation: false,
+    isForms: false,
     answerHidden: true,
     answerIrregular: false,
     conjugationAnswers: { s1: '-', s2: '-', s3: '-', p1: '-', p2: '-', p3: '-'},
@@ -41,6 +42,7 @@ const prepareRound = (verb: Verb, config: LessonConfig): Round => {
       const forms = getForms(verb)
       return {
         ...defaultValues,
+        isForms: true,
         formsAnswers: forms.map(form => form.form),
         formsAnswersHidden: forms.map(() => true),
         formsAnswersIrregulars: forms.map(form => form.irregularity),
@@ -73,9 +75,7 @@ export function useLesson(name?: string) {
 
     loadVerbsFromJson(lessonFile)
       .then((loadedVerbs) => {
-        console.log('[JJ]loadedVerbs:', loadedVerbs)
         const lessonVerbIds = new Set(lesson.verbs)
-        console.log('[JJ]lessonVerbIds:', lessonVerbIds)
         const filteredVerbs = loadedVerbs.filter((verb) => lessonVerbIds.has(verb.id))
         setVerbs(filteredVerbs)
         setRound(prepareRound(filteredVerbs[0], lesson.config))
@@ -87,9 +87,13 @@ export function useLesson(name?: string) {
       })
   }, [name, toast])
 
-  const updateRoundHiddenFlags: UpdateRoundHiddenFlags = useCallback((answerHidden: boolean, conjugationAnswersHidden: ConjugationFlags) => {
+  const updateRoundHiddenFlags: UpdateRoundHiddenFlags = useCallback((
+    answerHidden: boolean,
+    conjugationAnswersHidden: ConjugationFlags,
+    formsAnswersHidden: boolean[]
+  ) => {
     setRound(currentRound => {
-      return currentRound ? { ...currentRound, answerHidden, conjugationAnswersHidden } : undefined
+      return currentRound ? { ...currentRound, answerHidden, conjugationAnswersHidden, formsAnswersHidden } : undefined
     })
   }, [setRound])
 

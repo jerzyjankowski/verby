@@ -16,7 +16,7 @@ type ConfigSummaryProps = {
 export default function ConfigSummary({ lesson }: ConfigSummaryProps) {
   const directionConjugationLabel =
     lesson.config.directionConjugation !== undefined
-      ? spanishConfig.irregularConjugationsLabels[lesson.config.directionConjugation]
+      ? spanishConfig.conjugationsLabels[lesson.config.directionConjugation]
       : undefined
 
   const rows: Array<{ label: string; value: string | number }> = [

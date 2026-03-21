@@ -40,6 +40,7 @@ function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: Conju
 
 export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
   const personsLabels: Conjugation = spanishConfig.personsLabels
+  const formsLabels: string[] = spanishConfig.formsLabels
   const questionTextSize = getCardTextSize(round.question, 'text-4xl')
   const answerTextSize = getCardTextSize(round.answer, round.isConjugation ? 'text-2xl' : 'text-4xl')
   const [isFullTextSheetOpen, setIsFullTextSheetOpen] = useState(false)
@@ -63,11 +64,11 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
 
       <div
         className={`bg-primary-darker border border-primary-darkest rounded-xl flex cursor-pointer items-center justify-center p-4 ${
-          round.isConjugation ? 'min-h-20' : 'flex-1'
+          round.isConjugation || round.isForms ? 'min-h-20' : 'flex-1'
         }`}
         onClick={() => {
           if (round.answerHidden) {
-            updateRoundHiddenFlags(false, round?.conjugationAnswersHidden)
+            updateRoundHiddenFlags(false, round.conjugationAnswersHidden, round.formsAnswersHidden)
             return
           }
 
@@ -89,7 +90,7 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
             isHidden={round.conjugationAnswersHidden.s1}
             onClick={() => {
               if (round.conjugationAnswersHidden.s1) {
-                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s1: false })
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s1: false }, round.formsAnswersHidden)
                 return
               }
 
@@ -102,7 +103,7 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
             isHidden={round.conjugationAnswersHidden.p1}
             onClick={() => {
               if (round.conjugationAnswersHidden.p1) {
-                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p1: false })
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p1: false }, round.formsAnswersHidden)
                 return
               }
 
@@ -115,7 +116,7 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
             isHidden={round.conjugationAnswersHidden.s2}
             onClick={() => {
               if (round.conjugationAnswersHidden.s2) {
-                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s2: false })
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s2: false }, round.formsAnswersHidden)
                 return
               }
 
@@ -128,7 +129,7 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
             isHidden={round.conjugationAnswersHidden.p2}
             onClick={() => {
               if (round.conjugationAnswersHidden.p2) {
-                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p2: false })
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p2: false }, round.formsAnswersHidden)
                 return
               }
 
@@ -141,7 +142,7 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
             isHidden={round.conjugationAnswersHidden.s3}
             onClick={() => {
               if (round.conjugationAnswersHidden.s3) {
-                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s3: false })
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s3: false }, round.formsAnswersHidden)
                 return
               }
 
@@ -154,13 +155,36 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
             isHidden={round.conjugationAnswersHidden.p3}
             onClick={() => {
               if (round.conjugationAnswersHidden.p3) {
-                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p3: false })
+                updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p3: false }, round.formsAnswersHidden)
                 return
               }
 
               openFullTextSheet(round.conjugationAnswers.p3, personsLabels.p3)
             }}
           />
+        </div>
+      )}
+
+      {round.isForms && (
+        <div className="flex flex-col gap-3">
+          {round.formsAnswers.map((answer, index) => (
+            <ConjugationAnswerCard
+              key={`form-${index}`}
+              placeholder={formsLabels[index] ?? `Form ${index + 1}`}
+              answer={answer}
+              isHidden={round.formsAnswersHidden[index] ?? true}
+              onClick={() => {
+                if (round.formsAnswersHidden[index]) {
+                  const nextHidden = [...round.formsAnswersHidden]
+                  nextHidden[index] = false
+                  updateRoundHiddenFlags(round.answerHidden, round.conjugationAnswersHidden, nextHidden)
+                  return
+                }
+
+                openFullTextSheet(answer, formsLabels[index] ?? `Form ${index + 1}`)
+              }}
+            />
+          ))}
         </div>
       )}
 
@@ -171,6 +195,7 @@ export default function Cards({ round, updateRoundHiddenFlags }: CardsProps) {
         text={fullText}
         round={round}
         personsLabels={personsLabels}
+        formsLabels={formsLabels}
       />
     </div>
   )

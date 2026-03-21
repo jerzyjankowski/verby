@@ -73,9 +73,9 @@ export default function Page() {
     const savedLesson = loadLessonFromLocalStorage('_new')
     return savedLesson?.config ?? {}
   })
-  const conjugationOptions = spanishConfig.irregularConjugationsLabels.map((_, idx) => idx)
+  const conjugationOptions = spanishConfig.conjugationsLabels.map((_, idx) => idx)
   const conjugationLabelMap: Record<string, string> =
-    Object.fromEntries(spanishConfig.irregularConjugationsLabels.map((label, idx) => [String(idx), label]))
+    Object.fromEntries(spanishConfig.conjugationsLabels.map((label, idx) => [String(idx), label]))
 
   const setLanguage = (v: string) =>
     setForm((prev) => ({ ...prev, language: v as LessonConfig['language'] }))

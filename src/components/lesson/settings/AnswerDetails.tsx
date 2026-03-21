@@ -12,6 +12,7 @@ type AnswerDetailsProps = {
   text: string
   round: Round
   personsLabels: Conjugation
+  formsLabels: string[]
 }
 
 export default function AnswerDetails({
@@ -21,6 +22,7 @@ export default function AnswerDetails({
   text,
   round,
   personsLabels,
+  formsLabels,
 }: AnswerDetailsProps) {
   const [showAll, setShowAll] = useState(false)
 
@@ -83,6 +85,14 @@ export default function AnswerDetails({
               </div>
             </>
           ) : null}
+          {round.isForms
+            ? round.formsAnswers.map((formAnswer, index) => (
+                <div key={`form-${index}`} className="space-y-0.5">
+                  <p className="text-sm italic opacity-80">{formsLabels[index] ?? `Form ${index + 1}`}</p>
+                  <p className="text-2xl font-semibold whitespace-pre-wrap break-words">{formAnswer}</p>
+                </div>
+              ))
+            : null}
         </div>
       ) : null}
     </Sheet>

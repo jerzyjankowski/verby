@@ -17,8 +17,6 @@ export async function initLesson(config: LessonConfig): Promise<LessonSave> {
     const irregular = isIrregular(verb, config.extra, config.extra === 'conjugation' ? config.directionConjugation : undefined)
     return config.regularity === 'irregular' ? irregular : config.regularity === 'regular' ? !irregular : true
   })
-  console.log('[JJ]filteredVerbsByLevels', filteredVerbsByLevels.length)
-  console.log('[JJ]filteredVerbsByRegularity', filteredVerbsByRegularity.length)
 
   const filteredVerbs: Verb[] = []
   const shuffled = shuffle(filteredVerbsByRegularity)

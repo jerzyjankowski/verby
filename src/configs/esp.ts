@@ -12,11 +12,11 @@ export const spanishConfig: LanguageConfig = {
     p2: 'vos.',
     p3: 'ellos',
   },
-  irregularFormsLabels: [
+  formsLabels: [
     'gerundio',
     'participio passivo',
   ],
-  irregularConjugationsLabels: [
+  conjugationsLabels: [
     'Presente de indicativo',
     'Pretérito indefinido',
     'Imperfecto de indicativo',

@@ -4,6 +4,7 @@ export type Round = {
   verbId: number,
   question: string,
   isConjugation: boolean,
+  isForms: boolean,
   answer: string,
   answerHidden: boolean,
   answerIrregular: boolean,
@@ -15,4 +16,4 @@ export type Round = {
   formsAnswersIrregulars: boolean[]
 }
 
-export type UpdateRoundHiddenFlags = (answerHidden: boolean, conjugationAnswersHidden: ConjugationFlags) => void
+export type UpdateRoundHiddenFlags = (answerHidden: boolean, conjugationAnswersHidden: ConjugationFlags, formsAnswersHidden: boolean[]) => void

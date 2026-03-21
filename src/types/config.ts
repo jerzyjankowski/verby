@@ -72,8 +72,8 @@ export type LanguageConfig = {
     p2: string,
     p3: string,
   }
-  irregularFormsLabels: string[]
-  irregularConjugationsLabels: string[]
+  formsLabels: string[]
+  conjugationsLabels: string[]
 }
 
 export type LessonConfig = {
