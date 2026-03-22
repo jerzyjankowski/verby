@@ -55,6 +55,13 @@ export function getLibraryLessonNames(language: Language): string[] {
     .filter((n): n is string => n != null && n.length > 0)
 }
 
+/** Library entry whose `name` matches `name` when trimmed (case-insensitive). */
+export function getLibraryLessonByName(language: Language, name: string): LessonSave | undefined {
+  const library = loadLibraryFromLocalStorage(language)
+  const key = name.trim().toLowerCase()
+  return library.lessons.find((l) => (l.name?.trim() ?? '').toLowerCase() === key)
+}
+
 /**
  * Saves a copy of the lesson with `name` and optional `description` to the language library.
  * Replaces any existing entry with the same name (trimmed, case-insensitive) and sorts by name.

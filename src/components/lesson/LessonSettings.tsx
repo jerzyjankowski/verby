@@ -213,7 +213,18 @@ export default function LessonSettings({
         ) : null}
         {currentView === 'library-edit-current' ? <EditCurrentSaveView /> : null}
         {currentView === 'library-add-to-other' ? <AddToOtherSaveView /> : null}
-        {currentView === 'library-replace-other' ? <ReplaceOtherSaveView /> : null}
+        {currentView === 'library-replace-other' ? (
+          <ReplaceOtherSaveView
+            language={lesson.config.language}
+            onSave={({ name, notes }) => {
+              const saved = saveLibraryEntry(lesson.config.language, lesson, name, notes)
+              saveLessonAsCurrentToLocalStorage(saved)
+              onCurrentLessonSave(saved)
+              toast.success('Library', 'Library save replaced with the current lesson.')
+              handleBack()
+            }}
+          />
+        ) : null}
         {currentView === 'library-remove-from' ? <RemoveFromSaveView /> : null}
 
         {currentView === 'verbs' ? (
