@@ -4,7 +4,7 @@ import { shuffle } from 'lodash'
 import { loadVerbsFromJson } from './jsonVerbsLoader'
 import type { Verb } from '../types/verb.ts'
 
-function verbMatchesLessonLevel(verb: Verb, level: Level): boolean {
+export function verbMatchesLessonLevel(verb: Verb, level: Level): boolean {
   if (level === 'MAIN') return verb.sublevel === 'main'
   if (level === 'A0')
     return verb.sublevel === 'main' || verb.sublevel === 'A0'

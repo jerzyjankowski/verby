@@ -8,6 +8,7 @@ import {
 import type { Language, LessonSave, Library } from '../types/config.ts'
 import { getLibraryStorageKey } from '../consts/localStorage.ts'
 import { normalizeLessonConfigLevels } from './localStorage.ts'
+import { getLessonLevelsForVerbIds } from './verbLessonLevels.ts'
 
 /** Case- and accent-insensitive order for sorting library entries by `name`. */
 const libraryLessonNameOrder = new Intl.Collator(undefined, { sensitivity: 'base' })
@@ -192,4 +193,61 @@ export function saveLibraryEntry(
   })
 
   return entry
+}
+
+export type MergeLibraryEntryResult = {
+  entry: LessonSave
+  /** How many verb ids from `snapshot` were appended (duplicates skipped). */
+  addedVerbCount: number
+}
+
+/**
+ * Merges verbs from `snapshot` into an existing library lesson (matched by trimmed case-insensitive name).
+ * Duplicate verb ids are skipped. After merging verbs, `learnt` / `repeated` are reset (false / 0) for every row.
+ * `config.level` is set from all merged verb ids (existing + added) via verbs JSON.
+ * When `snapshot` is null, only the description is updated; verb lists and progress stay as stored.
+ */
+export async function mergeIntoLibraryEntry(
+  language: Language,
+  targetName: string,
+  snapshot: LessonSave | null,
+  description: string,
+): Promise<MergeLibraryEntryResult | null> {
+  const existing = getLibraryLessonByName(language, targetName)
+  if (!existing) return null
+
+  const nameForSave = existing.name?.trim() ?? targetName.trim()
+
+  if (!snapshot) {
+    const entry = saveLibraryEntry(language, existing, nameForSave, description)
+    return { entry, addedVerbCount: 0 }
+  }
+
+  const { verbs: ev, config } = existing
+  let mergedVerbs = [...ev]
+  let addedVerbCount = 0
+
+  const { verbs: sv, learnt: sl, repeated: sr } = snapshot
+  if (sl.length !== sv.length || sr.length !== sv.length) return null
+
+  const seen = new Set(ev)
+  for (let i = 0; i < sv.length; i++) {
+    const id = sv[i]!
+    if (seen.has(id)) continue
+    seen.add(id)
+    mergedVerbs.push(id)
+    addedVerbCount += 1
+  }
+
+  const level = await getLessonLevelsForVerbIds(language, mergedVerbs)
+
+  const body: LessonSave = {
+    config: { ...config, level },
+    verbs: mergedVerbs,
+    learnt: mergedVerbs.map(() => false),
+    repeated: mergedVerbs.map(() => 0),
+  }
+
+  const entry = saveLibraryEntry(language, body, nameForSave, description)
+  return { entry, addedVerbCount }
 }

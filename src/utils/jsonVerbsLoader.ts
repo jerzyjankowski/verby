@@ -1,4 +1,6 @@
-import type { Verb } from '../types/verb'
+import { getLanguageConfig } from '../configs/languageConfigMap.ts'
+import type { Language } from '../types/config.ts'
+import type { Verb } from '../types/verb.ts'
 
 /** Raw verb from JSON; may use "translation" instead of "meaning" for backward compatibility */
 type RawVerb = Omit<Verb, 'meaning'> & { meaning?: string; translation?: string }
@@ -18,6 +20,13 @@ export async function loadVerbsFromJson(path: string): Promise<Verb[]> {
     throw new Error(`Verbs JSON must be an array (path: ${path})`)
   }
   return raw.map(normalizeVerb)
+}
+
+/** Loads verbs JSON for the language, or an empty list when no file is configured. */
+export async function loadVerbsForLanguage(language: Language): Promise<Verb[]> {
+  const cfg = getLanguageConfig(language)
+  if (!cfg.verbsFilePath) return []
+  return loadVerbsFromJson(cfg.verbsFilePath)
 }
 
 function normalizeVerb(row: RawVerb): Verb {

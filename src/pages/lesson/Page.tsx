@@ -25,7 +25,6 @@ export default function Page() {
     restartQuestions,
     resetProgressAndSave,
   } = useLesson()
-  console.log('[JJ]lesson.name', lesson?.name)
 
   const handleComplete = () => {
     resetProgressAndSave()

@@ -13,13 +13,13 @@ import CreateNewSaveView from './settings/library/CreateNewSaveView.tsx'
 import EditCurrentSaveView from './settings/library/EditCurrentSaveView.tsx'
 import RemoveFromSaveView from './settings/library/RemoveFromSaveView.tsx'
 import ReplaceOtherSaveView from './settings/library/ReplaceOtherSaveView.tsx'
-import { LIBRARY_VIEW_TITLES, type LibrarySettingsView } from './settings/library/libraryViews.ts'
+import { LIBRARY_VIEW_TITLES, type LibrarySettingsView } from '../../types/library.ts'
 import LibraryManagement from './settings/LibraryManagement.tsx'
 import VerbsView from './settings/VerbsView.tsx'
 import VerbView from './settings/VerbView.tsx'
 import type {LanguageConfig, LessonSave} from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
-import { buildLessonSaveForLibrary, saveLibraryEntry } from '../../utils/library.ts'
+import { buildLessonSaveForLibrary, mergeIntoLibraryEntry, saveLibraryEntry } from '../../utils/library.ts'
 import { saveLessonAsCurrentToLocalStorage } from '../../utils/localStorage.ts'
 import {PREPARE_LESSON_PAGE_URL} from "../../consts/urls.ts";
 
@@ -211,7 +211,29 @@ export default function LessonSettings({
           />
         ) : null}
         {currentView === 'library-edit-current' ? <EditCurrentSaveView /> : null}
-        {currentView === 'library-add-to-other' ? <AddToOtherSaveView /> : null}
+        {currentView === 'library-add-to-other' ? (
+          <AddToOtherSaveView
+            language={lesson.config.language}
+            lesson={lesson}
+            onSave={async ({ name, notes, whichVerbs }) => {
+              const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs)
+              try {
+                const result = await mergeIntoLibraryEntry(lesson.config.language, name, snapshot, notes)
+                if (!result) return
+                const { addedVerbCount } = result
+                toast.success(
+                  'Library',
+                  addedVerbCount > 0
+                    ? `Added ${addedVerbCount} verb${addedVerbCount === 1 ? '' : 's'} to the library save.`
+                    : 'Library save updated.',
+                )
+                handleBack()
+              } catch {
+                toast.error('Library', 'Could not load verbs to merge levels into the library save.')
+              }
+            }}
+          />
+        ) : null}
         {currentView === 'library-replace-other' ? (
           <ReplaceOtherSaveView
             language={lesson.config.language}
