@@ -1,6 +1,3 @@
-- only available levels
-- select one or more levels at the same time
-
 - saving functionality
     - save new save or add to old one or replace old one
     - display all saves per language - let remove them (from main page, see saves, edit name, description, etc.)

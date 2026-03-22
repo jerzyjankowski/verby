@@ -11,15 +11,13 @@ export function filterVerbsMatchingLessonConfig(
   languageConfig: LanguageConfig,
 ): Verb[] {
   const filteredVerbsByLevels =
-    config.level === 'ALL'
-      ? [...verbsData]
-      : config.level === 'MAIN'
-        ? verbsData.filter((verb) => verb.sublevel === 'main')
-        : config.level === 'A0'
-          ? verbsData.filter(
-              (verb) => verb.sublevel === 'main' || verb.sublevel === 'A0',
-            )
-          : verbsData.filter((verb) => verb.level === config.level)
+    config.level === 'MAIN'
+      ? verbsData.filter((verb) => verb.sublevel === 'main')
+      : config.level === 'A0'
+        ? verbsData.filter(
+            (verb) => verb.sublevel === 'main' || verb.sublevel === 'A0',
+          )
+        : verbsData.filter((verb) => verb.level === config.level)
   return filteredVerbsByLevels.filter((verb) => {
     const irregular = languageConfig.isIrregular(
       verb,

@@ -42,7 +42,7 @@ const LEVELS_FROM_VERB_DATA_FIELDS: ReadonlySet<VerbLevel> = new Set([
   'C2',
 ])
 
-/** ALL / MAIN / A0 always; A1–C1 only if at least one verb uses that `level` value. */
+/** MAIN / A0 always; A1–C1 only if at least one verb uses that `level` value. */
 function availableLevelsForVerbs(verbs: Verb[]): Level[] {
   const present = new Set<Level>()
   for (const v of verbs) {
@@ -51,7 +51,7 @@ function availableLevelsForVerbs(verbs: Verb[]): Level[] {
     }
   }
   return LEVEL_OPTIONS.filter(
-    (l) => l === 'ALL' || l === 'MAIN' || l === 'A0' || present.has(l),
+    (l) => l === 'MAIN' || l === 'A0' || present.has(l),
   )
 }
 
@@ -197,7 +197,7 @@ export function usePrepareLesson() {
       return
     }
 
-    const alwaysOnly: Level[] = ['ALL', 'MAIN', 'A0']
+    const alwaysOnly: Level[] = ['MAIN', 'A0']
     setAvailableLevelOptions(alwaysOnly)
     setLevelsResolvedForLanguage(undefined)
 
@@ -225,7 +225,8 @@ export function usePrepareLesson() {
     if (form.level === undefined) return
     if (levelsResolvedForLanguage !== form.language) return
     if (availableLevelOptions.includes(form.level)) return
-    setForm((prev) => ({ ...prev, level: 'ALL' }))
+    const fallback = availableLevelOptions[0] ?? 'MAIN'
+    setForm((prev) => ({ ...prev, level: fallback }))
   }, [availableLevelOptions, form.level, form.language, levelsResolvedForLanguage])
 
   const allSelected = Boolean(

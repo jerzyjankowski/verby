@@ -16,7 +16,14 @@ export function loadCurrentLessonFromLocalStorage(): LessonSave | null {
   try {
     const raw = localStorage.getItem(CURRENT_LESSON_STORAGE_KEY)
     if (!raw) return null
-    return JSON.parse(raw) as LessonSave
+    const parsed = JSON.parse(raw) as LessonSave
+    if (parsed?.config && (parsed.config as { level?: string }).level === 'ALL') {
+      return {
+        ...parsed,
+        config: { ...parsed.config, level: 'MAIN' },
+      }
+    }
+    return parsed
   } catch {
     return null
   }
