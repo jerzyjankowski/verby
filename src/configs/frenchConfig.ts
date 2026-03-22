@@ -37,7 +37,7 @@ const isIrregular = (_verb: Verb, _extra: Extra, _id?: number): boolean => {
 
 export const frenchConfig: LanguageConfig = {
   code: 'FRA',
-  verbsFilePath: `${import.meta.env.BASE_URL}data/fra/verbs.json`,
+  verbsFilePath: '/data/fra/verbs.json',
   languageLabels,
   getForms,
   conjugate,
