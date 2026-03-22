@@ -21,7 +21,6 @@ export type ConjugationFlags = {
 export type Verb = {
   id: number
   level: VerbLevel
-  sublevel: string
   verb: string
   meaning: string
   root: string

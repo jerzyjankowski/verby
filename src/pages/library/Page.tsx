@@ -42,13 +42,6 @@ function defaultLanguageFromNewLesson(): Language | undefined {
 
 type DetailView = 'edit' | 'confirmDelete'
 
-function verbLevelDisplayLabel(v: Verb): string {
-  const sub = v.sublevel.toLowerCase()
-  if (sub === 'main') return 'MAIN'
-  if (sub === 'a0') return 'A0'
-  return v.level
-}
-
 export default function Page() {
   const navigate = useNavigate()
   const toast = useToast()
@@ -396,7 +389,7 @@ export default function Page() {
                                 {id}
                               </td>
                               <td className="w-16 min-w-[3.5rem] max-w-[4.5rem] whitespace-nowrap px-2 py-1.5 text-primary-text/90">
-                                {v ? verbLevelDisplayLabel(v) : '—'}
+                                {v?.level ?? '—'}
                               </td>
                               <td className="min-w-0 break-words px-2 py-1.5">{v?.verb ?? '—'}</td>
                             </tr>

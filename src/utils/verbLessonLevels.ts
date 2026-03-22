@@ -1,13 +1,12 @@
 import { LEVEL_OPTIONS, type Language, type Level } from '../types/config.ts'
 import type { Verb } from '../types/verb.ts'
 import { loadVerbsForLanguage } from './jsonVerbsLoader.ts'
-import { verbMatchesLessonLevel } from './initLesson.ts'
 
 /**
  * Distinct {@link Level} values that match at least one verb, in curriculum order (`LEVEL_OPTIONS`).
  */
 export function lessonLevelsForVerbs(verbs: Verb[]): Level[] {
-  return LEVEL_OPTIONS.filter((level) => verbs.some((v) => verbMatchesLessonLevel(v, level)))
+  return LEVEL_OPTIONS.filter((level) => verbs.some((v) => v.level === level))
 }
 
 /**
