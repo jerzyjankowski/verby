@@ -1,4 +1,3 @@
-- restart questions
 - zakończenie lekcji kiedy słówka się skończyły
 - /init and /lesson, no need for lesson name in url since always will start with _new? (rename _new)
 - urls in file
@@ -12,7 +11,7 @@
     - let continue from save
 
 - deploy
-- 
+
 - no extra option if arrays are empty
 - [TECH] linter, prettier, TS check on commit
 - go back to previous question or change decision for previous question (or for any question) or click verb from verbs or history and then see details, level, edit learnt

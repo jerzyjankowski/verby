@@ -33,7 +33,7 @@ function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: Conju
       {isHidden ? (
         <p className="text-center text-lg italic">{placeholder}</p>
       ) : (
-        <ClampText className={`w-full overflow-hidden text-center ${answerTextSize} font-semibold`} text={answer} lines={1} />
+        <ClampText className={`w-full overflow-hidden text-center ${answerTextSize} leading-normal font-semibold`} text={answer} lines={1} />
       )}
     </div>
   )
@@ -79,7 +79,7 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
         {round.answerHidden ? (
           <p className="text-center text-lg italic">???</p>
         ) : (
-          <ClampText className={`w-full overflow-hidden text-center ${answerTextSize} font-semibold`} text={round.answer} />
+          <ClampText className={`w-full overflow-hidden text-center ${answerTextSize} leading-normal font-semibold`} text={round.answer} />
           )}
       </div>
 
