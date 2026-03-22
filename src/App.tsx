@@ -12,13 +12,7 @@ export default function App() {
 
   return (
     <ToastProvider>
-      <BrowserRouter
-        basename={
-          import.meta.env.BASE_URL === '/'
-            ? undefined
-            : import.meta.env.BASE_URL.replace(/\/$/, '')
-        }
-      >
+      <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>
     </ToastProvider>
