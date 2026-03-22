@@ -17,7 +17,7 @@ export function saveLessonToLocalStorage(lesson: LessonSave): void {
   localStorage.setItem(key, JSON.stringify(lesson))
 }
 
-export function loadLessonFromLocalStorage(lessonName: string): LessonSave | null {
+export function loadCurrentLessonFromLocalStorage(lessonName: string): LessonSave | null {
   try {
     const key = lessonStorageKey(lessonName)
     const raw = localStorage.getItem(key)
@@ -25,14 +25,6 @@ export function loadLessonFromLocalStorage(lessonName: string): LessonSave | nul
     return JSON.parse(raw) as LessonSave
   } catch {
     return null
-  }
-}
-
-export function removeLessonFromLocalStorage(lessonName: string): void {
-  try {
-    localStorage.removeItem(lessonStorageKey(lessonName))
-  } catch {
-    // ignore
   }
 }
 

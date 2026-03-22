@@ -1,207 +1,99 @@
-import { useMemo, useState } from 'react'
-import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { useNavigate } from 'react-router-dom'
+import { CheckIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 
+import Cards from '../../components/lesson/Cards.tsx'
+import LessonCelebration from '../../components/lesson/LessonCelebration.tsx'
+import LessonTopBar from '../../components/lesson/LessonTopBar.tsx'
 import Button from '../../components/shared/Button.tsx'
-import Dropdown from '../../components/shared/Dropdown.tsx'
-import type { DropdownItem } from '../../components/shared/types.ts'
-import {
-  type LessonConfig,
-  type LessonConfigFormState,
-  LANGUAGE_OPTIONS,
-  LANGUAGE_LABELS,
-  REGULARITY_OPTIONS,
-  REGULARITY_LABELS,
-  LEVEL_OPTIONS,
-  LEVEL_LABELS,
-  DIRECTION_OPTIONS,
-  DIRECTION_LABELS,
-  SPEED_OPTIONS,
-  SPEED_LABELS,
-  BATCH_OPTIONS,
-  BATCH_LABELS, EXTRA_OPTIONS, EXTRA_LABELS,
-} from '../../types/config.ts'
-import { getLanguageConfig } from '../../configs/languageConfigMap.ts'
-import { initLesson } from '../../utils/initLesson.ts'
-import { loadLessonFromLocalStorage } from '../../utils/localStorage.ts'
-import {LESSON_PAGE_URL, MAIN_PAGE_URL} from "../../consts/urls.ts";
-
-function ConfigRow({
-  label,
-  value,
-  options,
-  labelMap,
-  onSelect,
-}: {
-  label: string
-  value: string | number | undefined
-  options: readonly (string | number)[]
-  labelMap: Record<string, string>
-  onSelect: (key: string) => void
-}) {
-  const displayValue = value !== undefined ? labelMap[String(value)] : undefined
-  const items: DropdownItem[] = options.map((opt) => ({
-    key: String(opt),
-    label: labelMap[String(opt)],
-    onSelect: () => onSelect(String(opt)),
-  }))
-
-  return (
-    <Dropdown
-      label={label}
-      selectedLabel={displayValue}
-      placeholder="Select…"
-      items={items}
-      align="start"
-    />
-  )
-}
+import { useLesson } from '../../hooks/useLesson.ts'
+import {MAIN_PAGE_URL} from "../../consts/urls.ts";
 
 export default function Page() {
   const navigate = useNavigate()
-  const [isStarting, setIsStarting] = useState(false)
-  const [form, setForm] = useState<LessonConfigFormState>(() => {
-    const savedLesson = loadLessonFromLocalStorage('_new')
-    return savedLesson?.config ?? {}
-  })
+  const {
+    lesson,
+    verbs,
+    round,
+    lastVerbsIds,
+    isCompleted,
+    updateRoundHiddenFlags,
+    canContinue,
+    onContinue,
+    languageConfig,
+    setVerbLearnt,
+    reverseDirection,
+    restartQuestions,
+    resetProgressAndSave,
+  } = useLesson('_new') // [JJ]
 
-  const languageConfig = useMemo(() => getLanguageConfig(form.language), [form.language])
-  const conjugationLabels = languageConfig.languageLabels.conjugationsLabels
-  const conjugationOptions = conjugationLabels.map((_, idx) => idx)
-  const conjugationLabelMap: Record<string, string> = Object.fromEntries(
-    conjugationLabels.map((label, idx) => [String(idx), label]),
-  )
+  const handleComplete = () => {
+    resetProgressAndSave()
+    navigate(MAIN_PAGE_URL)
+  }
 
-  const setLanguage = (v: string) =>
-    setForm((prev) => ({
-      ...prev,
-      language: v as LessonConfig['language'],
-      conjugation: undefined,
-    }))
-  const setLevel = (v: string) =>
-    setForm((prev) => ({ ...prev, level: v as LessonConfig['level'] }))
-  const setDirection = (v: string) =>
-    setForm((prev) => ({ ...prev, direction: v as LessonConfig['direction'] }))
-  const setExtra = (v: string) =>
-    setForm((prev) => ({
-      ...prev,
-      extra: v as LessonConfig['extra'],
-      conjugation: v === 'conjugation' ? prev.conjugation : undefined,
-      regularity: v === 'no' ? 'all' : prev.regularity,
-    }))
-  const setConjugation = (v: string) =>
-    setForm((prev) => ({ ...prev, conjugation: Number(v) }))
-  const setRegularity = (v: string) =>
-    setForm((prev) => ({ ...prev, regularity: v as LessonConfig['regularity'] }))
-  const setSpeed = (v: string) =>
-    setForm((prev) => ({ ...prev, speed: v as LessonConfig['speed'] }))
-  const setBatch = (v: string) =>
-    setForm((prev) => ({
-      ...prev,
-      batch: (v === 'ALL' ? 'ALL' : Number(v)) as LessonConfig['batch'],
-    }))
+  const currentVerb = round ? verbs.find((v) => v.id === round.verbId) : undefined
 
-  const allSelected =
-    form.language &&
-    form.level &&
-    form.direction &&
-    form.extra &&
-    (form.extra !== 'conjugation' || form.conjugation !== undefined) &&
-    (form.extra === 'no' || form.regularity !== undefined) &&
-    form.speed &&
-    form.batch !== undefined
-
-  const handleStart = async () => {
-    if (!allSelected || isStarting) return
-    const lessonConfig: LessonConfig = {
-      language: form.language!,
-      level: form.level!,
-      direction: form.direction!,
-      extra: form.extra!,
-      regularity: form.extra === 'no' ? 'all' : form.regularity!,
-      conjugation: form.extra === 'conjugation' ? form.conjugation : undefined,
-      speed: form.speed!,
-      batch: form.batch!,
-    }
-    try {
-      setIsStarting(true)
-      await initLesson(lessonConfig, languageConfig)
-      navigate(LESSON_PAGE_URL)
-    } finally {
-      setIsStarting(false)
-    }
+  if (!lesson) {
+    return (
+      <div className="min-h-screen bg-primary text-primary-text p-4">
+        <p className="text-primary-text">
+          No config found for lesson. Start from the init page.
+        </p>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-primary text-primary-text p-4">
-      <div className="mx-auto max-w-2xl">
-        <div className="verby-card grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4 p-4 bg-primary-darkest">
-          <ConfigRow
-            label="language:"
-            value={form.language}
-            options={LANGUAGE_OPTIONS}
-            labelMap={LANGUAGE_LABELS as Record<string, string>}
-            onSelect={setLanguage}
-          />
-          <ConfigRow
-            label="level:"
-            value={form.level}
-            options={LEVEL_OPTIONS}
-            labelMap={LEVEL_LABELS as Record<string, string>}
-            onSelect={setLevel}
-          />
-          <ConfigRow
-            label="direction:"
-            value={form.direction}
-            options={DIRECTION_OPTIONS}
-            labelMap={DIRECTION_LABELS as Record<string, string>}
-            onSelect={setDirection}
-          />
-          <ConfigRow
-            label="extra:"
-            value={form.extra}
-            options={EXTRA_OPTIONS}
-            labelMap={EXTRA_LABELS as Record<string, string>}
-            onSelect={setExtra}
-          />
-          {form.extra === 'conjugation' && (
-            <ConfigRow
-              label="conjugation:"
-              value={form.conjugation}
-              options={conjugationOptions}
-              labelMap={conjugationLabelMap}
-              onSelect={setConjugation}
-            />
-          )}
-          {form.extra === 'conjugation' || form.extra === 'forms' && (
-            <ConfigRow
-              label="regularity:"
-              value={form.regularity}
-              options={REGULARITY_OPTIONS}
-              labelMap={REGULARITY_LABELS as Record<string, string>}
-              onSelect={setRegularity}
-            />
-          )}
-          <ConfigRow
-            label="speed:"
-            value={form.speed}
-            options={SPEED_OPTIONS}
-            labelMap={SPEED_LABELS as Record<string, string>}
-            onSelect={setSpeed}
-          />
-          <ConfigRow
-            label="batch:"
-            value={form.batch}
-            options={BATCH_OPTIONS}
-            labelMap={BATCH_LABELS as Record<string, string>}
-            onSelect={setBatch}
-          />
-
-          <div className="col-span-2 mt-4 flex items-center gap-3">
-            <Button onClick={() => navigate(MAIN_PAGE_URL)} label="Back" icon={<ArrowLeftIcon className="size-4" />} fullWidth={false} />
-            <Button onClick={handleStart} disabled={!allSelected || isStarting} label={isStarting ? 'Starting...' : 'Start'} main />
-          </div>
-        </div>
+    <div className="flex h-dvh flex-col bg-primary text-primary-text">
+      <LessonTopBar
+        lesson={lesson}
+        verbs={verbs}
+        lastVerbsIds={lastVerbsIds}
+        languageConfig={languageConfig}
+        currentVerb={currentVerb}
+        isCompleted={isCompleted}
+        onVerbLearntChange={setVerbLearnt}
+        onReverseDirection={reverseDirection}
+        onRestartQuestions={restartQuestions}
+      />
+      <div
+        className={`mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col gap-3 p-4 ${isCompleted ? 'overflow-hidden' : 'overflow-auto'}`}
+      >
+        {isCompleted ? (
+          <>
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+              <LessonCelebration />
+            </div>
+            <Button label="Close" main onClick={handleComplete} />
+          </>
+        ) : (
+          <>
+            {round && (
+              <Cards
+                round={round}
+                updateRoundHiddenFlags={updateRoundHiddenFlags}
+                languageConfig={languageConfig}
+              />
+            )}
+            {round && (
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  icon={<ArrowRightIcon className="size-5" />}
+                  rounded={false}
+                  onClick={() => onContinue(false)}
+                  disabled={!canContinue}
+                />
+                <Button
+                  icon={<CheckIcon className="size-5" />}
+                  rounded={false}
+                  main
+                  onClick={() => onContinue(true)}
+                  disabled={!canContinue}
+                />
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   )

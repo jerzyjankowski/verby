@@ -4,7 +4,7 @@ import { useToast } from '../components/shared/Toast.tsx'
 import type {LanguageConfig, LessonConfig, LessonSave} from '../types/config.ts'
 import type {ConjugationFlags, Verb} from '../types/verb.ts'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
-import { loadLessonFromLocalStorage, saveLessonToLocalStorage } from '../utils/localStorage.ts'
+import { loadCurrentLessonFromLocalStorage, saveLessonToLocalStorage } from '../utils/localStorage.ts'
 import type {Round, UpdateRoundHiddenFlags} from "../types/lesson.ts";
 import {getLanguageConfig} from "../configs/languageConfigMap.ts";
 
@@ -73,7 +73,7 @@ export function useLesson(name?: string) {
       return
     }
     setIsCompleted(false)
-    const lesson = loadLessonFromLocalStorage(name)
+    const lesson = loadCurrentLessonFromLocalStorage(name)
     setLesson(lesson)
 
     if (lesson === null) {
@@ -228,6 +228,20 @@ export function useLesson(name?: string) {
     }
   }, [lesson, round, verbs, languageConfig])
 
+  const resetProgressAndSave = useCallback(() => {
+    setLastVerbsIds([])
+    setLesson((current) => {
+      if (!current) return current
+      const next: LessonSave = {
+        ...current,
+        learnt: current.verbs.map(() => false),
+        repeated: current.verbs.map(() => 0),
+      }
+      saveLessonToLocalStorage(next)
+      return next
+    })
+  }, [])
+
   const restartQuestions = useCallback(() => {
     if (!lesson) return
     setIsCompleted(false)
@@ -261,5 +275,6 @@ export function useLesson(name?: string) {
     setVerbLearnt,
     reverseDirection,
     restartQuestions,
+    resetProgressAndSave,
   }
 }

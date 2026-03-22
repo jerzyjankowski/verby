@@ -14,7 +14,7 @@ import {
 } from '../../types/config.ts'
 import type { MarkedVerb, Verb } from '../../types/verb.ts'
 import {
-  loadLessonFromLocalStorage,
+  loadCurrentLessonFromLocalStorage,
   loadMarkedVerbsFromLocalStorage,
   saveMarkedVerbsToLocalStorage,
 } from '../../utils/localStorage.ts'
@@ -41,7 +41,7 @@ function markedListsEqual(a: MarkedVerb[], b: MarkedVerb[]): boolean {
 }
 
 function defaultLanguageFromNewLesson(): Language | undefined {
-  const lesson = loadLessonFromLocalStorage('_new')
+  const lesson = loadCurrentLessonFromLocalStorage('_new')
   const lang = lesson?.config?.language
   if (lang !== undefined && LANGUAGE_OPTIONS.includes(lang)) {
     return lang

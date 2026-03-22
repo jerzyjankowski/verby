@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 
 import Button from '../components/shared/Button.tsx'
-import { loadLessonFromLocalStorage } from '../utils/localStorage.ts'
+import { loadCurrentLessonFromLocalStorage } from '../utils/localStorage.ts'
 import {LESSON_PAGE_URL, MARKED_VERBS_PAGE_URL, PREPARE_LESSON_PAGE_URL} from "../consts/urls.ts";
 
 export default function Page() {
   const navigate = useNavigate()
-  const hasNewLessonToContinue = !!loadLessonFromLocalStorage('_new')
+  const hasNewLessonToContinue = !!loadCurrentLessonFromLocalStorage('_new')
 
   return (
     <div className="min-h-screen bg-primary text-primary-text p-4">
