@@ -33,7 +33,7 @@ export default function Sheet({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-[var(--z-dialog-overlay)] bg-black/60 data-[state=open]:animate-[verby-overlay-in_220ms_ease-out] data-[state=closed]:animate-[verby-overlay-out_180ms_ease-in]" />
 
-        <Dialog.Content className="fixed right-0 top-0 z-[var(--z-dialog)] flex h-screen w-full max-w-md flex-col border-l border-primary-darkest bg-primary p-4 text-primary-text shadow-lg data-[state=open]:animate-[verby-sheet-in-right_280ms_cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-[verby-sheet-out-right_220ms_ease-in]">
+        <Dialog.Content className="fixed right-0 top-0 z-[var(--z-dialog)] flex h-dvh w-full max-w-md flex-col border-l border-primary-darkest bg-primary p-4 text-primary-text shadow-lg data-[state=open]:animate-[verby-sheet-in-right_280ms_cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:animate-[verby-sheet-out-right_220ms_ease-in]">
           <div className="flex items-center gap-3">
             {headerAction ? (
               <Button
