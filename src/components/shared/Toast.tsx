@@ -1,5 +1,6 @@
-import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
+import { Cross1Icon } from '@radix-ui/react-icons'
 import * as ToastPrimitive from '@radix-ui/react-toast'
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 
 type ToastVariant = 'error' | 'success'
 
@@ -56,22 +57,32 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               if (!open) removeMessage(message.id)
             }}
             className={[
-              'verby-card data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] bg-primary-darker p-3 shadow-lg',
+              'verby-card data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] bg-primary-darker p-3 pr-2 shadow-lg',
               message.variant === 'error' ? 'border-functional-error' : 'border-functional-success',
             ].join(' ')}
           >
-            <ToastPrimitive.Title
-              className={`text-sm font-semibold ${
-                message.variant === 'error' ? 'text-text-error' : 'text-text-success'
-              }`}
-            >
-              {message.title}
-            </ToastPrimitive.Title>
-            {message.description ? (
-              <ToastPrimitive.Description className="mt-1 text-sm text-primary-text">
-                {message.description}
-              </ToastPrimitive.Description>
-            ) : null}
+            <div className="flex gap-2">
+              <div className="min-w-0 flex-1 pr-1">
+                <ToastPrimitive.Title
+                  className={`text-sm font-semibold ${
+                    message.variant === 'error' ? 'text-text-error' : 'text-text-success'
+                  }`}
+                >
+                  {message.title}
+                </ToastPrimitive.Title>
+                {message.description ? (
+                  <ToastPrimitive.Description className="mt-1 text-sm text-primary-text">
+                    {message.description}
+                  </ToastPrimitive.Description>
+                ) : null}
+              </div>
+              <ToastPrimitive.Close
+                aria-label="Dismiss notification"
+                className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-primary-darkest text-primary-text transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-text/25"
+              >
+                <Cross1Icon className="size-3.5" />
+              </ToastPrimitive.Close>
+            </div>
           </ToastPrimitive.Root>
         ))}
 
