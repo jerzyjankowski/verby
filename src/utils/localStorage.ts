@@ -11,7 +11,7 @@ function isLevel(value: string): value is Level {
 }
 
 /** Migrate legacy `level` string (or invalid data) to `Level[]`. */
-function normalizeLessonConfigLevels(config: LessonSave['config']): LessonSave['config'] {
+export function normalizeLessonConfigLevels(config: LessonSave['config']): LessonSave['config'] {
   const raw = config.level as unknown
   if (Array.isArray(raw)) {
     const seen = new Set<Level>()

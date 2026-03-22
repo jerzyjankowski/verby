@@ -19,6 +19,7 @@ import VerbsView from './settings/VerbsView.tsx'
 import VerbView from './settings/VerbView.tsx'
 import type {LanguageConfig, LessonSave} from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
+import { saveNewLibraryEntry } from '../../utils/library.ts'
 import { saveLessonAsCurrentToLocalStorage } from '../../utils/localStorage.ts'
 import {PREPARE_LESSON_PAGE_URL} from "../../consts/urls.ts";
 
@@ -196,7 +197,14 @@ export default function LessonSettings({
           <LibraryManagement onOpenLibraryView={pushView} />
         ) : null}
 
-        {currentView === 'library-create-new' ? <CreateNewSaveView /> : null}
+        {currentView === 'library-create-new' ? (
+          <CreateNewSaveView
+            onSave={({ name, notes }) => {
+              saveNewLibraryEntry(lesson.config.language, lesson, name, notes)
+              toast.success('Library', 'Lesson saved to your library.')
+            }}
+          />
+        ) : null}
         {currentView === 'library-edit-current' ? <EditCurrentSaveView /> : null}
         {currentView === 'library-add-to-other' ? <AddToOtherSaveView /> : null}
         {currentView === 'library-replace-other' ? <ReplaceOtherSaveView /> : null}
