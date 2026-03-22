@@ -10,7 +10,8 @@ type RawVerb = Omit<Verb, 'meaning'> & { meaning?: string; translation?: string 
  * parses it and returns an array of Verb. Normalizes "translation" to "meaning" if present.
  */
 export async function loadVerbsFromJson(path: string): Promise<Verb[]> {
-  const url = path.startsWith('/') ? path : `/${path}`
+  const relative = path.replace(/^\/+/, '')
+  const url = `${import.meta.env.BASE_URL}${relative}`
   const res = await fetch(url)
   if (!res.ok) {
     throw new Error(`Failed to load verbs: ${res.status} ${res.statusText} (${path})`)

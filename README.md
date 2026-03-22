@@ -1,5 +1,8 @@
 run locally:
 `pnpm run dev`
 
-not working now:
+build:
 `pnpm run build`
+
+deploy after push:
+`pnpm run deploy`

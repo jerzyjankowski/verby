@@ -5,6 +5,10 @@ import { ToastProvider } from './components/shared/Toast'
 
 const routes = buildFileSystemRoutes()
 
+/** Must match Vite `base` so routes resolve under e.g. /verby on GitHub Pages and in dev. */
+const routerBasename =
+  import.meta.env.BASE_URL.replace(/\/$/, '') || undefined
+
 export default function App() {
   function AppRoutes() {
     return useRoutes(routes)
@@ -12,7 +16,7 @@ export default function App() {
 
   return (
     <ToastProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={routerBasename}>
         <AppRoutes />
       </BrowserRouter>
     </ToastProvider>
