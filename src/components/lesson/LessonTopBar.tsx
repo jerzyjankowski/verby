@@ -14,6 +14,7 @@ type LessonTopBarProps = {
   onVerbLearntChange: (verbId: number, learnt: boolean) => void
   onReverseDirection: () => void
   onRestartQuestions: () => void
+  onCurrentLessonSave: (lesson: LessonSave) => void
 }
 
 function formatElapsed(totalSeconds: number): string {
@@ -32,6 +33,7 @@ export default function LessonTopBar({
   onVerbLearntChange,
   onReverseDirection,
   onRestartQuestions,
+  onCurrentLessonSave,
 }: LessonTopBarProps) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [sameSpeedTurnProgress, setSameSpeedTurnProgress] = useState<{ turn: number; total: number }>({ turn: 1, total: lesson.verbs.length})
@@ -109,6 +111,7 @@ export default function LessonTopBar({
           onVerbLearntChange={onVerbLearntChange}
           onReverseDirection={onReverseDirection}
           onRestartQuestions={onRestartQuestions}
+          onCurrentLessonSave={onCurrentLessonSave}
         />
       </div>
     </header>

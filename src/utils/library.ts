@@ -64,7 +64,7 @@ export function saveLibraryEntry(
   lesson: LessonSave,
   name: string,
   description: string,
-): void {
+): LessonSave {
   const trimmedName = name.trim().slice(0, LIBRARY_SAVE_NAME_MAX_LEN)
   const trimmedDesc = description.trim().slice(0, LIBRARY_SAVE_NOTES_MAX_LEN)
 
@@ -90,4 +90,6 @@ export function saveLibraryEntry(
     language,
     lessons,
   })
+
+  return entry
 }

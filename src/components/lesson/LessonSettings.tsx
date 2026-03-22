@@ -32,6 +32,7 @@ type LessonSettingsProps = {
   onVerbLearntChange: (verbId: number, learnt: boolean) => void
   onReverseDirection: () => void
   onRestartQuestions: () => void
+  onCurrentLessonSave: (lesson: LessonSave) => void
 }
 
 type SettingsView =
@@ -55,6 +56,7 @@ export default function LessonSettings({
   onVerbLearntChange,
   onReverseDirection,
   onRestartQuestions,
+  onCurrentLessonSave,
 }: LessonSettingsProps) {
   const navigate = useNavigate()
   const toast = useToast()
@@ -201,7 +203,9 @@ export default function LessonSettings({
           <CreateNewSaveView
             language={lesson.config.language}
             onSave={({ name, notes }) => {
-              saveLibraryEntry(lesson.config.language, lesson, name, notes)
+              const saved = saveLibraryEntry(lesson.config.language, lesson, name, notes)
+              saveLessonAsCurrentToLocalStorage(saved)
+              onCurrentLessonSave(saved)
               toast.success('Library', 'Lesson saved to your library.')
               handleBack()
             }}

@@ -239,6 +239,10 @@ export function useLesson() {
     })
   }, [])
 
+  const setCurrentLessonFromSave = useCallback((next: LessonSave) => {
+    setLesson(next)
+  }, [])
+
   const restartQuestions = useCallback(() => {
     if (!lesson) return
     setIsCompleted(false)
@@ -273,5 +277,6 @@ export function useLesson() {
     reverseDirection,
     restartQuestions,
     resetProgressAndSave,
+    setCurrentLessonFromSave,
   }
 }
