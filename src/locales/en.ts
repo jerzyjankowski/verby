@@ -152,7 +152,13 @@ export const ui = {
     starting: 'Starting...',
     sheetStartTitle: 'Start lesson?',
     sheetNoVerbsTitle: 'No verbs found',
-    verbWord: (n: number) => (n === 1 ? 'verb' : 'verbs'),
+    /** Text before the bold lesson verb count in the start confirmation. */
+    startLessonIncludeLead: 'This lesson will include',
+    /** After the bold count: noun + full stop. */
+    lessonIncludeNounPhrase: (n: number) => (n === 1 ? 'verb.' : 'verbs.'),
+    /** After the bold count on the “matched filters” line. */
+    matchedFiltersAfterStrong: (n: number) =>
+      `${n === 1 ? 'verb' : 'verbs'} matched your filters.`,
     batchShortfall: (batch: number, available: number) =>
       `You selected a batch of ${batch}, but only ${available} ${available === 1 ? 'verb' : 'verbs'} matched your settings, so the lesson has fewer cards than that batch size.`,
     noVerbsBody:

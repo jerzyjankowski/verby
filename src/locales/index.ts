@@ -11,3 +11,6 @@ export {
   SPEED_LABELS,
   ui,
 } from './en.ts'
+
+/** Polish UI strings (same export shape as `en.ts`; `LANGUAGE_LABELS` / `LEVEL_LABELS` match English). */
+export * as pl from './pl.ts'

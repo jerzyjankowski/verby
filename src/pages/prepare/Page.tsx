@@ -27,12 +27,12 @@ function StartLessonConfirmBody({
   return (
     <>
       <p>
-        This lesson will include <strong>{lessonVerbCount}</strong>{' '}
-        {ui.prepare.verbWord(lessonVerbCount)}.
+        {ui.prepare.startLessonIncludeLead}{' '}
+        <strong>{lessonVerbCount}</strong> {ui.prepare.lessonIncludeNounPhrase(lessonVerbCount)}
       </p>
       <p>
         <strong>{availableVerbCountBeforeBatch}</strong>{' '}
-        {ui.prepare.verbWord(availableVerbCountBeforeBatch)} matched your filters.
+        {ui.prepare.matchedFiltersAfterStrong(availableVerbCountBeforeBatch)}
       </p>
       {shortfall ? (
         <p>{ui.prepare.batchShortfall(batch, availableVerbCountBeforeBatch)}</p>
