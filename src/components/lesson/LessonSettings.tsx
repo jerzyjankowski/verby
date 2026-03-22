@@ -10,7 +10,6 @@ import Confirmation from './settings/Confirmation.tsx'
 import HistoryView from './settings/HistoryView.tsx'
 import AddToOtherSaveView from './settings/library/AddToOtherSaveView.tsx'
 import CreateNewSaveView from './settings/library/CreateNewSaveView.tsx'
-import EditCurrentSaveView from './settings/library/EditCurrentSaveView.tsx'
 import RemoveFromSaveView from './settings/library/RemoveFromSaveView.tsx'
 import ReplaceOtherSaveView from './settings/library/ReplaceOtherSaveView.tsx'
 import { LIBRARY_VIEW_TITLES, type LibrarySettingsView } from '../../types/library.ts'
@@ -215,7 +214,6 @@ export default function LessonSettings({
             }}
           />
         ) : null}
-        {currentView === 'library-edit-current' ? <EditCurrentSaveView /> : null}
         {currentView === 'library-add-to-other' ? (
           <AddToOtherSaveView
             language={lesson.config.language}
