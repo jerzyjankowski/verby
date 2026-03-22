@@ -17,6 +17,7 @@
 - remove subtypes, Main and A0 can be removed from A1? (or maybe subtype will be useful later?)
 
 WILD IDEAS:
+- dates when save/markedVerb was created/edited
 - versioned app, add version to saves, because maybe in time they will be broken, so it can help debug, maybe some way to remove single saves, port saves to newer version?
 - PL version of this app
 - [TECH] unit tests

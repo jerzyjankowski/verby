@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { CheckCircledIcon } from '@radix-ui/react-icons'
 
-type FwTone = 'primary' | 'error' | 'success'
+type FwTone = 'primary' | 'error' | 'success' | 'warning'
 
 type Burst = {
   left: string
@@ -17,21 +17,21 @@ type Burst = {
 const BURST_COUNT = 32
 /** Time between the start of one burst and the start of the next. */
 const STAGGER_MS = 500
-/** Wait after the last burst’s animation ends before starting the next cycle. */
-const POST_CYCLE_PAUSE_MS = 900
 
-const TONES: FwTone[] = ['primary', 'error', 'success']
+const TONES: FwTone[] = ['primary', 'error', 'success', 'warning']
 
 const FLASH_BY_TONE: Record<FwTone, string> = {
   primary: 'bg-primary-text/70',
   error: 'bg-text-error/68',
   success: 'bg-text-success/70',
+  warning: 'bg-text-warning/70',
 }
 
 const PARTICLE_BG_BY_TONE: Record<FwTone, string> = {
   primary: 'bg-primary-text',
   error: 'bg-text-error',
   success: 'bg-text-success',
+  warning: 'bg-text-warning',
 }
 
 function rnd(min: number, max: number): number {
@@ -122,7 +122,7 @@ export default function LessonCelebration() {
   const bursts = useMemo(() => createRandomBursts(BURST_COUNT), [cycleId])
 
   useEffect(() => {
-    const waitMs = latestBurstEndMs(bursts) + POST_CYCLE_PAUSE_MS
+    const waitMs = latestBurstEndMs(bursts)
     const id = window.setTimeout(() => setCycleId((c) => c + 1), waitMs)
     return () => window.clearTimeout(id)
   }, [bursts])

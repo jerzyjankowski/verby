@@ -10,6 +10,8 @@
   --color-primary-darkest: #101019;
   --color-text-error: #dd9393;
   --color-functional-error: #932626;
+  --color-text-warning: #FFDE7C;
+  --color-functional-warning: #8a7228;
   --color-text-success: #9dd8a6;
   --color-functional-success: #2f7a3e;
 }
@@ -31,8 +33,14 @@
   --primary-darkest: #101019;
   --text-error: #dd9393;
   --functional-error: #932626;
+  --text-warning: #e6c86a;
+  --functional-warning: #8a7228;
   --text-success: #9dd8a6;
   --functional-success: #2f7a3e;
+
+  /* Fireworks (.verby-firework-particle); overridden per particle in LessonCelebration */
+  --fw-deg: 0deg;
+  --fw-travel: 4rem;
 }
 
 @layer base {

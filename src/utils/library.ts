@@ -1,6 +1,10 @@
+import { LIBRARY_SAVE_NAME_MAX_LEN, LIBRARY_SAVE_NOTES_MAX_LEN } from '../consts/librarySave.ts'
 import type { Language, LessonSave, Library } from '../types/config.ts'
 import { getLibraryStorageKey } from '../consts/localStorage.ts'
 import { normalizeLessonConfigLevels } from './localStorage.ts'
+
+/** Case- and accent-insensitive order for sorting library entries by `name`. */
+const libraryLessonNameOrder = new Intl.Collator(undefined, { sensitivity: 'base' })
 
 function isLessonSaveLike(value: unknown): value is LessonSave {
   return (
@@ -43,15 +47,26 @@ function saveLibraryToLocalStorage(library: Library): void {
   localStorage.setItem(key, JSON.stringify(library))
 }
 
-/** Appends a copy of the lesson with `name` and optional `description` to the language library. */
-export function saveNewLibraryEntry(
+/** Non-empty trimmed `name` values from library lessons (order preserved). */
+export function getLibraryLessonNames(language: Language): string[] {
+  const library = loadLibraryFromLocalStorage(language)
+  return library.lessons
+    .map((l) => l.name?.trim())
+    .filter((n): n is string => n != null && n.length > 0)
+}
+
+/**
+ * Saves a copy of the lesson with `name` and optional `description` to the language library.
+ * Replaces any existing entry with the same name (trimmed, case-insensitive) and sorts by name.
+ */
+export function saveLibraryEntry(
   language: Language,
   lesson: LessonSave,
   name: string,
   description: string,
 ): void {
-  const trimmedName = name.trim()
-  const trimmedDesc = description.trim()
+  const trimmedName = name.trim().slice(0, LIBRARY_SAVE_NAME_MAX_LEN)
+  const trimmedDesc = description.trim().slice(0, LIBRARY_SAVE_NOTES_MAX_LEN)
 
   const entry: LessonSave = {
     ...lesson,
@@ -64,8 +79,15 @@ export function saveNewLibraryEntry(
   }
 
   const library = loadLibraryFromLocalStorage(language)
+  const newNameKey = trimmedName.toLowerCase()
+  const withoutSameName = library.lessons.filter(
+    (l) => (l.name?.trim() ?? '').toLowerCase() !== newNameKey,
+  )
+  const lessons = [...withoutSameName, entry].sort((a, b) =>
+    libraryLessonNameOrder.compare(a.name?.trim() ?? '', b.name?.trim() ?? ''),
+  )
   saveLibraryToLocalStorage({
     language,
-    lessons: [...library.lessons, entry],
+    lessons,
   })
 }

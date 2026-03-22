@@ -27,7 +27,7 @@ function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: Conju
 
   return (
     <div
-      className="bg-primary-darker border border-primary-darkest rounded-xl flex min-h-20 items-center justify-center p-4"
+      className="bg-primary-darker border border-primary-darkest rounded-xl flex min-h-20 items-center justify-center p-4 cursor-pointer"
       onClick={onClick}
     >
       {isHidden ? (
@@ -60,7 +60,7 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
         className="bg-primary-darker border border-primary-darkest rounded-xl flex flex-1 cursor-pointer items-center justify-center p-4"
         onClick={() => openFullTextSheet(round.question, 'Question')}
       >
-        <ClampText className={`w-full overflow-hidden text-center ${questionTextSize} leading-normal font-semibold`} text={round.question} lines={round.isConjugation || round.isForms ? 2 : 3}/>
+        <ClampText className={`w-full overflow-hidden text-center ${questionTextSize} leading-normal font-semibold`} text={round.question} lines={round.isConjugation ? 2 : 3}/>
       </div>
 
       <div

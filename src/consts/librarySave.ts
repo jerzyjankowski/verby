@@ -1,0 +1,2 @@
+export const LIBRARY_SAVE_NAME_MAX_LEN = 32
+export const LIBRARY_SAVE_NOTES_MAX_LEN = 256
