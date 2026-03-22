@@ -25,18 +25,17 @@ import {
   removeMatchingVerbsFromLibraryEntry,
   saveLibraryEntry,
 } from '../../utils/library.ts'
-import { saveLessonAsCurrentToLocalStorage } from '../../utils/localStorage.ts'
 import { MAIN_PAGE_URL } from "../../consts/urls.ts";
 
 type LessonSettingsProps = {
   lesson: LessonSave
   verbs: Verb[]
-  lastVerbsIds: number[]
   languageConfig: LanguageConfig
   currentVerb?: Verb
   onVerbLearntChange: (verbId: number, learnt: boolean) => void
   onReverseDirection: () => void
   onRestartQuestions: () => void
+  onQuickSave: () => void
 }
 
 type SettingsView =
@@ -54,12 +53,12 @@ type SettingsView =
 export default function LessonSettings({
   lesson,
   verbs,
-  lastVerbsIds,
   languageConfig,
   currentVerb,
   onVerbLearntChange,
   onReverseDirection,
   onRestartQuestions,
+  onQuickSave,
 }: LessonSettingsProps) {
   const navigate = useNavigate()
   const toast = useToast()
@@ -120,7 +119,7 @@ export default function LessonSettings({
   }
 
   const handleQuickSave = () => {
-    saveLessonAsCurrentToLocalStorage(lesson)
+    onQuickSave()
     toast.success(ui.toast.quickSaveTitle, ui.toast.quickSaveBody)
   }
 
@@ -129,6 +128,7 @@ export default function LessonSettings({
     0,
   )
   const verbsLabel = ui.lesson.verbsLabel(notLearntCount, lesson.verbs.length)
+  const historyLength = lesson.history?.length ?? 0
 
   const editVerbLabel = currentVerb
     ? ui.lesson.editVerbWithName(currentVerb.verb)
@@ -141,7 +141,7 @@ export default function LessonSettings({
     ...LIBRARY_VIEW_TITLES,
     verbs: verbsLabel,
     'verb-edit': ui.lesson.editVerb,
-    history: ui.lesson.historyLabel(lastVerbsIds.length),
+    history: ui.lesson.historyLabel(historyLength),
     'close-questions': ui.lesson.closeQuestionsTitle,
     'reverse-direction': ui.lesson.reverseDirectionTitle,
     'restart-questions': ui.lesson.restartQuestionsTitle,
@@ -190,7 +190,7 @@ export default function LessonSettings({
               disabled={!currentVerb}
             />
             <Button
-              label={ui.lesson.historyLabel(lastVerbsIds.length)}
+              label={ui.lesson.historyLabel(historyLength)}
               onClick={() => pushView('history')}
             />
             <Button label={ui.lesson.reverseDirection} onClick={() => pushView('reverse-direction')} />
@@ -295,7 +295,6 @@ export default function LessonSettings({
           <HistoryView
             lesson={lesson}
             verbs={verbs}
-            lastVerbsIds={lastVerbsIds}
             onVerbSelect={(verbId) => openVerbEdit(verbs.find((v) => v.id === verbId))}
           />
         ) : null}

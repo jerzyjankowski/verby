@@ -74,6 +74,9 @@ export type LessonSave = {
   verbs: number[]
   learnt: boolean[]
   repeated: number[]
+  history: number[]
+  /** Current flashcard verb when saved to local storage (quick save); not stored in library. */
+  lastVerbId?: number
   name?: string
   description?: string
 }

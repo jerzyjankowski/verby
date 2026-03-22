@@ -1,6 +1,5 @@
-- deploy
-
-- remember save position in verbs lists when going into single verb and going back
+TODO:
+- remember scroll position in verbs lists when going into single verb and going back
 - UI settings from main menu and from lesson settings
 - main menu split continue and start (top) from the settings (bottom)
 - conjugation display as one column and limit to only few (not all yo, tu, el, ...), (for example because of smaller screens) - UI settings
@@ -8,7 +7,7 @@
 - [TECH] linter, prettier, TS check on commit
 - remove subtypes, Main and A0 can be removed from A1? (or maybe subtype will be useful later?)
 
-WILD IDEAS:
+DEEP BACKLOG:
 - dates when save/markedVerb was created/edited
 - versioned app, add version to saves, because maybe in time they will be broken, so it can help debug, maybe some way to remove single saves, port saves to newer version?
 - PL version of this app

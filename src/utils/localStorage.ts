@@ -40,7 +40,15 @@ export function loadCurrentLessonFromLocalStorage(): LessonSave | null {
     if (!raw) return null
     const parsed = JSON.parse(raw) as LessonSave
     if (parsed?.config) {
-      return { ...parsed, config: normalizeLessonConfigLevels(parsed.config) }
+      const lv = parsed.lastVerbId
+      const lastVerbId =
+        typeof lv === 'number' && Number.isFinite(lv) ? lv : undefined
+      return {
+        ...parsed,
+        config: normalizeLessonConfigLevels(parsed.config),
+        history: Array.isArray(parsed.history) ? parsed.history : [],
+        lastVerbId,
+      }
     }
     return parsed
   } catch {

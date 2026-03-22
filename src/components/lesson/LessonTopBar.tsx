@@ -8,13 +8,13 @@ import { ui } from '../../locales'
 type LessonTopBarProps = {
   lesson: LessonSave
   verbs: Verb[]
-  lastVerbsIds: number[]
   languageConfig: LanguageConfig
   currentVerb?: Verb
   isCompleted?: boolean
   onVerbLearntChange: (verbId: number, learnt: boolean) => void
   onReverseDirection: () => void
   onRestartQuestions: () => void
+  onQuickSave: () => void
 }
 
 function formatElapsed(totalSeconds: number): string {
@@ -26,13 +26,13 @@ function formatElapsed(totalSeconds: number): string {
 export default function LessonTopBar({
   lesson,
   verbs,
-  lastVerbsIds,
   languageConfig,
   currentVerb,
   isCompleted = false,
   onVerbLearntChange,
   onReverseDirection,
   onRestartQuestions,
+  onQuickSave,
 }: LessonTopBarProps) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [sameSpeedTurnProgress, setSameSpeedTurnProgress] = useState<{ turn: number; total: number }>({ turn: 1, total: lesson.verbs.length})
@@ -105,12 +105,12 @@ export default function LessonTopBar({
         <LessonSettings
           lesson={lesson}
           verbs={verbs}
-          lastVerbsIds={lastVerbsIds}
           languageConfig={languageConfig}
           currentVerb={currentVerb}
           onVerbLearntChange={onVerbLearntChange}
           onReverseDirection={onReverseDirection}
           onRestartQuestions={onRestartQuestions}
+          onQuickSave={onQuickSave}
         />
       </div>
     </header>

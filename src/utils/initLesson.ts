@@ -88,6 +88,7 @@ export async function initLesson(
       verbs,
       learnt,
       repeated,
+      history: [],
     },
     availableVerbCountBeforeBatch,
   }

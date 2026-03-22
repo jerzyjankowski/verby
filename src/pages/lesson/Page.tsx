@@ -15,7 +15,6 @@ export default function Page() {
     lesson,
     verbs,
     round,
-    lastVerbsIds,
     isCompleted,
     updateRoundHiddenFlags,
     canContinue,
@@ -25,6 +24,7 @@ export default function Page() {
     reverseDirection,
     restartQuestions,
     resetProgressAndSave,
+    quickSave,
   } = useLesson()
 
   const handleComplete = () => {
@@ -47,13 +47,13 @@ export default function Page() {
       <LessonTopBar
         lesson={lesson}
         verbs={verbs}
-        lastVerbsIds={lastVerbsIds}
         languageConfig={languageConfig}
         currentVerb={currentVerb}
         isCompleted={isCompleted}
         onVerbLearntChange={setVerbLearnt}
         onReverseDirection={reverseDirection}
         onRestartQuestions={restartQuestions}
+        onQuickSave={quickSave}
       />
       <div
         className={`mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col gap-3 p-4 ${isCompleted ? 'overflow-hidden' : 'overflow-auto'}`}

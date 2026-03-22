@@ -37,9 +37,12 @@ function loadLibraryFromLocalStorage(language: Language): Library {
     const lessons: LessonSave[] = []
     for (const item of lessonsRaw) {
       if (!isLessonSaveLike(item)) continue
+      const l = item as LessonSave
+      const { lastVerbId: _omit, ...rest } = l
       lessons.push({
-        ...item,
-        config: normalizeLessonConfigLevels(item.config),
+        ...rest,
+        config: normalizeLessonConfigLevels(l.config),
+        history: Array.isArray(l.history) ? l.history : [],
       })
     }
 
@@ -174,6 +177,7 @@ export function buildLessonSaveForLibrary(
     verbs: indices.map((i) => verbs[i]!),
     learnt: indices.map(() => false),
     repeated: indices.map(() => 0),
+    history: [],
   }
 }
 
@@ -197,8 +201,9 @@ export function saveLibraryEntry(
   const trimmedName = name.trim().slice(0, LIBRARY_SAVE_NAME_MAX_LEN)
   const trimmedDesc = description.trim().slice(0, LIBRARY_SAVE_NOTES_MAX_LEN)
 
+  const { lastVerbId: _omitResumeVerb, ...lessonForLibrary } = lesson
   const entry: LessonSave = {
-    ...lesson,
+    ...lessonForLibrary,
     name: trimmedName,
   }
   if (trimmedDesc) {
@@ -273,6 +278,7 @@ export async function mergeIntoLibraryEntry(
     verbs: mergedVerbs,
     learnt: mergedVerbs.map(() => false),
     repeated: mergedVerbs.map(() => 0),
+    history: [],
   }
 
   const entry = saveLibraryEntry(language, body, nameForSave, description)
@@ -325,6 +331,7 @@ export async function removeMatchingVerbsFromLibraryEntry(
     verbs: mergedVerbs,
     learnt: mergedVerbs.map(() => false),
     repeated: mergedVerbs.map(() => 0),
+    history: [],
   }
 
   const entry = saveLibraryEntry(language, body, nameForSave, description)
@@ -374,11 +381,13 @@ export function updateLibraryEntryMetadata(
   if (duplicate) return { ok: false, reason: 'duplicate_name' }
 
   const lesson = library.lessons[idx]!
+  const { lastVerbId: _omit, ...lessonRest } = lesson
   const entry: LessonSave = {
-    config: { ...lesson.config },
-    verbs: lesson.verbs.slice(),
-    learnt: lesson.learnt.slice(),
-    repeated: lesson.repeated.slice(),
+    config: { ...lessonRest.config },
+    verbs: lessonRest.verbs.slice(),
+    learnt: lessonRest.learnt.slice(),
+    repeated: lessonRest.repeated.slice(),
+    history: lessonRest.history?.slice() ?? [],
     name: trimmedNewName,
   }
   if (trimmedDesc) {
