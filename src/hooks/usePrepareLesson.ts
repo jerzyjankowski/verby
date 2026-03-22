@@ -163,10 +163,10 @@ export function usePrepareLesson() {
   const toggleLevel = (v: string) => {
     const level = v as Level
     setForm((prev) => {
-      const cur = prev.level ?? []
+      const cur = prev.levels ?? []
       const has = cur.includes(level)
       const next = has ? cur.filter((x) => x !== level) : [...cur, level]
-      return { ...prev, level: next }
+      return { ...prev, levels: next }
     })
   }
   const setDirection = (v: string) =>
@@ -229,19 +229,19 @@ export function usePrepareLesson() {
   }, [form.language])
 
   useEffect(() => {
-    if (form.level === undefined || form.level.length === 0) return
+    if (form.levels === undefined || form.levels.length === 0) return
     if (levelsResolvedForLanguage !== form.language) return
-    const valid = form.level.filter((l) => availableLevelOptions.includes(l))
-    if (valid.length === form.level.length) return
+    const valid = form.levels.filter((l) => availableLevelOptions.includes(l))
+    if (valid.length === form.levels.length) return
     const fallback =
       valid.length > 0 ? valid : [availableLevelOptions[0] ?? 'MAIN']
-    setForm((prev) => ({ ...prev, level: fallback }))
-  }, [availableLevelOptions, form.level, form.language, levelsResolvedForLanguage])
+    setForm((prev) => ({ ...prev, levels: fallback }))
+  }, [availableLevelOptions, form.levels, form.language, levelsResolvedForLanguage])
 
   const allSelected = Boolean(
     form.language &&
-      form.level &&
-      form.level.length > 0 &&
+      form.levels &&
+      form.levels.length > 0 &&
       form.direction &&
       form.speed &&
       form.batch !== undefined &&
@@ -257,7 +257,7 @@ export function usePrepareLesson() {
     const extraForLesson: Extra = hasExtraChoices ? form.extra! : 'no'
     return {
       language: form.language!,
-      level: form.level!,
+      levels: form.levels!,
       direction: form.direction!,
       extra: extraForLesson,
       regularity: extraForLesson === 'no' ? 'all' : form.regularity!,
@@ -269,7 +269,7 @@ export function usePrepareLesson() {
     allSelected,
     hasExtraChoices,
     form.language,
-    form.level,
+    form.levels,
     form.direction,
     form.extra,
     form.regularity,

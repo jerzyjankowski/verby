@@ -215,7 +215,7 @@ export default function Page() {
         <div className="verby-card grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4 p-4 bg-primary-darkest">
           <LevelConfigRow
             label="levels:"
-            selected={form.level}
+            selected={form.levels}
             options={options.level}
             labelMap={labels.level}
             onToggle={toggleLevel}

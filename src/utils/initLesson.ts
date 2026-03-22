@@ -18,7 +18,7 @@ export function filterVerbsMatchingLessonConfig(
   languageConfig: LanguageConfig,
 ): Verb[] {
   const filteredVerbsByLevels = verbsData.filter((verb) =>
-    config.level.some((level) => verbMatchesLessonLevel(verb, level)),
+    config.levels.some((level) => verbMatchesLessonLevel(verb, level)),
   )
   return filteredVerbsByLevels.filter((verb) => {
     const irregular = languageConfig.isIrregular(

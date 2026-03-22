@@ -97,7 +97,7 @@ export type LanguageConfig = {
 export type LessonConfig = {
   language: Language
   regularity: Regularity
-  level: Level[]
+  levels: Level[]
   direction: Direction
   extra: Extra
   conjugation?: number
@@ -108,7 +108,7 @@ export type LessonConfig = {
 export type LessonConfigFormState = {
   language?: Language
   regularity?: Regularity
-  level?: Level[]
+  levels?: Level[]
   direction?: Direction
   extra?: Extra
   conjugation?: number

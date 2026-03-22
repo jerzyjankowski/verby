@@ -23,7 +23,7 @@ export default function ConfigSummary({ lesson, languageConfig }: ConfigSummaryP
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
     {
       label: 'levels',
-      value: lesson.config.level.map((l) => LEVEL_LABELS[l]).join(', '),
+      value: lesson.config.levels.map((l) => LEVEL_LABELS[l]).join(', '),
     },
     { label: 'direction', value: DIRECTION_LABELS[lesson.config.direction] },
     { label: 'extra', value: EXTRA_LABELS[lesson.config.extra] },

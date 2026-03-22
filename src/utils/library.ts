@@ -238,10 +238,10 @@ export async function mergeIntoLibraryEntry(
     addedVerbCount += 1
   }
 
-  const level = await getLessonLevelsForVerbIds(language, mergedVerbs)
+  const levels = await getLessonLevelsForVerbIds(language, mergedVerbs)
 
   const body: LessonSave = {
-    config: { ...config, level },
+    config: { ...config, levels },
     verbs: mergedVerbs,
     learnt: mergedVerbs.map(() => false),
     repeated: mergedVerbs.map(() => 0),
@@ -290,10 +290,10 @@ export async function removeMatchingVerbsFromLibraryEntry(
   const removedVerbCount = ev.length - keepIndices.length
   const mergedVerbs = keepIndices.map((i) => ev[i]!)
 
-  const level = await getLessonLevelsForVerbIds(language, mergedVerbs)
+  const levels = await getLessonLevelsForVerbIds(language, mergedVerbs)
 
   const body: LessonSave = {
-    config: { ...config, level },
+    config: { ...config, levels },
     verbs: mergedVerbs,
     learnt: mergedVerbs.map(() => false),
     repeated: mergedVerbs.map(() => 0),

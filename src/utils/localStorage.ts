@@ -12,22 +12,22 @@ function isLevel(value: string): value is Level {
 
 /** Migrate legacy `level` string (or invalid data) to `Level[]`. */
 export function normalizeLessonConfigLevels(config: LessonSave['config']): LessonSave['config'] {
-  const raw = config.level as unknown
+  const raw = config.levels as unknown
   if (Array.isArray(raw)) {
     const seen = new Set<Level>()
-    const level: Level[] = []
+    const levels: Level[] = []
     for (const x of raw) {
       if (typeof x === 'string' && isLevel(x) && !seen.has(x)) {
         seen.add(x)
-        level.push(x)
+        levels.push(x)
       }
     }
-    return level.length > 0 ? { ...config, level } : { ...config, level: ['MAIN'] }
+    return levels.length > 0 ? { ...config, levels } : { ...config, levels: ['MAIN'] }
   }
   if (typeof raw === 'string' && isLevel(raw)) {
-    return { ...config, level: [raw] }
+    return { ...config, levels: [raw] }
   }
-  return { ...config, level: ['MAIN'] }
+  return { ...config, levels: ['MAIN'] }
 }
 
 export function saveLessonAsCurrentToLocalStorage(lesson: LessonSave): void {
