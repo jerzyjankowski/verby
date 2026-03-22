@@ -283,7 +283,7 @@ export const isIrregular = (verb: Verb, extra: Extra, id?: number): boolean => {
 
 export const spanishConfig: LanguageConfig = {
   code: 'ESP',
-  verbsFilePath: '/data/esp/verbs.json',
+  verbsFilePath: `${import.meta.env.BASE_URL}data/esp/verbs.json`,
   languageLabels,
   getForms,
   conjugate,
