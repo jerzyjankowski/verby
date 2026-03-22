@@ -29,3 +29,8 @@ export type Verb = {
   irregularForms: string[]
   irregularConjugations: Conjugation[]
 }
+
+export type MarkedVerb = {
+  id: number
+  description: string
+}
