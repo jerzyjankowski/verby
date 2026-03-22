@@ -1,6 +1,6 @@
+- mark question and save it in local storage
 - topbar: time, turn (in same speed mode), cards left
 - modal when turn changes (in same speed mode)
-- mark question and save it in local storage
 - reverse direction mid lesson
 - restart questions
 - zakończenie lekcji kiedy słówka się skończyły

@@ -4,7 +4,7 @@ import { useToast } from '../components/shared/Toast.tsx'
 import type {LanguageConfig, LessonConfig, LessonSave} from '../types/config.ts'
 import type {ConjugationFlags, Verb} from '../types/verb.ts'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
-import { loadLessonFromLocalStorage } from '../utils/localStorage.ts'
+import { loadLessonFromLocalStorage, saveLessonToLocalStorage } from '../utils/localStorage.ts'
 import type {Round, UpdateRoundHiddenFlags} from "../types/lesson.ts";
 import {getLanguageConfig} from "../configs/languageConfigMap.ts";
 
@@ -178,5 +178,31 @@ export function useLesson(name?: string) {
 
   }, [round, lesson, setLesson, setLastVerbsIds, lastVerbsIds, randomizeVerb, setRound, languageConfig])
 
-  return { lesson, verbs, round, lastVerbsIds, updateRoundHiddenFlags, canContinue, onContinue, languageConfig }
+  const setVerbLearnt = useCallback((verbId: number, learntValue: boolean) => {
+    setLesson((current) => {
+      if (!current) return current
+
+      const verbIndex = current.verbs.findIndex((id) => id === verbId)
+      if (verbIndex < 0) return current
+
+      const learnt = [...current.learnt]
+      learnt[verbIndex] = learntValue
+      const nextLesson: LessonSave = { ...current, learnt }
+
+      saveLessonToLocalStorage(nextLesson)
+      return nextLesson
+    })
+  }, [])
+
+  return {
+    lesson,
+    verbs,
+    round,
+    lastVerbsIds,
+    updateRoundHiddenFlags,
+    canContinue,
+    onContinue,
+    languageConfig,
+    setVerbLearnt,
+  }
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { ArrowLeftIcon, GearIcon } from '@radix-ui/react-icons'
 import { useNavigate } from 'react-router-dom'
 
@@ -9,6 +9,7 @@ import ConfigSummary from './settings/ConfigSummary.tsx'
 import Confirmation from './settings/Confirmation.tsx'
 import HistoryView from './settings/HistoryView.tsx'
 import VerbsView from './settings/VerbsView.tsx'
+import VerbView from './settings/VerbView.tsx'
 import type {LanguageConfig, LessonSave} from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
 
@@ -17,41 +18,71 @@ type LessonSettingsProps = {
   verbs: Verb[]
   lastVerbsIds: number[]
   languageConfig: LanguageConfig
+  currentVerb?: Verb
+  onVerbLearntChange: (verbId: number, learnt: boolean) => void
 }
 
-type SettingsView = 'menu' | 'config-summary' | 'verbs' | 'history' | 'close-questions'
+type SettingsView = 'menu' | 'config-summary' | 'verbs' | 'verb-edit' | 'history' | 'close-questions'
 
-export default function LessonSettings({ lesson, verbs, lastVerbsIds, languageConfig }: LessonSettingsProps) {
+export default function LessonSettings({
+  lesson,
+  verbs,
+  lastVerbsIds,
+  languageConfig,
+  currentVerb,
+  onVerbLearntChange,
+}: LessonSettingsProps) {
   const navigate = useNavigate()
   const toast = useToast()
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [view, setView] = useState<SettingsView>('menu')
+  const [viewStack, setViewStack] = useState<SettingsView[]>(['menu'])
+  const [verbBeingEdited, setVerbBeingEdited] = useState<Verb | null>(null)
+
+  const currentView = viewStack[viewStack.length - 1]!
+
+  const pushView = useCallback((next: SettingsView) => {
+    setViewStack((stack) => [...stack, next])
+  }, [])
+
+  const handleBack = useCallback(() => {
+    if (currentView === 'verb-edit') {
+      setVerbBeingEdited(null)
+    }
+    setViewStack((stack) => (stack.length <= 1 ? stack : stack.slice(0, -1)))
+  }, [currentView])
+
+  const openVerbEdit = (verb: Verb | undefined) => {
+    if (!verb) return
+    setVerbBeingEdited(verb)
+    pushView('verb-edit')
+  }
+
+  const resetNavigation = () => {
+    setViewStack(['menu'])
+    setVerbBeingEdited(null)
+  }
 
   const handleOpenChange = (open: boolean) => {
     setSettingsOpen(open)
     if (!open) {
-      setView('menu')
+      resetNavigation()
     }
   }
 
   const handleOpenSettings = () => {
-    setView('menu')
+    resetNavigation()
     setSettingsOpen(true)
   }
 
-  const handleBackToMenu = () => {
-    setView('menu')
-  }
-
-  const handleReverseQuestions = () => {
-    toast.success('Reverse Questions', 'Reversing questions is ready.')
+  const handleReverseDirection = () => {
+    toast.success('Reverse Direction', 'Reversed direction mocked.')
     setSettingsOpen(false)
-    setView('menu')
+    resetNavigation()
   }
 
   const handleConfirmCloseQuestions = () => {
     setSettingsOpen(false)
-    setView('menu')
+    resetNavigation()
     navigate('/lesson')
   }
 
@@ -61,13 +92,23 @@ export default function LessonSettings({ lesson, verbs, lastVerbsIds, languageCo
   )
   const verbsLabel = `Verbs (${notLearntCount}/${lesson.verbs.length})`
 
+  const editVerbLabel = currentVerb
+    ? `Edit verb (${currentVerb.verb})`
+    : 'Edit verb'
+
   const titleByView: Record<SettingsView, string> = {
     menu: 'Lesson settings',
     'config-summary': 'Config Summary',
     verbs: verbsLabel,
+    'verb-edit': 'Edit verb',
     history: `History (${lastVerbsIds.length})`,
     'close-questions': 'Close Questions',
   }
+
+  const sheetTitle =
+    currentView === 'verb-edit' && verbBeingEdited
+      ? `Edit verb (${verbBeingEdited.verb})`
+      : titleByView[currentView]
 
   return (
     <>
@@ -85,39 +126,65 @@ export default function LessonSettings({ lesson, verbs, lastVerbsIds, languageCo
       <Sheet
         open={settingsOpen}
         onOpenChange={handleOpenChange}
-        title={titleByView[view]}
+        title={sheetTitle}
         headerAction={
-          view === 'menu'
+          currentView === 'menu'
             ? undefined
             : {
-                ariaLabel: 'Back to settings',
+                ariaLabel: 'Back to previous screen',
                 title: 'Back',
-                onAction: handleBackToMenu,
+                onAction: handleBack,
                 icon: <ArrowLeftIcon className="size-4" />,
               }
         }
       >
-        {view === 'menu' ? (
+        {currentView === 'menu' ? (
           <div className="flex flex-col gap-2">
-            <Button label="Config Summary" onClick={() => setView('config-summary')} />
-            <Button label={verbsLabel} onClick={() => setView('verbs')} />
-            <Button label={`History (${lastVerbsIds.length})`} onClick={() => setView('history')} />
-            <Button label="Reverse Questions" onClick={handleReverseQuestions} />
-            <Button label="Close Questions" onClick={() => setView('close-questions')} />
+            <Button label="Config Summary" onClick={() => pushView('config-summary')} />
+            <Button label={verbsLabel} onClick={() => pushView('verbs')} />
+            <Button
+              label={editVerbLabel}
+              onClick={() => openVerbEdit(currentVerb)}
+              disabled={!currentVerb}
+            />
+            <Button label={`History (${lastVerbsIds.length})`} onClick={() => pushView('history')} />
+            <Button label="Reverse Direction" onClick={handleReverseDirection} />
+            <Button label="Close Questions" onClick={() => pushView('close-questions')} />
           </div>
         ) : null}
 
-        {view === 'config-summary' ? <ConfigSummary lesson={lesson} languageConfig={languageConfig} /> : null}
+        {currentView === 'config-summary' ? <ConfigSummary lesson={lesson} languageConfig={languageConfig} /> : null}
 
-        {view === 'verbs' ? <VerbsView lesson={lesson} verbs={verbs} /> : null}
+        {currentView === 'verbs' ? (
+          <VerbsView
+            lesson={lesson}
+            verbs={verbs}
+            onVerbSelect={(verbId) => openVerbEdit(verbs.find((v) => v.id === verbId))}
+          />
+        ) : null}
 
-        {view === 'history' ? <HistoryView lesson={lesson} verbs={verbs} lastVerbsIds={lastVerbsIds} /> : null}
+        {currentView === 'verb-edit' && verbBeingEdited ? (
+          <VerbView
+            lesson={lesson}
+            verb={verbBeingEdited}
+            onLearntChange={(learnt) => onVerbLearntChange(verbBeingEdited.id, learnt)}
+          />
+        ) : null}
 
-        {view === 'close-questions' ? (
+        {currentView === 'history' ? (
+          <HistoryView
+            lesson={lesson}
+            verbs={verbs}
+            lastVerbsIds={lastVerbsIds}
+            onVerbSelect={(verbId) => openVerbEdit(verbs.find((v) => v.id === verbId))}
+          />
+        ) : null}
+
+        {currentView === 'close-questions' ? (
           <Confirmation
             message="Are you sure you want to close this lesson and return to the lessons page?"
             onConfirm={handleConfirmCloseQuestions}
-            onCancel={handleBackToMenu}
+            onCancel={handleBack}
           />
         ) : null}
       </Sheet>

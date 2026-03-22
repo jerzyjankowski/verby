@@ -8,9 +8,10 @@ type HistoryViewProps = {
   lesson: LessonSave
   verbs: Verb[]
   lastVerbsIds: number[]
+  onVerbSelect?: (verbId: number) => void
 }
 
-export default function HistoryView({ lesson, verbs, lastVerbsIds }: HistoryViewProps) {
+export default function HistoryView({ lesson, verbs, lastVerbsIds, onVerbSelect }: HistoryViewProps) {
   const historyRows = useMemo(() => {
     const verbsById = new Map(verbs.map((verb) => [verb.id, verb]))
     const learntById = new Map(lesson.verbs.map((id, index) => [id, lesson.learnt[index] ?? false]))
@@ -46,7 +47,11 @@ export default function HistoryView({ lesson, verbs, lastVerbsIds }: HistoryView
           {historyRows.map((row, index) => (
             <tr
               key={`${row.order}-${row.id}-${index}`}
-              className="border-b border-primary-darkest last:border-b-0"
+              className={[
+                'border-b border-primary-darkest last:border-b-0',
+                onVerbSelect ? 'cursor-pointer transition-colors hover:bg-primary' : '',
+              ].join(' ')}
+              onClick={onVerbSelect ? () => onVerbSelect(row.id) : undefined}
             >
               <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">{row.order}</td>
               <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">{row.id}</td>
