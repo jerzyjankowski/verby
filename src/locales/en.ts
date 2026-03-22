@@ -130,6 +130,13 @@ export const ui = {
     newLesson: 'New Lesson',
     markedVerbs: 'Marked Verbs',
     library: 'Library',
+    settings: 'Settings',
+  },
+  settings: {
+    title: 'Settings',
+    applicationLanguage: 'Application language',
+    langEnglish: 'English',
+    langPolish: 'Polish',
   },
   prepare: {
     selectLanguagePlaceholder: 'Select Language...',
@@ -184,7 +191,7 @@ export const ui = {
     editVerbWithName: (name: string) => `Edit verb (${name})`,
     historyLabel: (n: number) => `History (${n})`,
     confirmCloseLesson:
-      'Are you sure you want to close this lesson and return to the lessons page?',
+      'Are you sure you want to close this lesson?',
     confirmReverseDirection:
       'Switch which language is shown as the question and which as the answer? The current card will update.',
     confirmRestart:

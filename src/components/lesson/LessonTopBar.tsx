@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import LessonSettings from './LessonSettings.tsx'
 import type { LanguageConfig, LessonSave } from '../../types/config.ts'
 import type { Verb } from '../../types/verb.ts'
-import { ui } from '../../locales/index.ts'
+import { ui } from '../../locales'
 
 type LessonTopBarProps = {
   lesson: LessonSave
@@ -81,7 +81,8 @@ export default function LessonTopBar({
         </span>
         {lesson.config.speed === 'same' && sameSpeedTurnProgress ? (
           <span className="text-primary-text/90">
-            Turn <span className="tabular-nums font-medium">{maxRepeated}</span>
+            {ui.lesson.topBarTurn}{' '}
+            <span className="tabular-nums font-medium">{maxRepeated}</span>
             {!isCompleted && (
               <span className="tabular-nums text-primary-text/80">
                 {' '}
