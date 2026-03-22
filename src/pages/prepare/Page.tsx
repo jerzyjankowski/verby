@@ -154,8 +154,14 @@ export default function Page() {
 
   const sheetHasVerbs = pendingStart ? pendingStart.lesson.verbs.length > 0 : false
 
+  const languageItems: DropdownItem[] = options.language.map((opt) => ({
+    key: String(opt),
+    label: labels.language[String(opt)],
+    onSelect: () => setLanguage(String(opt)),
+  }))
+
   return (
-    <div className="min-h-screen bg-primary text-primary-text p-4">
+    <div className="min-h-screen bg-primary text-primary-text pb-28">
       {pendingStart ? (
         <Sheet
           open={startConfirmOpen}
@@ -177,23 +183,38 @@ export default function Page() {
             onConfirm={confirmStartLesson}
             onCancel={cancelStartLesson}
             confirmLabel="Start lesson"
-            cancelLabel="Back"
+            cancelLabel="Cancel"
             confirmDisabled={!sheetHasVerbs}
           />
         </Sheet>
       ) : null}
 
-      <div className="mx-auto max-w-2xl">
-        <div className="verby-card grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4 p-4 bg-primary-darkest">
-          <ConfigRow
-            label="language:"
-            value={form.language}
-            options={options.language}
-            labelMap={labels.language}
-            onSelect={setLanguage}
+      <header className="border-b border-primary-darkest bg-primary-darkest">
+        <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
+          <Button
+            onClick={() => navigate(MAIN_PAGE_URL)}
+            label="Back"
+            icon={<ArrowLeftIcon className="size-4" />}
+            fullWidth={false}
           />
+          <div className="min-w-0 flex-1">
+            <Dropdown
+              selectedLabel={
+                form.language !== undefined ? labels.language[String(form.language)] : undefined
+              }
+              placeholder="Select Language..."
+              triggerVariant="onDark"
+              items={languageItems}
+              align="start"
+            />
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-2xl p-4">
+        <div className="verby-card grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4 p-4 bg-primary-darkest">
           <LevelConfigRow
-            label="level:"
+            label="levels:"
             selected={form.level}
             options={options.level}
             labelMap={labels.level}
@@ -247,16 +268,17 @@ export default function Page() {
             labelMap={labels.batch}
             onSelect={setBatch}
           />
+        </div>
+      </div>
 
-          <div className="col-span-2 mt-4 flex items-center gap-3">
-            <Button onClick={() => navigate(MAIN_PAGE_URL)} label="Back" icon={<ArrowLeftIcon className="size-4" />} fullWidth={false} />
-            <Button
-              onClick={handleStart}
-              disabled={startDisabled}
-              label={isStarting ? 'Starting...' : 'Start lesson'}
-              main
-            />
-          </div>
+      <div className="fixed bottom-0 left-0 right-0 z-[var(--z-sticky)] border-t border-primary-darkest bg-primary-darkest p-4">
+        <div className="mx-auto max-w-2xl">
+          <Button
+            onClick={handleStart}
+            disabled={startDisabled}
+            label={isStarting ? 'Starting...' : 'Start lesson'}
+            main
+          />
         </div>
       </div>
     </div>
