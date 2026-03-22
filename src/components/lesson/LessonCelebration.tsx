@@ -17,8 +17,8 @@ type Burst = {
 const BURST_COUNT = 32
 /** Time between the start of one burst and the start of the next. */
 const STAGGER_MS = 500
-/** Full firework sequence restarts on this interval (32 × 500ms = 16s of staggered starts). */
-const CYCLE_MS = 16_000
+/** Wait after the last burst’s animation ends before starting the next cycle. */
+const POST_CYCLE_PAUSE_MS = 900
 
 const TONES: FwTone[] = ['primary', 'error', 'success']
 
@@ -57,6 +57,15 @@ function createRandomBursts(n: number): Burst[] {
     })
   }
   return bursts
+}
+
+function latestBurstEndMs(bursts: Burst[]): number {
+  let max = 0
+  for (const b of bursts) {
+    const end = b.delayMs + b.durationMs
+    if (end > max) max = end
+  }
+  return max
 }
 
 function FireworksBackground({ bursts }: { bursts: Burst[] }) {
@@ -113,9 +122,10 @@ export default function LessonCelebration() {
   const bursts = useMemo(() => createRandomBursts(BURST_COUNT), [cycleId])
 
   useEffect(() => {
-    const id = window.setInterval(() => setCycleId((c) => c + 1), CYCLE_MS)
-    return () => window.clearInterval(id)
-  }, [])
+    const waitMs = latestBurstEndMs(bursts) + POST_CYCLE_PAUSE_MS
+    const id = window.setTimeout(() => setCycleId((c) => c + 1), waitMs)
+    return () => window.clearTimeout(id)
+  }, [bursts])
 
   return (
     <div className="relative flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden px-4 py-6 text-center">

@@ -19,6 +19,7 @@ import {
   saveMarkedVerbsToLocalStorage,
 } from '../../utils/localStorage.ts'
 import { loadVerbsFromJson } from '../../utils/jsonVerbsLoader.ts'
+import {MAIN_PAGE_URL} from "../../consts/urls.ts";
 
 type Row = {
   id: number
@@ -133,7 +134,7 @@ export default function Page() {
       <header className="border-b border-primary-darker bg-primary-darkest">
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
           <Button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(MAIN_PAGE_URL)}
             label="Back"
             icon={<ArrowLeftIcon className="size-4" />}
             fullWidth={false}

@@ -24,6 +24,7 @@ import {
 import { getLanguageConfig } from '../../configs/languageConfigMap.ts'
 import { initLesson } from '../../utils/initLesson.ts'
 import { loadLessonFromLocalStorage } from '../../utils/localStorage.ts'
+import {LESSON_PAGE_URL, MAIN_PAGE_URL} from "../../consts/urls.ts";
 
 function ConfigRow({
   label,
@@ -125,7 +126,7 @@ export default function Page() {
     try {
       setIsStarting(true)
       await initLesson(lessonConfig, languageConfig)
-      navigate('/lesson/_new')
+      navigate(LESSON_PAGE_URL)
     } finally {
       setIsStarting(false)
     }
@@ -197,7 +198,7 @@ export default function Page() {
           />
 
           <div className="col-span-2 mt-4 flex items-center gap-3">
-            <Button onClick={() => navigate('/')} label="Back" icon={<ArrowLeftIcon className="size-4" />} fullWidth={false} />
+            <Button onClick={() => navigate(MAIN_PAGE_URL)} label="Back" icon={<ArrowLeftIcon className="size-4" />} fullWidth={false} />
             <Button onClick={handleStart} disabled={!allSelected || isStarting} label={isStarting ? 'Starting...' : 'Start'} main />
           </div>
         </div>

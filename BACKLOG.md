@@ -1,4 +1,3 @@
-- zakończenie lekcji kiedy słówka się skończyły
 - /init and /lesson, no need for lesson name in url since always will start with _new? (rename _new)
 - urls in file
 - if there are no verbs don't let start a lesson - show modal, if there are less verbs than batch selected ask to continue, or maybe always show the modal to tell how much would be if batch ALL

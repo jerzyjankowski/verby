@@ -7,6 +7,7 @@ import LessonTopBar from '../../../components/lesson/LessonTopBar.tsx'
 import Button from '../../../components/shared/Button.tsx'
 import { useLesson } from '../../../hooks/useLesson.ts'
 import { removeLessonFromLocalStorage } from '../../../utils/localStorage.ts'
+import {MAIN_PAGE_URL} from "../../../consts/urls.ts";
 
 export default function Page() {
   const { name } = useParams<{ name: string }>()
@@ -30,7 +31,7 @@ export default function Page() {
     if (lesson?.name) {
       removeLessonFromLocalStorage(lesson.name)
     }
-    navigate('/')
+    navigate(MAIN_PAGE_URL)
   }
 
   const currentVerb = round ? verbs.find((v) => v.id === round.verbId) : undefined
@@ -53,6 +54,7 @@ export default function Page() {
         lastVerbsIds={lastVerbsIds}
         languageConfig={languageConfig}
         currentVerb={currentVerb}
+        isCompleted={isCompleted}
         onVerbLearntChange={setVerbLearnt}
         onReverseDirection={reverseDirection}
         onRestartQuestions={restartQuestions}

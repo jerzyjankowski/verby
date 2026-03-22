@@ -10,6 +10,7 @@ type LessonTopBarProps = {
   lastVerbsIds: number[]
   languageConfig: LanguageConfig
   currentVerb?: Verb
+  isCompleted?: boolean
   onVerbLearntChange: (verbId: number, learnt: boolean) => void
   onReverseDirection: () => void
   onRestartQuestions: () => void
@@ -27,6 +28,7 @@ export default function LessonTopBar({
   lastVerbsIds,
   languageConfig,
   currentVerb,
+  isCompleted = false,
   onVerbLearntChange,
   onReverseDirection,
   onRestartQuestions,
@@ -35,11 +37,12 @@ export default function LessonTopBar({
   const [sameSpeedTurnProgress, setSameSpeedTurnProgress] = useState<{ turn: number; total: number }>({ turn: 1, total: lesson.verbs.length})
 
   useEffect(() => {
+    if (isCompleted) return
     const id = window.setInterval(() => {
       setElapsedSeconds((n) => n + 1)
     }, 1000)
     return () => window.clearInterval(id)
-  }, [])
+  }, [isCompleted])
 
   const notLearntCount = useMemo(
     () =>
@@ -78,19 +81,23 @@ export default function LessonTopBar({
         {lesson.config.speed === 'same' && sameSpeedTurnProgress ? (
           <span className="text-primary-text/90">
             Turn <span className="tabular-nums font-medium">{maxRepeated}</span>
-            <span className="tabular-nums text-primary-text/80">
-              {' '}
-              ({verbsRepeatedMaxRepeatedTimes}/{sameSpeedTurnProgress.total})
-            </span>
+            {!isCompleted && (
+              <span className="tabular-nums text-primary-text/80">
+                {' '}
+                ({verbsRepeatedMaxRepeatedTimes}/{sameSpeedTurnProgress.total})
+              </span>
+            )}
           </span>
         ) : null}
-        <span className="text-primary-text/90">
-          Left{' '}
-          <span className="tabular-nums font-medium">{notLearntCount}</span>
-          <span className="tabular-nums text-primary-text/80">
-            {' '}/ {lesson.verbs.length}
+        {!isCompleted && (
+          <span className="text-primary-text/90">
+            Left{' '}
+            <span className="tabular-nums font-medium">{notLearntCount}</span>
+            <span className="tabular-nums text-primary-text/80">
+              {' '}/ {lesson.verbs.length}
+            </span>
           </span>
-        </span>
+        )}
       </div>
       <div className="shrink-0">
         <LessonSettings

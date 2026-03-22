@@ -13,6 +13,7 @@ import VerbView from './settings/VerbView.tsx'
 import type {LanguageConfig, LessonSave} from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
 import { saveLessonToLocalStorage } from '../../utils/localStorage.ts'
+import {PREPARE_LESSON_PAGE_URL} from "../../consts/urls.ts";
 
 type LessonSettingsProps = {
   lesson: LessonSave
@@ -100,7 +101,7 @@ export default function LessonSettings({
   const handleConfirmCloseQuestions = () => {
     setSettingsOpen(false)
     resetNavigation()
-    navigate('/lesson')
+    navigate(PREPARE_LESSON_PAGE_URL)
   }
 
   const handleQuickSave = () => {
