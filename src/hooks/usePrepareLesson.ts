@@ -3,20 +3,23 @@ import { useNavigate } from 'react-router-dom'
 
 import { getLanguageConfig } from '../configs/languageConfigMap.ts'
 import {
-  BATCH_OPTIONS,
   BATCH_LABELS,
-  DIRECTION_OPTIONS,
   DIRECTION_LABELS,
-  EXTRA_OPTIONS,
   EXTRA_LABELS,
-  LANGUAGE_OPTIONS,
   LANGUAGE_LABELS,
-  LEVEL_OPTIONS,
   LEVEL_LABELS,
-  REGULARITY_OPTIONS,
   REGULARITY_LABELS,
-  SPEED_OPTIONS,
   SPEED_LABELS,
+  ui,
+} from '../locales/index.ts'
+import {
+  BATCH_OPTIONS,
+  DIRECTION_OPTIONS,
+  EXTRA_OPTIONS,
+  LANGUAGE_OPTIONS,
+  LEVEL_OPTIONS,
+  REGULARITY_OPTIONS,
+  SPEED_OPTIONS,
   type Extra,
   type LanguageConfig,
   type LessonConfig,
@@ -337,7 +340,7 @@ export function usePrepareLesson() {
 
   const sourceLabelMap = useMemo((): Record<string, string> => {
     const map: Record<string, string> = {
-      [PREPARE_SOURCE_ALL_KEY]: 'All verbs',
+      [PREPARE_SOURCE_ALL_KEY]: ui.prepare.sourceAllVerbs,
     }
     for (const n of sourceOptions) {
       if (n !== PREPARE_SOURCE_ALL_KEY) map[n] = n

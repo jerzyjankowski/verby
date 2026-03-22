@@ -3,6 +3,7 @@ import * as Switch from '@radix-ui/react-switch'
 
 import type { Round } from '../../../types/lesson.ts'
 import type { Conjugation } from '../../../types/verb.ts'
+import { ui } from '../../../locales/index.ts'
 import Sheet from '../../shared/Sheet.tsx'
 
 type AnswerDetailsProps = {
@@ -44,17 +45,17 @@ export default function AnswerDetails({
         >
           <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-primary transition-transform data-[state=checked]:translate-x-[22px]" />
         </Switch.Root>
-        Show all
+        {ui.answerDetails.showAll}
       </label>
 
       {showAll ? (
         <div className="space-y-2">
           <div className="space-y-0.5">
-            <p className="text-sm italic opacity-80">Question</p>
+            <p className="text-sm italic opacity-80">{ui.answerDetails.question}</p>
             <p className="text-2xl font-semibold whitespace-pre-wrap break-words">{round.question}</p>
           </div>
           <div className="space-y-0.5">
-            <p className="text-sm italic opacity-80">Answer</p>
+            <p className="text-sm italic opacity-80">{ui.answerDetails.answer}</p>
             <p className="text-2xl font-semibold whitespace-pre-wrap break-words">{round.answer}</p>
           </div>
           {round.isConjugation ? (
@@ -88,7 +89,9 @@ export default function AnswerDetails({
           {round.isForms
             ? round.formsAnswers.map((formAnswer, index) => (
                 <div key={`form-${index}`} className="space-y-0.5">
-                  <p className="text-sm italic opacity-80">{formsLabels[index] ?? `Form ${index + 1}`}</p>
+                  <p className="text-sm italic opacity-80">
+                    {formsLabels[index] ?? ui.cards.formFallback(index)}
+                  </p>
                   <p className="text-2xl font-semibold whitespace-pre-wrap break-words">{formAnswer}</p>
                 </div>
               ))

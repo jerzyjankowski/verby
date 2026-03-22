@@ -1,5 +1,6 @@
 import Button from '../../shared/Button.tsx'
-import { LIBRARY_MENU_ITEMS, type LibrarySettingsView } from '../../../types/library.ts'
+import { LIBRARY_MENU_ITEMS } from '../../../locales/index.ts'
+import type { LibrarySettingsView } from '../../../types/library.ts'
 
 type LibraryManagementProps = {
   onOpenLibraryView: (view: LibrarySettingsView) => void

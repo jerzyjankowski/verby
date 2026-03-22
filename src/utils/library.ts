@@ -1,10 +1,10 @@
 import {
   LIBRARY_SAVE_NAME_MAX_LEN,
   LIBRARY_SAVE_NOTES_MAX_LEN,
-  LIBRARY_VERB_SCOPE_LABELS,
   LIBRARY_VERB_SCOPE_OPTIONS,
   type LibraryVerbScope,
 } from '../consts/librarySave.ts'
+import { LIBRARY_VERB_SCOPE_LABELS } from '../locales/index.ts'
 import type { Language, LessonSave, Library } from '../types/config.ts'
 import { getLibraryStorageKey } from '../consts/localStorage.ts'
 import { normalizeLessonConfigLevels } from './localStorage.ts'

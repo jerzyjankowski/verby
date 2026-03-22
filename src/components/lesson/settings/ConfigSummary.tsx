@@ -1,11 +1,14 @@
 import {
-  LANGUAGE_LABELS,
-  REGULARITY_LABELS,
-  LEVEL_LABELS,
+  BATCH_LABELS,
   DIRECTION_LABELS,
+  EXTRA_LABELS,
+  LANGUAGE_LABELS,
+  LEVEL_LABELS,
+  REGULARITY_LABELS,
   SPEED_LABELS,
-  BATCH_LABELS, EXTRA_LABELS, type LanguageConfig,
-} from '../../../types/config.ts'
+  ui,
+} from '../../../locales/index.ts'
+import type { LanguageConfig } from '../../../types/config.ts'
 import type { LessonSave } from '../../../types/config.ts'
 
 type ConfigSummaryProps = {
@@ -20,25 +23,27 @@ export default function ConfigSummary({ lesson, languageConfig }: ConfigSummaryP
       : undefined
 
   const sourceName =
-    lesson.name != null && lesson.name.trim() !== '' ? lesson.name.trim() : 'All verbs'
+    lesson.name != null && lesson.name.trim() !== ''
+      ? lesson.name.trim()
+      : ui.configSummary.allVerbsSource
 
   const rows: Array<{ label: string; value: string | number }> = [
-    { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
-    { label: 'source', value: sourceName },
+    { label: ui.configSummary.rowLanguage, value: LANGUAGE_LABELS[lesson.config.language] },
+    { label: ui.configSummary.rowSource, value: sourceName },
     {
-      label: 'levels',
+      label: ui.configSummary.rowLevels,
       value: lesson.config.levels.map((l) => LEVEL_LABELS[l]).join(', '),
     },
-    { label: 'direction', value: DIRECTION_LABELS[lesson.config.direction] },
-    { label: 'extra', value: EXTRA_LABELS[lesson.config.extra] },
-    { label: 'regularity', value: REGULARITY_LABELS[lesson.config.regularity] },
-    { label: 'speed', value: SPEED_LABELS[lesson.config.speed] },
-    { label: 'batch', value: BATCH_LABELS[lesson.config.batch] },
+    { label: ui.configSummary.rowDirection, value: DIRECTION_LABELS[lesson.config.direction] },
+    { label: ui.configSummary.rowExtra, value: EXTRA_LABELS[lesson.config.extra] },
+    { label: ui.configSummary.rowRegularity, value: REGULARITY_LABELS[lesson.config.regularity] },
+    { label: ui.configSummary.rowSpeed, value: SPEED_LABELS[lesson.config.speed] },
+    { label: ui.configSummary.rowBatch, value: BATCH_LABELS[lesson.config.batch] },
   ]
 
   if (lesson.config.conjugation !== undefined) {
     rows.splice(3, 0, {
-      label: 'direction conjugation',
+      label: ui.configSummary.rowDirectionConjugation,
       value: conjugationLabel ?? lesson.config.conjugation,
     })
   }

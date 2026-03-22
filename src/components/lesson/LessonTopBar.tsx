@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import LessonSettings from './LessonSettings.tsx'
 import type { LanguageConfig, LessonSave } from '../../types/config.ts'
 import type { Verb } from '../../types/verb.ts'
+import { ui } from '../../locales/index.ts'
 
 type LessonTopBarProps = {
   lesson: LessonSave
@@ -75,7 +76,7 @@ export default function LessonTopBar({
   return (
     <header className="flex w-full shrink-0 items-center justify-between gap-3 border-b border-primary-darker bg-primary-darkest px-4 py-2 text-sm text-primary-text">
       <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="tabular-nums" aria-label="Time since lesson started">
+        <span className="tabular-nums" aria-label={ui.aria.timeSinceLessonStarted}>
           {formatElapsed(elapsedSeconds)}
         </span>
         {lesson.config.speed === 'same' && sameSpeedTurnProgress ? (
@@ -91,7 +92,7 @@ export default function LessonTopBar({
         ) : null}
         {!isCompleted && (
           <span className="text-primary-text/90">
-            Left{' '}
+            {ui.lesson.topBarLeft}{' '}
             <span className="tabular-nums font-medium">{notLearntCount}</span>
             <span className="tabular-nums text-primary-text/80">
               {' '}/ {lesson.verbs.length}

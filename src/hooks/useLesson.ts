@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react'
 
 import { useToast } from '../components/shared/Toast.tsx'
+import { ui } from '../locales/index.ts'
 import type {LanguageConfig, LessonConfig, LessonSave} from '../types/config.ts'
 import type {ConjugationFlags, Verb} from '../types/verb.ts'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
@@ -74,7 +75,7 @@ export function useLesson() {
     setLesson(lesson)
 
     if (lesson === null) {
-      toast.error('Failed to load current lesson from local storage')
+      toast.error(ui.toast.loadLessonFailed)
       return
     }
     const newLanguageConfig = getLanguageConfig(lesson.config.language)
@@ -97,7 +98,7 @@ export function useLesson() {
       })
       .catch((err) => {
         const errorMessage = err instanceof Error ? err.message : String(err)
-        toast.error('Failed to load verbs', errorMessage)
+        toast.error(ui.toast.loadVerbsFailedTitle, errorMessage)
         setVerbs([])
       })
   }, [toast])

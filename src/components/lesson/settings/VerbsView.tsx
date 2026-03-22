@@ -3,6 +3,7 @@ import { CheckIcon, Cross2Icon } from '@radix-ui/react-icons'
 
 import type { LessonSave } from '../../../types/config.ts'
 import type { Verb } from '../../../types/verb.ts'
+import { ui } from '../../../locales/index.ts'
 
 type VerbsViewProps = {
   lesson: LessonSave
@@ -47,9 +48,9 @@ export default function VerbsView({ lesson, verbs, onVerbSelect }: VerbsViewProp
               <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">×{row.repeated}</td>
               <td className="w-px whitespace-nowrap px-3 py-2">
                 {row.learnt ? (
-                  <CheckIcon aria-label="Learnt" className="size-4" />
+                  <CheckIcon aria-label={ui.aria.learnt} className="size-4" />
                 ) : (
-                  <Cross2Icon aria-label="Not learnt" className="size-4" />
+                  <Cross2Icon aria-label={ui.aria.notLearnt} className="size-4" />
                 )}
               </td>
             </tr>

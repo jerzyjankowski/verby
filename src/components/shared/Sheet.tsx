@@ -3,6 +3,7 @@ import { Cross1Icon } from '@radix-ui/react-icons'
 import type { ReactNode } from 'react'
 
 import Button from './Button.tsx'
+import { ui } from '../../locales/index.ts'
 
 type SheetHeaderAction = {
   ariaLabel: string
@@ -47,8 +48,8 @@ export default function Sheet({
             ) : (
               <Dialog.Close asChild>
                 <Button
-                  aria-label="Close sheet"
-                  title="Close"
+                  aria-label={ui.aria.closeSheet}
+                  title={ui.common.close}
                   icon={<Cross1Icon className="size-4" />}
                   fullWidth={false}
                   rounded

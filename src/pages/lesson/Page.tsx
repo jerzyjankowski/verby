@@ -6,7 +6,8 @@ import LessonCelebration from '../../components/lesson/LessonCelebration.tsx'
 import LessonTopBar from '../../components/lesson/LessonTopBar.tsx'
 import Button from '../../components/shared/Button.tsx'
 import { useLesson } from '../../hooks/useLesson.ts'
-import {MAIN_PAGE_URL} from "../../consts/urls.ts";
+import { MAIN_PAGE_URL } from '../../consts/urls.ts'
+import { ui } from '../../locales/index.ts'
 
 export default function Page() {
   const navigate = useNavigate()
@@ -36,9 +37,7 @@ export default function Page() {
   if (!lesson) {
     return (
       <div className="min-h-screen bg-primary text-primary-text p-4">
-        <p className="text-primary-text">
-          No config found for lesson. Start from the init page.
-        </p>
+        <p className="text-primary-text">{ui.lesson.noConfig}</p>
       </div>
     )
   }
@@ -64,7 +63,7 @@ export default function Page() {
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
               <LessonCelebration />
             </div>
-            <Button label="Close" main onClick={handleComplete} />
+            <Button label={ui.common.close} main onClick={handleComplete} />
           </>
         ) : (
           <>

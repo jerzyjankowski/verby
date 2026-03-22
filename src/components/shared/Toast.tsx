@@ -2,6 +2,8 @@ import { Cross1Icon } from '@radix-ui/react-icons'
 import * as ToastPrimitive from '@radix-ui/react-toast'
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 
+import { ui } from '../../locales/index.ts'
+
 type ToastVariant = 'error' | 'success'
 
 type ToastMessage = {
@@ -77,7 +79,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 ) : null}
               </div>
               <ToastPrimitive.Close
-                aria-label="Dismiss notification"
+                aria-label={ui.aria.dismissNotification}
                 className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-primary-darkest text-primary-text transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-text/25"
               >
                 <Cross1Icon className="size-3.5" />

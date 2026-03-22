@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import Button from '../../shared/Button.tsx'
+import { ui } from '../../../locales/index.ts'
 
 type ConfirmationProps = {
   message: ReactNode
@@ -15,8 +16,8 @@ export default function Confirmation({
   message,
   onConfirm,
   onCancel,
-  confirmLabel = 'Yes',
-  cancelLabel = 'No',
+  confirmLabel = ui.common.yes,
+  cancelLabel = ui.common.no,
   confirmDisabled = false,
 }: ConfirmationProps) {
   return (

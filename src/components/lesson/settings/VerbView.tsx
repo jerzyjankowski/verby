@@ -5,6 +5,7 @@ import Button from '../../shared/Button.tsx'
 import TextField from '../../shared/TextField.tsx'
 import type { LessonSave } from '../../../types/config.ts'
 import type { MarkedVerb, Verb } from '../../../types/verb.ts'
+import { ui } from '../../../locales/index.ts'
 import {
   loadMarkedVerbFromLocalStorage,
   removeMarkedVerbFromLocalStorage,
@@ -80,7 +81,7 @@ export default function VerbView({ lesson, verb, onLearntChange }: VerbViewProps
     <div className="flex flex-col gap-4 overflow-hidden rounded-xl border border-primary-darkest bg-primary-darker p-4">
       <p className="text-lg font-semibold">{verb.verb}</p>
       <label className="flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
-        <span>Learnt in this lesson</span>
+        <span>{ui.verbView.learntInLesson}</span>
         <Switch.Root
           checked={isLearnt}
           onCheckedChange={onLearntChange}
@@ -91,7 +92,7 @@ export default function VerbView({ lesson, verb, onLearntChange }: VerbViewProps
       </label>
 
       <label className="flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
-        <span>Marked</span>
+        <span>{ui.verbView.marked}</span>
         <Switch.Root
           checked={markedOn}
           onCheckedChange={setMarkedOn}
@@ -107,13 +108,18 @@ export default function VerbView({ lesson, verb, onLearntChange }: VerbViewProps
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Reason for marking..."
+            placeholder={ui.verbView.reasonPlaceholder}
           />
         </label>
       ) : null}
 
       {dirty ? (
-        <Button label="Save" onClick={handleSaveMarked} main disabled={markedOn && !description || description.trim().length === 0} />
+        <Button
+          label={ui.common.save}
+          onClick={handleSaveMarked}
+          main
+          disabled={(markedOn && !description) || description.trim().length === 0}
+        />
       ) : null}
     </div>
   )

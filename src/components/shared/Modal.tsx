@@ -1,4 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
+
+import { ui } from '../../locales/index.ts'
 import type { ReactNode } from 'react'
 
 export type ModalProps = {
@@ -22,10 +24,10 @@ export default function Modal({ open, onOpenChange, title, children, footer }: M
             <Dialog.Close asChild>
               <button
                 type="button"
-                aria-label="Close modal"
+                aria-label={ui.aria.closeModal}
                 className="rounded-md border border-primary-darkest/60 bg-primary px-2 py-1 text-sm hover:bg-primary-darker/30"
               >
-                Close
+                {ui.common.close}
               </button>
             </Dialog.Close>
           </div>

@@ -12,7 +12,8 @@ import AddToOtherSaveView from './settings/library/AddToOtherSaveView.tsx'
 import CreateNewSaveView from './settings/library/CreateNewSaveView.tsx'
 import RemoveFromSaveView from './settings/library/RemoveFromSaveView.tsx'
 import ReplaceOtherSaveView from './settings/library/ReplaceOtherSaveView.tsx'
-import { LIBRARY_VIEW_TITLES, type LibrarySettingsView } from '../../types/library.ts'
+import { LIBRARY_VIEW_TITLES, ui } from '../../locales/index.ts'
+import type { LibrarySettingsView } from '../../types/library.ts'
 import LibraryManagement from './settings/LibraryManagement.tsx'
 import VerbsView from './settings/VerbsView.tsx'
 import VerbView from './settings/VerbView.tsx'
@@ -120,42 +121,42 @@ export default function LessonSettings({
 
   const handleQuickSave = () => {
     saveLessonAsCurrentToLocalStorage(lesson)
-    toast.success('Quick save', 'Current lesson quick saved')
+    toast.success(ui.toast.quickSaveTitle, ui.toast.quickSaveBody)
   }
 
   const notLearntCount = lesson.verbs.reduce(
     (count, _id, index) => count + (lesson.learnt[index] ? 0 : 1),
     0,
   )
-  const verbsLabel = `Verbs (${notLearntCount}/${lesson.verbs.length})`
+  const verbsLabel = ui.lesson.verbsLabel(notLearntCount, lesson.verbs.length)
 
   const editVerbLabel = currentVerb
-    ? `Edit verb (${currentVerb.verb})`
-    : 'Edit verb'
+    ? ui.lesson.editVerbWithName(currentVerb.verb)
+    : ui.lesson.editVerb
 
   const titleByView: Record<SettingsView, string> = {
-    menu: 'Lesson settings',
-    'config-summary': 'Config Summary',
-    'library-management': 'Manage library',
+    menu: ui.lesson.settingsMenuTitle,
+    'config-summary': ui.lesson.configSummaryTitle,
+    'library-management': ui.lesson.manageLibrary,
     ...LIBRARY_VIEW_TITLES,
     verbs: verbsLabel,
-    'verb-edit': 'Edit verb',
-    history: `History (${lastVerbsIds.length})`,
-    'close-questions': 'Close Questions',
-    'reverse-direction': 'Reverse Direction',
-    'restart-questions': 'Restart Questions',
+    'verb-edit': ui.lesson.editVerb,
+    history: ui.lesson.historyLabel(lastVerbsIds.length),
+    'close-questions': ui.lesson.closeQuestionsTitle,
+    'reverse-direction': ui.lesson.reverseDirectionTitle,
+    'restart-questions': ui.lesson.restartQuestionsTitle,
   }
 
   const sheetTitle =
     currentView === 'verb-edit' && verbBeingEdited
-      ? `Edit verb (${verbBeingEdited.verb})`
+      ? ui.lesson.editVerbWithName(verbBeingEdited.verb)
       : titleByView[currentView]
 
   return (
     <>
       <Button
-        aria-label="Open lesson settings"
-        title="Settings"
+        aria-label={ui.aria.openLessonSettings}
+        title={ui.aria.settings}
         onClick={handleOpenSettings}
         icon={<GearIcon className="size-5" />}
         fullWidth={false}
@@ -170,8 +171,8 @@ export default function LessonSettings({
           currentView === 'menu'
             ? undefined
             : {
-                ariaLabel: 'Back to previous screen',
-                title: 'Back',
+                ariaLabel: ui.aria.backToPreviousScreen,
+                title: ui.common.back,
                 onAction: handleBack,
                 icon: <ArrowLeftIcon className="size-4" />,
               }
@@ -179,19 +180,22 @@ export default function LessonSettings({
       >
         {currentView === 'menu' ? (
           <div className="flex flex-col gap-2">
-            <Button label="Config Summary" onClick={() => pushView('config-summary')} />
-            <Button label="Manage Library" onClick={() => pushView('library-management')} />
-            <Button label="Quick save" onClick={handleQuickSave} />
+            <Button label={ui.lesson.configSummaryButton} onClick={() => pushView('config-summary')} />
+            <Button label={ui.lesson.manageLibraryButton} onClick={() => pushView('library-management')} />
+            <Button label={ui.lesson.quickSave} onClick={handleQuickSave} />
             <Button label={verbsLabel} onClick={() => pushView('verbs')} />
             <Button
               label={editVerbLabel}
               onClick={() => openVerbEdit(currentVerb)}
               disabled={!currentVerb}
             />
-            <Button label={`History (${lastVerbsIds.length})`} onClick={() => pushView('history')} />
-            <Button label="Reverse Direction" onClick={() => pushView('reverse-direction')} />
-            <Button label="Restart questions" onClick={() => pushView('restart-questions')} />
-            <Button label="Close Questions" onClick={() => pushView('close-questions')} />
+            <Button
+              label={ui.lesson.historyLabel(lastVerbsIds.length)}
+              onClick={() => pushView('history')}
+            />
+            <Button label={ui.lesson.reverseDirection} onClick={() => pushView('reverse-direction')} />
+            <Button label={ui.lesson.restartQuestions} onClick={() => pushView('restart-questions')} />
+            <Button label={ui.lesson.closeQuestions} onClick={() => pushView('close-questions')} />
           </div>
         ) : null}
 
@@ -209,7 +213,7 @@ export default function LessonSettings({
               const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs)
               if (!snapshot) return
               saveLibraryEntry(lesson.config.language, snapshot, name, notes)
-              toast.success('Library', 'Lesson saved to your library.')
+              toast.success(ui.toast.libraryTitle, ui.toast.lessonSavedToLibrary)
               handleBack()
             }}
           />
@@ -225,15 +229,10 @@ export default function LessonSettings({
                 const result = await mergeIntoLibraryEntry(lesson.config.language, name, snapshot, notes)
                 if (!result) return
                 const { addedVerbCount } = result
-                toast.success(
-                  'Library',
-                  addedVerbCount > 0
-                    ? `Added ${addedVerbCount} verb${addedVerbCount === 1 ? '' : 's'} to the library save.`
-                    : 'Library save updated.',
-                )
+                toast.success(ui.toast.libraryTitle, ui.lesson.toastAddedVerbs(addedVerbCount))
                 handleBack()
               } catch {
-                toast.error('Library', 'Could not load verbs to merge levels into the library save.')
+                toast.error(ui.toast.libraryTitle, ui.toast.mergeVerbsError)
               }
             }}
           />
@@ -246,7 +245,7 @@ export default function LessonSettings({
               const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs)
               if (!snapshot) return
               saveLibraryEntry(lesson.config.language, snapshot, name, notes)
-              toast.success('Library', 'Library save replaced with the current lesson.')
+              toast.success(ui.toast.libraryTitle, ui.toast.librarySaveReplaced)
               handleBack()
             }}
           />
@@ -267,15 +266,10 @@ export default function LessonSettings({
                 )
                 if (!result) return
                 const { removedVerbCount } = result
-                toast.success(
-                  'Library',
-                  removedVerbCount > 0
-                    ? `Removed ${removedVerbCount} verb${removedVerbCount === 1 ? '' : 's'} from the library save.`
-                    : 'Library save updated.',
-                )
+                toast.success(ui.toast.libraryTitle, ui.lesson.toastRemovedVerbs(removedVerbCount))
                 handleBack()
               } catch {
-                toast.error('Library', 'Could not load verbs to update levels in the library save.')
+                toast.error(ui.toast.libraryTitle, ui.toast.updateLevelsError)
               }
             }}
           />
@@ -308,7 +302,7 @@ export default function LessonSettings({
 
         {currentView === 'close-questions' ? (
           <Confirmation
-            message="Are you sure you want to close this lesson and return to the lessons page?"
+            message={ui.lesson.confirmCloseLesson}
             onConfirm={handleConfirmCloseQuestions}
             onCancel={handleBack}
           />
@@ -316,7 +310,7 @@ export default function LessonSettings({
 
         {currentView === 'reverse-direction' ? (
           <Confirmation
-            message="Switch which language is shown as the question and which as the answer? The current card will update."
+            message={ui.lesson.confirmReverseDirection}
             onConfirm={handleConfirmReverseDirection}
             onCancel={handleBack}
           />
@@ -324,7 +318,7 @@ export default function LessonSettings({
 
         {currentView === 'restart-questions' ? (
           <Confirmation
-            message="Reset learnt progress, repeat counts, and history for this session? Nothing will be written to storage."
+            message={ui.lesson.confirmRestart}
             onConfirm={handleConfirmRestartQuestions}
             onCancel={handleBack}
           />

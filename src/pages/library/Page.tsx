@@ -16,11 +16,8 @@ import {
   LIBRARY_SAVE_NOTES_MAX_LEN,
 } from '../../consts/librarySave.ts'
 import { MAIN_PAGE_URL } from '../../consts/urls.ts'
-import {
-  type Language,
-  LANGUAGE_LABELS,
-  LANGUAGE_OPTIONS,
-} from '../../types/config.ts'
+import { LANGUAGE_LABELS, ui } from '../../locales/index.ts'
+import { type Language, LANGUAGE_OPTIONS } from '../../types/config.ts'
 import type { Verb } from '../../types/verb.ts'
 import { loadVerbsForLanguage } from '../../utils/jsonVerbsLoader.ts'
 import { loadCurrentLessonFromLocalStorage } from '../../utils/localStorage.ts'
@@ -101,7 +98,7 @@ export default function Page() {
       .catch((e: unknown) => {
         if (!cancelled) {
           setVerbsById(new Map())
-          setVerbsError(e instanceof Error ? e.message : 'Failed to load verbs.')
+          setVerbsError(e instanceof Error ? e.message : ui.libraryPage.loadVerbsFailed)
         }
       })
       .finally(() => {
@@ -181,11 +178,11 @@ export default function Page() {
     )
     if (!result.ok) {
       if (result.reason === 'duplicate_name') {
-        toast.error('Library', 'That name is already used by another save.')
+        toast.error(ui.toast.libraryTitle, ui.toast.duplicateSaveName)
       } else if (result.reason === 'not_found') {
-        toast.error('Library', 'This save was removed or renamed elsewhere.')
+        toast.error(ui.toast.libraryTitle, ui.toast.saveRemovedElsewhere)
       } else {
-        toast.error('Library', 'Enter a name for this save.')
+        toast.error(ui.toast.libraryTitle, ui.toast.enterSaveName)
       }
       return
     }
@@ -197,21 +194,21 @@ export default function Page() {
     setDraftDesc(result.entry.description ?? '')
     setSelectedName(nextName)
     setListVersion((v) => v + 1)
-    toast.success('Library', 'Save updated.')
+    toast.success(ui.toast.libraryTitle, ui.toast.saveUpdated)
   }
 
   const handleConfirmDelete = () => {
     if (!language || !selectedName) return
     const ok = deleteLibraryEntry(language, selectedName)
     if (!ok) {
-      toast.error('Library', 'Could not delete this save.')
+      toast.error(ui.toast.libraryTitle, ui.toast.deleteSaveFailed)
       return
     }
     setDetailOpen(false)
     setSelectedName(null)
     setDetailView('edit')
     setListVersion((v) => v + 1)
-    toast.success('Library', 'Save deleted.')
+    toast.success(ui.toast.libraryTitle, ui.toast.saveDeleted)
   }
 
   const nameDescribedBy = [
@@ -227,14 +224,14 @@ export default function Page() {
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
           <Button
             onClick={() => navigate(MAIN_PAGE_URL)}
-            label="Back"
+            label={ui.common.back}
             icon={<ArrowLeftIcon className="size-4" />}
             fullWidth={false}
           />
           <div className="min-w-0 flex-1">
             <Dropdown
               selectedLabel={language !== undefined ? LANGUAGE_LABELS[language] : undefined}
-              placeholder="Select Language..."
+              placeholder={ui.prepare.selectLanguagePlaceholder}
               triggerVariant="onDark"
               items={languageItems}
               align="start"
@@ -246,9 +243,9 @@ export default function Page() {
       <div className="mx-auto max-w-2xl p-4">
         <div className="verby-card bg-primary-darkest flex flex-col gap-4 p-4">
           {language === undefined ? (
-            <p className="text-sm text-primary-text/80">No language selected yet.</p>
+            <p className="text-sm text-primary-text/80">{ui.libraryPage.noLanguageYet}</p>
           ) : entryNames.length === 0 ? (
-            <p className="text-sm text-primary-text/80">No library saves for this language.</p>
+            <p className="text-sm text-primary-text/80">{ui.libraryPage.noSavesForLanguage}</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {entryNames.map((name) => (
@@ -268,13 +265,17 @@ export default function Page() {
       <Sheet
         open={detailOpen}
         onOpenChange={handleDetailOpenChange}
-        title={detailView === 'confirmDelete' ? 'Delete library save?' : 'Library save'}
+        title={
+          detailView === 'confirmDelete'
+            ? ui.libraryPage.sheetTitleDelete
+            : ui.libraryPage.sheetTitleEdit
+        }
         footer={
           detailView === 'edit' ? (
             <div className="flex flex-col gap-2">
-              <Button label="Save" main onClick={handleSave} disabled={!canSave} />
+              <Button label={ui.common.save} main onClick={handleSave} disabled={!canSave} />
               <Button
-                label="Delete"
+                label={ui.common.delete}
                 onClick={() => setDetailView('confirmDelete')}
                 disabled={!language || !selectedName}
               />
@@ -286,18 +287,19 @@ export default function Page() {
           <Confirmation
             message={
               <p>
-                Delete <strong>{selectedName ?? ''}</strong> from your library? This cannot be undone.
+                {ui.libraryPage.deleteConfirmBeforeName}{' '}
+                <strong>{selectedName ?? ''}</strong> {ui.libraryPage.deleteConfirmAfterName}
               </p>
             }
             onConfirm={handleConfirmDelete}
             onCancel={() => setDetailView('edit')}
-            confirmLabel="Delete"
-            cancelLabel="Cancel"
+            confirmLabel={ui.common.delete}
+            cancelLabel={ui.common.cancel}
           />
         ) : (
           <div className="flex flex-col gap-4 text-sm text-primary-text">
             <label className="flex flex-col gap-1.5 font-medium">
-              <span>Name</span>
+              <span>{ui.libraryPage.nameLabel}</span>
               <TextField
                 type="text"
                 value={draftName}
@@ -309,33 +311,33 @@ export default function Page() {
               />
               {nameDuplicate ? (
                 <span id="library-edit-name-dup" className="font-normal text-text-error">
-                  That name is already used by another save.
+                  {ui.libraryPage.nameDuplicateInline}
                 </span>
               ) : null}
               {nameAtLimit ? (
                 <span id="library-edit-name-limit" className="font-normal text-primary-text/70">
-                  Max {LIBRARY_SAVE_NAME_MAX_LEN} characters.
+                  {ui.libraryPage.maxChars(LIBRARY_SAVE_NAME_MAX_LEN)}
                 </span>
               ) : null}
             </label>
             <label className="flex flex-col gap-1.5 font-medium">
-              <span>Description</span>
+              <span>{ui.libraryPage.descriptionLabel}</span>
               <TextArea
                 value={draftDesc}
                 maxLength={LIBRARY_SAVE_NOTES_MAX_LEN}
                 onChange={(e) => setDraftDesc(e.target.value)}
                 rows={4}
-                placeholder="Optional notes…"
+                placeholder={ui.libraryPage.optionalNotesPlaceholder}
               />
               {notesAtLimit ? (
                 <span className="font-normal text-primary-text/70">
-                  Max {LIBRARY_SAVE_NOTES_MAX_LEN} characters.
+                  {ui.libraryPage.maxChars(LIBRARY_SAVE_NOTES_MAX_LEN)}
                 </span>
               ) : null}
             </label>
 
             <label className="flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
-              <span>Display verbs ({verbCount})</span>
+              <span>{ui.libraryPage.displayVerbs(verbCount)}</span>
               <Switch.Root
                 checked={displayVerbs}
                 onCheckedChange={setDisplayVerbs}
@@ -348,11 +350,11 @@ export default function Page() {
             {displayVerbs ? (
               <div className="flex flex-col gap-2">
                 {verbsLoading ? (
-                  <p className="text-sm text-primary-text/80">Loading verbs…</p>
+                  <p className="text-sm text-primary-text/80">{ui.libraryPage.loadingVerbs}</p>
                 ) : verbsError ? (
                   <p className="text-sm text-text-error">{verbsError}</p>
                 ) : verbCount === 0 ? (
-                  <p className="text-sm text-primary-text/80">No verbs in this save.</p>
+                  <p className="text-sm text-primary-text/80">{ui.libraryPage.noVerbsInSave}</p>
                 ) : (
                   <div className="max-h-[min(50vh,24rem)] overflow-auto rounded-lg border border-primary-darkest">
                     <table className="w-full border-collapse text-left text-sm">
@@ -362,16 +364,16 @@ export default function Page() {
                             scope="col"
                             className="w-14 min-w-[3.25rem] whitespace-nowrap px-2 py-2 font-semibold tabular-nums"
                           >
-                            id
+                            {ui.libraryPage.tableId}
                           </th>
                           <th
                             scope="col"
                             className="w-16 min-w-[3.5rem] max-w-[4.5rem] whitespace-nowrap px-2 py-2 font-semibold"
                           >
-                            level
+                            {ui.libraryPage.tableLevel}
                           </th>
                           <th scope="col" className="min-w-0 px-2 py-2 font-semibold">
-                            verb
+                            {ui.libraryPage.tableVerb}
                           </th>
                         </tr>
                       </thead>
@@ -389,9 +391,11 @@ export default function Page() {
                                 {id}
                               </td>
                               <td className="w-16 min-w-[3.5rem] max-w-[4.5rem] whitespace-nowrap px-2 py-1.5 text-primary-text/90">
-                                {v?.level ?? '—'}
+                                {v?.level ?? ui.common.emDash}
                               </td>
-                              <td className="min-w-0 break-words px-2 py-1.5">{v?.verb ?? '—'}</td>
+                              <td className="min-w-0 break-words px-2 py-1.5">
+                                {v?.verb ?? ui.common.emDash}
+                              </td>
                             </tr>
                           )
                         })}

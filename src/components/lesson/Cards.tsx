@@ -3,7 +3,8 @@ import { useState } from 'react'
 import type {Conjugation} from "../../types/verb.ts";
 import AnswerDetails from './settings/AnswerDetails.tsx'
 import ClampText from '../shared/ClampText.tsx'
-import type {LanguageConfig} from "../../types/config.ts";
+import type { LanguageConfig } from '../../types/config.ts'
+import { ui } from '../../locales/index.ts'
 
 type CardsProps = {
   round: Round
@@ -46,7 +47,7 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
   const answerTextSize = getCardTextSize(round.answer, round.isConjugation || round.isForms ? 'text-2xl' : 'text-4xl')
   const [isFullTextSheetOpen, setIsFullTextSheetOpen] = useState(false)
   const [fullText, setFullText] = useState('')
-  const [fullTextTitle, setFullTextTitle] = useState('Full text')
+  const [fullTextTitle, setFullTextTitle] = useState<string>(ui.cards.fullTextTitle)
 
   function openFullTextSheet(text: string, title: string) {
     setFullText(text)
@@ -58,7 +59,7 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div
         className="bg-primary-darker border border-primary-darkest rounded-xl flex flex-1 cursor-pointer items-center justify-center p-4"
-        onClick={() => openFullTextSheet(round.question, 'Question')}
+        onClick={() => openFullTextSheet(round.question, ui.cards.question)}
       >
         <ClampText className={`w-full overflow-hidden text-center ${questionTextSize} leading-normal font-semibold`} text={round.question} lines={round.isConjugation ? 2 : 3}/>
       </div>
@@ -73,11 +74,11 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
             return
           }
 
-          openFullTextSheet(round.answer, 'Answer')
+          openFullTextSheet(round.answer, ui.cards.answer)
         }}
       >
         {round.answerHidden ? (
-          <p className="text-center text-lg italic">???</p>
+          <p className="text-center text-lg italic">{ui.cards.hiddenAnswer}</p>
         ) : (
           <ClampText className={`w-full overflow-hidden text-center ${answerTextSize} leading-normal font-semibold`} text={round.answer} />
           )}
@@ -171,7 +172,7 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
           {round.formsAnswers.map((answer, index) => (
             <ConjugationAnswerCard
               key={`form-${index}`}
-              placeholder={formsLabels[index] ?? `Form ${index + 1}`}
+              placeholder={formsLabels[index] ?? ui.cards.formFallback(index)}
               answer={answer}
               isHidden={round.formsAnswersHidden[index] ?? true}
               onClick={() => {
@@ -182,7 +183,7 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
                   return
                 }
 
-                openFullTextSheet(answer, formsLabels[index] ?? `Form ${index + 1}`)
+                openFullTextSheet(answer, formsLabels[index] ?? ui.cards.formFallback(index))
               }}
             />
           ))}

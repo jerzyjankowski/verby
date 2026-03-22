@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+
+import { ui } from '../../locales/index.ts'
 import { CheckCircledIcon } from '@radix-ui/react-icons'
 
 type FwTone = 'primary' | 'error' | 'success' | 'warning'
@@ -157,7 +159,7 @@ export default function LessonCelebration() {
             aria-hidden
           />
           <h2 className="relative z-10 text-xl font-semibold tracking-tight text-text-success">
-            Lesson completed
+            {ui.lesson.celebrationTitle}
           </h2>
         </div>
       </div>

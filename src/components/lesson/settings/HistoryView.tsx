@@ -3,6 +3,7 @@ import { CheckIcon, Cross2Icon } from '@radix-ui/react-icons'
 
 import type { LessonSave } from '../../../types/config.ts'
 import type { Verb } from '../../../types/verb.ts'
+import { ui } from '../../../locales/index.ts'
 
 type HistoryViewProps = {
   lesson: LessonSave
@@ -60,9 +61,9 @@ export default function HistoryView({ lesson, verbs, lastVerbsIds, onVerbSelect 
               <td className="w-px whitespace-nowrap px-3 py-2 text-right tabular-nums">×{row.appeared}</td>
               <td className="w-px whitespace-nowrap px-3 py-2">
                 {row.learnt ? (
-                  <CheckIcon aria-label="Learnt on last appearance" className="size-4" />
+                  <CheckIcon aria-label={ui.aria.learntOnLastAppearance} className="size-4" />
                 ) : (
-                  <Cross2Icon aria-label="Not last appearance" className="size-4" />
+                  <Cross2Icon aria-label={ui.aria.notLastAppearance} className="size-4" />
                 )}
               </td>
             </tr>

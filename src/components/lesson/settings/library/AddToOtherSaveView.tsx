@@ -10,6 +10,7 @@ import {
   getLibraryVerbScopeMenuSpec,
   getLibraryVerbScopeTriggerLabel,
 } from '../../../../utils/library.ts'
+import { ui } from '../../../../locales/index.ts'
 import Button from '../../../shared/Button.tsx'
 import Dropdown from '../../../shared/Dropdown.tsx'
 import TextArea from '../../../shared/TextArea.tsx'
@@ -85,63 +86,59 @@ export default function AddToOtherSaveView({ language, lesson, currentVerbId, on
   return (
     <div className="flex flex-col gap-4 overflow-hidden rounded-xl border border-primary-darkest bg-primary-darker p-4 text-sm text-primary-text">
       <div>
-        <p className="text-lg font-semibold">Add to library save</p>
-        <p className="mt-1 text-primary-text/80">
-          Append verbs from this lesson to an existing save. Verbs already in that save are skipped. You can
-          update the notes as well.
-        </p>
+        <p className="text-lg font-semibold">{ui.libraryForms.addTitle}</p>
+        <p className="mt-1 text-primary-text/80">{ui.libraryForms.addSubtitle}</p>
       </div>
 
       {existingNames.length === 0 ? (
-        <p className="text-primary-text/80">No saves in your library for this language yet.</p>
+        <p className="text-primary-text/80">{ui.libraryForms.noSavesYet}</p>
       ) : (
         <div className="flex flex-col gap-1.5 text-sm font-medium">
-          <span>Existing save</span>
+          <span>{ui.libraryForms.existingSave}</span>
           <Dropdown
             items={dropdownItems}
             selectedLabel={selectedName}
-            placeholder="Choose a library save…"
+            placeholder={ui.libraryForms.chooseSavePlaceholder}
             triggerVariant="onDark"
           />
         </div>
       )}
 
       <label className="flex flex-col gap-1.5 text-sm font-medium">
-        <span>Notes</span>
+        <span>{ui.libraryForms.notes}</span>
         <TextArea
           value={notes}
           maxLength={LIBRARY_SAVE_NOTES_MAX_LEN}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Optional details about this save…"
+          placeholder={ui.libraryForms.optionalDetailsPlaceholder}
           rows={4}
           disabled={existingNames.length === 0 || !selectedName}
           aria-describedby={notesAtLimit ? 'library-add-other-notes-limit' : undefined}
         />
         {notesAtLimit ? (
           <p id="library-add-other-notes-limit" className="text-sm font-normal text-text-warning">
-            Maximum notes length ({LIBRARY_SAVE_NOTES_MAX_LEN} characters) reached.
+            {ui.libraryForms.notesMaxLengthReached(LIBRARY_SAVE_NOTES_MAX_LEN)}
           </p>
         ) : null}
       </label>
 
       <div className="flex flex-col gap-1.5 text-sm font-medium">
         <Dropdown
-          label="Which verbs"
+          label={ui.libraryForms.whichVerbs}
           items={verbScopeDropdownItems}
           selectedLabel={getLibraryVerbScopeTriggerLabel(whichVerbs, scopeCounts)}
-          placeholder="Choose which verbs…"
+          placeholder={ui.libraryForms.chooseVerbsPlaceholder}
           triggerVariant="onDark"
         />
         {!hasVerbsForScope ? (
           <p className="text-sm font-normal text-text-warning" role="status">
-            No verbs match this filter. Choose another option, update progress in the lesson, or save to update
-            notes only.
+            {ui.libraryForms.noVerbsMatchOrNotes}
           </p>
         ) : null}
       </div>
 
       <Button
-        label="Save"
+        label={ui.common.save}
         main
         disabled={!canSave}
         onClick={() =>

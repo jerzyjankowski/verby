@@ -13,6 +13,7 @@ import {
   getLibraryVerbScopeMenuSpec,
   getLibraryVerbScopeTriggerLabel,
 } from '../../../../utils/library.ts'
+import { ui } from '../../../../locales/index.ts'
 import Button from '../../../shared/Button.tsx'
 import Dropdown from '../../../shared/Dropdown.tsx'
 import TextArea from '../../../shared/TextArea.tsx'
@@ -69,70 +70,68 @@ export default function CreateNewSaveView({ language, lesson, onSave }: CreateNe
   return (
     <div className="flex flex-col gap-4 overflow-hidden rounded-xl border border-primary-darkest bg-primary-darker p-4 text-sm text-primary-text">
       <div>
-        <p className="text-lg font-semibold">New library save</p>
-        <p className="mt-1 text-primary-text/80">
-          Save the current lesson as a new entry in your library.
-        </p>
+        <p className="text-lg font-semibold">{ui.libraryForms.newTitle}</p>
+        <p className="mt-1 text-primary-text/80">{ui.libraryForms.newSubtitle}</p>
       </div>
 
       <label className="flex flex-col gap-1.5 text-sm font-medium">
-        <span>Name</span>
+        <span>{ui.libraryPage.nameLabel}</span>
         <TextField
           type="text"
           value={name}
           maxLength={LIBRARY_SAVE_NAME_MAX_LEN}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Week 3 irregular verbs"
+          placeholder={ui.libraryForms.namePlaceholderExample}
           autoComplete="off"
           aria-invalid={nameTaken}
           aria-describedby={nameDescribedBy || undefined}
         />
         {nameTaken ? (
           <p id="library-new-save-name-error" className="text-sm font-normal text-text-error" role="alert">
-            A save with this name already exists. Choose a different name.
+            {ui.libraryForms.nameTaken}
           </p>
         ) : null}
         {nameAtLimit ? (
           <p id="library-new-save-name-limit" className="text-sm font-normal text-text-warning">
-            Maximum name length ({LIBRARY_SAVE_NAME_MAX_LEN} characters) reached.
+            {ui.libraryForms.nameMaxLengthReached(LIBRARY_SAVE_NAME_MAX_LEN)}
           </p>
         ) : null}
       </label>
 
       <label className="flex flex-col gap-1.5 text-sm font-medium">
-        <span>Notes</span>
+        <span>{ui.libraryForms.notes}</span>
         <TextArea
           value={notes}
           maxLength={LIBRARY_SAVE_NOTES_MAX_LEN}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Optional details about this save…"
+          placeholder={ui.libraryForms.optionalDetailsPlaceholder}
           rows={4}
           aria-describedby={notesAtLimit ? 'library-new-save-notes-limit' : undefined}
         />
         {notesAtLimit ? (
           <p id="library-new-save-notes-limit" className="text-sm font-normal text-text-warning">
-            Maximum notes length ({LIBRARY_SAVE_NOTES_MAX_LEN} characters) reached.
+            {ui.libraryForms.notesMaxLengthReached(LIBRARY_SAVE_NOTES_MAX_LEN)}
           </p>
         ) : null}
       </label>
 
       <div className="flex flex-col gap-1.5 text-sm font-medium">
         <Dropdown
-          label="Which verbs"
+          label={ui.libraryForms.whichVerbs}
           items={verbScopeDropdownItems}
           selectedLabel={getLibraryVerbScopeTriggerLabel(whichVerbs, scopeCounts)}
-          placeholder="Choose which verbs…"
+          placeholder={ui.libraryForms.chooseVerbsPlaceholder}
           triggerVariant="onDark"
         />
         {!hasVerbsForScope ? (
           <p className="text-sm font-normal text-text-warning" role="status">
-            No verbs match this filter. Choose another option or update progress in the lesson.
+            {ui.libraryForms.noVerbsMatchSimple}
           </p>
         ) : null}
       </div>
 
       <Button
-        label="Save"
+        label={ui.common.save}
         main
         disabled={!canSave}
         onClick={() => onSave?.({ name: trimmedName, notes: notes.trim(), whichVerbs })}

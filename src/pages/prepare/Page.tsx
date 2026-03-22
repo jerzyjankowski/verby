@@ -8,6 +8,7 @@ import type { DropdownItem } from '../../components/shared/types.ts'
 import Confirmation from '../../components/lesson/settings/Confirmation.tsx'
 import Sheet from '../../components/shared/Sheet.tsx'
 import { PREPARE_SOURCE_ALL_KEY, usePrepareLesson } from '../../hooks/usePrepareLesson.ts'
+import { ui } from '../../locales/index.ts'
 import type { LessonConfig, Level } from '../../types/config.ts'
 import { MAIN_PAGE_URL } from '../../consts/urls.ts'
 
@@ -27,30 +28,21 @@ function StartLessonConfirmBody({
     <>
       <p>
         This lesson will include <strong>{lessonVerbCount}</strong>{' '}
-        {lessonVerbCount === 1 ? 'verb' : 'verbs'}.
+        {ui.prepare.verbWord(lessonVerbCount)}.
       </p>
       <p>
         <strong>{availableVerbCountBeforeBatch}</strong>{' '}
-        {availableVerbCountBeforeBatch === 1 ? 'verb' : 'verbs'} matched your filters.
+        {ui.prepare.verbWord(availableVerbCountBeforeBatch)} matched your filters.
       </p>
       {shortfall ? (
-        <p>
-          You selected a batch of <strong>{batch}</strong>, but only{' '}
-          <strong>{availableVerbCountBeforeBatch}</strong>{' '}
-          {availableVerbCountBeforeBatch === 1 ? 'verb' : 'verbs'} matched your settings, so the
-          lesson has fewer cards than that batch size.
-        </p>
+        <p>{ui.prepare.batchShortfall(batch, availableVerbCountBeforeBatch)}</p>
       ) : null}
     </>
   )
 }
 
 function NoVerbsFoundSheetBody(): ReactNode {
-  return (
-    <p>
-      You cannot start a lesson without any verbs. Change your filters so at least one verb matches.
-    </p>
-  )
+  return <p>{ui.prepare.noVerbsBody}</p>
 }
 
 function ConfigRow({
@@ -59,12 +51,14 @@ function ConfigRow({
   options,
   labelMap,
   onSelect,
+  placeholder = ui.prepare.selectPlaceholder,
 }: {
   label: string
   value: string | number | undefined
   options: readonly (string | number)[]
   labelMap: Record<string, string>
   onSelect: (key: string) => void
+  placeholder?: string
 }) {
   const displayValue = value !== undefined ? labelMap[String(value)] : undefined
   const items: DropdownItem[] = options.map((opt) => ({
@@ -77,7 +71,7 @@ function ConfigRow({
     <Dropdown
       label={label}
       selectedLabel={displayValue}
-      placeholder="Select…"
+      placeholder={placeholder}
       items={items}
       align="start"
     />
@@ -93,15 +87,13 @@ function SourceHelpPanel({
 }) {
   if (allVerbs) {
     return (
-      <p className="text-sm leading-relaxed text-primary-text/90">
-        Every verb from the default full language list can be included.
-      </p>
+      <p className="text-sm leading-relaxed text-primary-text/90">{ui.prepare.sourceHelpAll}</p>
     )
   }
   const desc = description?.trim() ?? ''
   return (
     <p className="whitespace-pre-line text-sm leading-relaxed text-primary-text/90">
-      {`Use verbs configured in the selected save.\nDescription: "${desc}"`}
+      {ui.prepare.sourceHelpSave(desc)}
     </p>
   )
 }
@@ -200,7 +192,7 @@ export default function Page() {
         <Sheet
           open={startConfirmOpen}
           onOpenChange={handleStartConfirmOpenChange}
-          title={sheetHasVerbs ? 'Start lesson?' : 'No verbs found'}
+          title={sheetHasVerbs ? ui.prepare.sheetStartTitle : ui.prepare.sheetNoVerbsTitle}
         >
           <Confirmation
             message={
@@ -216,8 +208,8 @@ export default function Page() {
             }
             onConfirm={confirmStartLesson}
             onCancel={cancelStartLesson}
-            confirmLabel="Start lesson"
-            cancelLabel="Cancel"
+            confirmLabel={ui.prepare.startLesson}
+            cancelLabel={ui.common.cancel}
             confirmDisabled={!sheetHasVerbs}
           />
         </Sheet>
@@ -227,7 +219,7 @@ export default function Page() {
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
           <Button
             onClick={() => navigate(MAIN_PAGE_URL)}
-            label="Back"
+            label={ui.common.back}
             icon={<ArrowLeftIcon className="size-4" />}
             fullWidth={false}
           />
@@ -236,7 +228,7 @@ export default function Page() {
               selectedLabel={
                 form.language !== undefined ? labels.language[String(form.language)] : undefined
               }
-              placeholder="Select Language..."
+              placeholder={ui.prepare.selectLanguagePlaceholder}
               triggerVariant="onDark"
               items={languageItems}
               align="start"
@@ -249,7 +241,7 @@ export default function Page() {
         <div className="mx-auto max-w-2xl p-4">
           <div className="verby-card grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4 p-4 bg-primary-darkest">
             <span className="flex h-10 shrink-0 items-center self-start text-sm text-primary-text">
-              source:
+              {ui.prepare.rowSource}
             </span>
             <div className="flex min-w-0 items-center gap-2 self-start">
               <div className="min-w-0 flex-1">
@@ -259,7 +251,7 @@ export default function Page() {
                       String(form.libraryLessonSaveName ?? PREPARE_SOURCE_ALL_KEY)
                     ]
                   }
-                  placeholder="Select…"
+                  placeholder={ui.prepare.selectPlaceholder}
                   items={sourceItems}
                   align="start"
                 />
@@ -268,7 +260,7 @@ export default function Page() {
                 type="button"
                 onClick={() => setSourceHelpOpen((open) => !open)}
                 aria-expanded={sourceHelpOpen}
-                aria-label="About verb source"
+                aria-label={ui.aria.aboutVerbSource}
                 className={[
                   'inline-flex size-10 shrink-0 items-center justify-center rounded-lg border transition-colors',
                   'border-primary-darkest bg-primary text-primary-text/80',
@@ -287,14 +279,14 @@ export default function Page() {
               </div>
             ) : null}
             <LevelConfigRow
-              label="levels:"
+              label={ui.prepare.rowLevels}
               selected={form.levels}
               options={options.level}
               labelMap={labels.level}
               onToggle={toggleLevel}
             />
             <ConfigRow
-              label="direction:"
+              label={ui.prepare.rowDirection}
               value={form.direction}
               options={options.direction}
               labelMap={labels.direction}
@@ -302,7 +294,7 @@ export default function Page() {
             />
             {hasExtraChoices ? (
               <ConfigRow
-                label="extra:"
+                label={ui.prepare.rowExtra}
                 value={form.extra}
                 options={options.extra}
                 labelMap={labels.extra}
@@ -311,7 +303,7 @@ export default function Page() {
             ) : null}
             {form.extra === 'conjugation' && (
               <ConfigRow
-                label="conjugation:"
+                label={ui.prepare.rowConjugation}
                 value={form.conjugation}
                 options={options.conjugation}
                 labelMap={labels.conjugation}
@@ -320,7 +312,7 @@ export default function Page() {
             )}
             {(form.extra === 'conjugation' || form.extra === 'forms') && (
               <ConfigRow
-                label="regularity:"
+                label={ui.prepare.rowRegularity}
                 value={form.regularity}
                 options={options.regularity}
                 labelMap={labels.regularity}
@@ -328,14 +320,14 @@ export default function Page() {
               />
             )}
             <ConfigRow
-              label="speed:"
+              label={ui.prepare.rowSpeed}
               value={form.speed}
               options={options.speed}
               labelMap={labels.speed}
               onSelect={setSpeed}
             />
             <ConfigRow
-              label="batch:"
+              label={ui.prepare.rowBatch}
               value={form.batch}
               options={options.batch}
               labelMap={labels.batch}
@@ -345,10 +337,7 @@ export default function Page() {
         </div>
       ) : (
         <div className="mx-auto max-w-2xl p-4">
-          <p className="text-sm leading-relaxed text-primary-text/80">
-            Select a language in the header first. Then you can choose source, levels, and other
-            lesson options here.
-          </p>
+          <p className="text-sm leading-relaxed text-primary-text/80">{ui.prepare.pickLanguageFirst}</p>
         </div>
       )}
 
@@ -357,7 +346,7 @@ export default function Page() {
           <Button
             onClick={handleStart}
             disabled={startDisabled}
-            label={isStarting ? 'Starting...' : 'Start lesson'}
+            label={isStarting ? ui.prepare.starting : ui.prepare.startLesson}
             main
           />
         </div>

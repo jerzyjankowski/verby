@@ -8,11 +8,8 @@ import TextField from '../../components/shared/TextField.tsx'
 import Dropdown from '../../components/shared/Dropdown.tsx'
 import type { DropdownItem } from '../../components/shared/types.ts'
 import { getLanguageConfig } from '../../configs/languageConfigMap.ts'
-import {
-  type Language,
-  LANGUAGE_LABELS,
-  LANGUAGE_OPTIONS,
-} from '../../types/config.ts'
+import { LANGUAGE_LABELS, ui } from '../../locales/index.ts'
+import { type Language, LANGUAGE_OPTIONS } from '../../types/config.ts'
 import type { MarkedVerb, Verb } from '../../types/verb.ts'
 import {
   loadCurrentLessonFromLocalStorage,
@@ -82,7 +79,7 @@ export default function Page() {
     const path = getLanguageConfig(language).verbsFilePath
     if (!path) {
       setVerbsById(new Map())
-      setVerbsError('No verb list for this language.')
+      setVerbsError(ui.markedVerbs.noVerbListForLanguage)
       setVerbsLoading(false)
       return
     }
@@ -95,7 +92,7 @@ export default function Page() {
       })
       .catch((e: unknown) => {
         setVerbsById(new Map())
-        setVerbsError(e instanceof Error ? e.message : 'Failed to load verbs.')
+        setVerbsError(e instanceof Error ? e.message : ui.markedVerbs.loadVerbsFailed)
       })
       .finally(() => setVerbsLoading(false))
   }, [language])
@@ -123,7 +120,7 @@ export default function Page() {
     setRows(next.map((m) => ({ ...m, active: true })))
   }
 
-  const verbLabel = (id: number) => verbsById.get(id)?.verb ?? `Verb #${id}`
+  const verbLabel = (id: number) => verbsById.get(id)?.verb ?? ui.markedVerbs.verbFallback(id)
 
   return (
     <div
@@ -136,14 +133,14 @@ export default function Page() {
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
           <Button
             onClick={() => navigate(MAIN_PAGE_URL)}
-            label="Back"
+            label={ui.common.back}
             icon={<ArrowLeftIcon className="size-4" />}
             fullWidth={false}
           />
           <div className="min-w-0 flex-1">
             <Dropdown
               selectedLabel={language !== undefined ? LANGUAGE_LABELS[language] : undefined}
-              placeholder="Select Language..."
+              placeholder={ui.prepare.selectLanguagePlaceholder}
               triggerVariant="onDark"
               items={languageItems}
               align="start"
@@ -155,13 +152,13 @@ export default function Page() {
       <div className="mx-auto max-w-2xl p-4">
         <div className="verby-card bg-primary-darkest p-4 flex flex-col gap-4">
           {language === undefined ? (
-            <p className="text-sm text-primary-text/80">No language selected yet.</p>
+            <p className="text-sm text-primary-text/80">{ui.markedVerbs.noLanguageYet}</p>
           ) : verbsLoading ? (
-            <p className="text-sm text-primary-text/80">Loading verbs…</p>
+            <p className="text-sm text-primary-text/80">{ui.markedVerbs.loadingVerbs}</p>
           ) : verbsError ? (
             <p className="text-sm text-text-error">{verbsError}</p>
           ) : rows.length === 0 ? (
-            <p className="text-sm text-primary-text/80">No marked verbs for this language.</p>
+            <p className="text-sm text-primary-text/80">{ui.markedVerbs.noneForLanguage}</p>
           ) : (
             <ul className="flex flex-col gap-3">
               {rows.map((row) => (
@@ -171,7 +168,7 @@ export default function Page() {
                 >
                   <p className="text-lg font-semibold">{verbLabel(row.id)}</p>
                   <label className="flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
-                    <span>Marked</span>
+                    <span>{ui.markedVerbs.marked}</span>
                     <Switch.Root
                       checked={row.active}
                       onCheckedChange={(checked) =>
@@ -196,7 +193,7 @@ export default function Page() {
                             ),
                           )
                         }
-                        placeholder="Reason for marking..."
+                        placeholder={ui.markedVerbs.reasonPlaceholder}
                       />
                     </label>
                   ) : null}
@@ -211,12 +208,12 @@ export default function Page() {
         <div className="fixed bottom-0 left-0 right-0 z-[var(--z-sticky)] border-t border-primary-darkest bg-primary-darkest p-4">
           <div className="mx-auto max-w-2xl">
             <Button
-              label="Save"
+              label={ui.common.save}
               main
               onClick={handleSave}
               disabled={saveBlocked}
               title={
-                saveBlocked ? 'Each marked verb needs a non-empty description.' : undefined
+                saveBlocked ? ui.markedVerbs.saveBlockedHint : undefined
               }
             />
           </div>
