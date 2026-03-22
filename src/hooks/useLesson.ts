@@ -50,6 +50,15 @@ const prepareRound = (verb: Verb, lessonConfig: LessonConfig, languageConfig: La
   }
 }
 
+/** Bump `repeated` for the verb currently being shown (once per display, not on continue). */
+function withRepeatedIncrementedForShownVerb(lesson: LessonSave, verbId: number): LessonSave {
+  const verbIndex = lesson.verbs.findIndex((id) => id === verbId)
+  if (verbIndex < 0) return lesson
+  const repeated = [...lesson.repeated]
+  repeated[verbIndex] = (repeated[verbIndex] ?? 0) + 1
+  return { ...lesson, repeated }
+}
+
 export function useLesson(name?: string) {
   const [verbs, setVerbs] = useState<Verb[]>([])
   const [round, setRound] = useState<Round | undefined>()
@@ -77,7 +86,15 @@ export function useLesson(name?: string) {
         const lessonVerbIds = new Set(lesson.verbs)
         const filteredVerbs = loadedVerbs.filter((verb) => lessonVerbIds.has(verb.id))
         setVerbs(filteredVerbs)
-        setRound(prepareRound(filteredVerbs[0], lesson.config, newLanguageConfig))
+        if (filteredVerbs.length === 0) {
+          setRound(undefined)
+          return
+        }
+        const firstVerb =
+          filteredVerbs[Math.floor(Math.random() * filteredVerbs.length)]!
+        const lessonWithFirstShown = withRepeatedIncrementedForShownVerb(lesson, firstVerb.id)
+        setLesson(lessonWithFirstShown)
+        setRound(prepareRound(firstVerb, lessonWithFirstShown.config, newLanguageConfig))
       })
       .catch((err) => {
         const errorMessage = err instanceof Error ? err.message : String(err)
@@ -155,25 +172,23 @@ export function useLesson(name?: string) {
     }
 
     const learnt = [...lesson.learnt]
-    const repeated = [...lesson.repeated]
-
     learnt[verbIndex] = correct
-    repeated[verbIndex] = (repeated[verbIndex] ?? 0) + 1
 
-    const nextLesson: LessonSave = {
+    const nextLessonAfterLearnt: LessonSave = {
       ...lesson,
       learnt,
-      repeated,
     }
     const nextLastVerbsIds = [...lastVerbsIds, round.verbId]
 
-    setLesson(nextLesson)
     setLastVerbsIds(nextLastVerbsIds)
 
-    const nextVerb = randomizeVerb(nextLesson, nextLastVerbsIds)
+    const nextVerb = randomizeVerb(nextLessonAfterLearnt, nextLastVerbsIds)
     if (!nextVerb) {
+      setLesson(nextLessonAfterLearnt)
       return
     }
+    const nextLesson = withRepeatedIncrementedForShownVerb(nextLessonAfterLearnt, nextVerb.id)
+    setLesson(nextLesson)
     setRound(prepareRound(nextVerb, nextLesson.config, languageConfig))
 
   }, [round, lesson, setLesson, setLastVerbsIds, lastVerbsIds, randomizeVerb, setRound, languageConfig])
