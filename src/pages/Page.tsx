@@ -6,7 +6,7 @@ import {LESSON_PAGE_URL, MARKED_VERBS_PAGE_URL, PREPARE_LESSON_PAGE_URL} from ".
 
 export default function Page() {
   const navigate = useNavigate()
-  const hasNewLessonToContinue = !!loadCurrentLessonFromLocalStorage('_new')
+  const hasNewLessonToContinue = !!loadCurrentLessonFromLocalStorage()
 
   return (
     <div className="min-h-screen bg-primary text-primary-text p-4">

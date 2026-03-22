@@ -119,7 +119,6 @@ export type LessonConfigFormState = {
 
 export type LessonSave = {
   config: LessonConfig
-  name: string
   verbs: number[]
   learnt: boolean[]
   repeated: number[]

@@ -24,7 +24,7 @@ export default function Page() {
     reverseDirection,
     restartQuestions,
     resetProgressAndSave,
-  } = useLesson('_new') // [JJ]
+  } = useLesson()
 
   const handleComplete = () => {
     resetProgressAndSave()

@@ -2,10 +2,8 @@ import type { LanguageConfig, LessonConfig, LessonSave } from '../types/config.t
 import { shuffle } from 'lodash'
 
 import { loadVerbsFromJson } from './jsonVerbsLoader'
-import { saveLessonToLocalStorage } from './localStorage'
+import { saveLessonAsCurrentToLocalStorage } from './localStorage'
 import type { Verb } from '../types/verb.ts'
-
-const LESSON_NAME = '_new'
 
 export async function initLesson(
   config: LessonConfig,
@@ -41,12 +39,11 @@ export async function initLesson(
 
   const lesson: LessonSave = {
     config,
-    name: LESSON_NAME,
     verbs,
     learnt,
     repeated,
   }
 
-  saveLessonToLocalStorage(lesson)
+  saveLessonAsCurrentToLocalStorage(lesson)
   return lesson
 }

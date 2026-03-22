@@ -41,7 +41,7 @@ function markedListsEqual(a: MarkedVerb[], b: MarkedVerb[]): boolean {
 }
 
 function defaultLanguageFromNewLesson(): Language | undefined {
-  const lesson = loadCurrentLessonFromLocalStorage('_new')
+  const lesson = loadCurrentLessonFromLocalStorage()
   const lang = lesson?.config?.language
   if (lang !== undefined && LANGUAGE_OPTIONS.includes(lang)) {
     return lang

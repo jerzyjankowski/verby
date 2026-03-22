@@ -1,9 +1,6 @@
-- /init and /lesson, no need for lesson name in url since always will start with _new? (rename _new)
-- urls in file
 - if there are no verbs don't let start a lesson - show modal, if there are less verbs than batch selected ask to continue, or maybe always show the modal to tell how much would be if batch ALL
 
 - saving functionality
-    - save _new
     - save new save or add to old one or replace old one
     - display all saves per language - let remove them (from main page, see saves, edit name, description, etc.)
     - starting lesson select pool ALL or one of saves

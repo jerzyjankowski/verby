@@ -5,9 +5,6 @@ type PageModule = { default: React.ComponentType }
 type LayoutModule = { default: React.ComponentType<{ children: React.ReactNode }> }
 
 function keyToSegments(key: string, suffixToRemove: string) {
-  // Example keys:
-  // - "../pages/Page.tsx"
-  // - "../pages/lesson/[name]/Page.tsx"
   const pagesMarker = '/pages/'
   const idx = key.lastIndexOf(pagesMarker)
   const rel = idx >= 0 ? key.slice(idx + pagesMarker.length) : key

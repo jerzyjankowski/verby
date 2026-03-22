@@ -12,7 +12,7 @@ import VerbsView from './settings/VerbsView.tsx'
 import VerbView from './settings/VerbView.tsx'
 import type {LanguageConfig, LessonSave} from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
-import { saveLessonToLocalStorage } from '../../utils/localStorage.ts'
+import { saveLessonAsCurrentToLocalStorage } from '../../utils/localStorage.ts'
 import {PREPARE_LESSON_PAGE_URL} from "../../consts/urls.ts";
 
 type LessonSettingsProps = {
@@ -105,7 +105,7 @@ export default function LessonSettings({
   }
 
   const handleQuickSave = () => {
-    saveLessonToLocalStorage({ ...lesson, name: '_new' })
+    saveLessonAsCurrentToLocalStorage(lesson)
     toast.success('Quick save', 'Current lesson quick saved')
   }
 

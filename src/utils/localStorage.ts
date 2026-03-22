@@ -1,26 +1,20 @@
 import type { Language, LessonSave } from '../types/config.ts'
 import type { MarkedVerb } from '../types/verb.ts'
 
-export const LESSON_STORAGE_KEY_PREFIX = 'lesson-'
+export const CURRENT_LESSON_STORAGE_KEY = 'current-lesson'
 const MARKED_VERBS_KEY_SUFFIX = 'marked-verbs'
 
 export function getMarkedVerbsKey(language: Language): string {
   return `${language}-${MARKED_VERBS_KEY_SUFFIX}`
 }
 
-function lessonStorageKey(lessonName: string): string {
-  return `${LESSON_STORAGE_KEY_PREFIX}${lessonName}`
+export function saveLessonAsCurrentToLocalStorage(lesson: LessonSave): void {
+  localStorage.setItem(CURRENT_LESSON_STORAGE_KEY, JSON.stringify(lesson))
 }
 
-export function saveLessonToLocalStorage(lesson: LessonSave): void {
-  const key = lessonStorageKey(lesson.name)
-  localStorage.setItem(key, JSON.stringify(lesson))
-}
-
-export function loadCurrentLessonFromLocalStorage(lessonName: string): LessonSave | null {
+export function loadCurrentLessonFromLocalStorage(): LessonSave | null {
   try {
-    const key = lessonStorageKey(lessonName)
-    const raw = localStorage.getItem(key)
+    const raw = localStorage.getItem(CURRENT_LESSON_STORAGE_KEY)
     if (!raw) return null
     return JSON.parse(raw) as LessonSave
   } catch {

@@ -61,7 +61,7 @@ export default function Page() {
   const navigate = useNavigate()
   const [isStarting, setIsStarting] = useState(false)
   const [form, setForm] = useState<LessonConfigFormState>(() => {
-    const savedLesson = loadCurrentLessonFromLocalStorage('_new')
+    const savedLesson = loadCurrentLessonFromLocalStorage()
     return savedLesson?.config ?? {}
   })
 

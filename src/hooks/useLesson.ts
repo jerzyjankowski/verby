@@ -4,7 +4,7 @@ import { useToast } from '../components/shared/Toast.tsx'
 import type {LanguageConfig, LessonConfig, LessonSave} from '../types/config.ts'
 import type {ConjugationFlags, Verb} from '../types/verb.ts'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
-import { loadCurrentLessonFromLocalStorage, saveLessonToLocalStorage } from '../utils/localStorage.ts'
+import { loadCurrentLessonFromLocalStorage, saveLessonAsCurrentToLocalStorage } from '../utils/localStorage.ts'
 import type {Round, UpdateRoundHiddenFlags} from "../types/lesson.ts";
 import {getLanguageConfig} from "../configs/languageConfigMap.ts";
 
@@ -59,7 +59,7 @@ function withRepeatedIncrementedForShownVerb(lesson: LessonSave, verbId: number)
   return { ...lesson, repeated }
 }
 
-export function useLesson(name?: string) {
+export function useLesson() {
   const [verbs, setVerbs] = useState<Verb[]>([])
   const [round, setRound] = useState<Round | undefined>()
   const [lesson, setLesson] = useState<LessonSave | null | undefined>()
@@ -69,15 +69,12 @@ export function useLesson(name?: string) {
   const toast = useToast()
 
   useEffect(() => {
-    if (!name) {
-      return
-    }
     setIsCompleted(false)
-    const lesson = loadCurrentLessonFromLocalStorage(name)
+    const lesson = loadCurrentLessonFromLocalStorage()
     setLesson(lesson)
 
     if (lesson === null) {
-      toast.error('Failed to load lesson from local storage by name', name)
+      toast.error('Failed to load current lesson from local storage')
       return
     }
     const newLanguageConfig = getLanguageConfig(lesson.config.language)
@@ -103,7 +100,7 @@ export function useLesson(name?: string) {
         toast.error('Failed to load verbs', errorMessage)
         setVerbs([])
       })
-  }, [name, toast])
+  }, [toast])
 
   const updateRoundHiddenFlags: UpdateRoundHiddenFlags = useCallback((
     answerHidden: boolean,
@@ -186,7 +183,7 @@ export function useLesson(name?: string) {
 
     const nextVerb = randomizeVerb(nextLessonAfterLearnt, nextLastVerbsIds)
     if (!nextVerb) {
-      saveLessonToLocalStorage(nextLessonAfterLearnt)
+      saveLessonAsCurrentToLocalStorage(nextLessonAfterLearnt)
       setLesson(nextLessonAfterLearnt)
       setRound(undefined)
       setIsCompleted(true)
@@ -209,7 +206,7 @@ export function useLesson(name?: string) {
       learnt[verbIndex] = learntValue
       const nextLesson: LessonSave = { ...current, learnt }
 
-      saveLessonToLocalStorage(nextLesson)
+      saveLessonAsCurrentToLocalStorage(nextLesson)
       return nextLesson
     })
   }, [])
@@ -220,7 +217,7 @@ export function useLesson(name?: string) {
       lesson.config.direction === 'to_foreign' ? 'to_native' : 'to_foreign'
     const nextConfig: LessonConfig = { ...lesson.config, direction: nextDirection }
     const nextLesson: LessonSave = { ...lesson, config: nextConfig }
-    saveLessonToLocalStorage(nextLesson)
+    saveLessonAsCurrentToLocalStorage(nextLesson)
     setLesson(nextLesson)
     const verb = verbs.find((v) => v.id === round.verbId)
     if (verb) {
@@ -237,7 +234,7 @@ export function useLesson(name?: string) {
         learnt: current.verbs.map(() => false),
         repeated: current.verbs.map(() => 0),
       }
-      saveLessonToLocalStorage(next)
+      saveLessonAsCurrentToLocalStorage(next)
       return next
     })
   }, [])
