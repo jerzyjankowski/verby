@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { CheckIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 
 import Cards from '../../../components/lesson/Cards'
-import LessonSettings from '../../../components/lesson/LessonSettings.tsx'
+import LessonTopBar from '../../../components/lesson/LessonTopBar.tsx'
 import Button from '../../../components/shared/Button.tsx'
 import { useLesson } from '../../../hooks/useLesson.ts'
 
@@ -33,17 +33,16 @@ export default function Page() {
   }
 
   return (
-    <div className="h-dvh bg-primary text-primary-text p-4">
-      <div className="mx-auto flex h-full max-w-2xl flex-col gap-3">
-        <LessonSettings
-          lesson={lesson}
-          verbs={verbs}
-          lastVerbsIds={lastVerbsIds}
-          languageConfig={languageConfig}
-          currentVerb={currentVerb}
-          onVerbLearntChange={setVerbLearnt}
-        />
-
+    <div className="flex h-dvh flex-col bg-primary text-primary-text">
+      <LessonTopBar
+        lesson={lesson}
+        verbs={verbs}
+        lastVerbsIds={lastVerbsIds}
+        languageConfig={languageConfig}
+        currentVerb={currentVerb}
+        onVerbLearntChange={setVerbLearnt}
+      />
+      <div className="mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col gap-3 overflow-auto p-4">
         {round && (
           <Cards
             round={round}

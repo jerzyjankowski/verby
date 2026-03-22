@@ -112,16 +112,14 @@ export default function LessonSettings({
 
   return (
     <>
-      <div className="mb-3 flex justify-end">
-        <Button
-          aria-label="Open lesson settings"
-          title="Settings"
-          onClick={handleOpenSettings}
-          icon={<GearIcon className="size-5" />}
-          fullWidth={false}
-          rounded
-        />
-      </div>
+      <Button
+        aria-label="Open lesson settings"
+        title="Settings"
+        onClick={handleOpenSettings}
+        icon={<GearIcon className="size-5" />}
+        fullWidth={false}
+        rounded
+      />
 
       <Sheet
         open={settingsOpen}
