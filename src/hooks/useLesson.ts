@@ -223,6 +223,25 @@ export function useLesson(name?: string) {
     }
   }, [lesson, round, verbs, languageConfig])
 
+  const restartQuestions = useCallback(() => {
+    if (!lesson) return
+    const resetLesson: LessonSave = {
+      ...lesson,
+      learnt: lesson.verbs.map(() => false),
+      repeated: lesson.verbs.map(() => 0),
+    }
+    setLastVerbsIds([])
+    if (verbs.length === 0) {
+      setLesson(resetLesson)
+      setRound(undefined)
+      return
+    }
+    const firstVerb = verbs[Math.floor(Math.random() * verbs.length)]!
+    const lessonWithFirstShown = withRepeatedIncrementedForShownVerb(resetLesson, firstVerb.id)
+    setLesson(lessonWithFirstShown)
+    setRound(prepareRound(firstVerb, lessonWithFirstShown.config, languageConfig))
+  }, [lesson, verbs, languageConfig])
+
   return {
     lesson,
     verbs,
@@ -234,5 +253,6 @@ export function useLesson(name?: string) {
     languageConfig,
     setVerbLearnt,
     reverseDirection,
+    restartQuestions,
   }
 }

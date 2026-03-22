@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 import Button from '../shared/Button.tsx'
 import Sheet from '../shared/Sheet.tsx'
+import { useToast } from '../shared/Toast.tsx'
 import ConfigSummary from './settings/ConfigSummary.tsx'
 import Confirmation from './settings/Confirmation.tsx'
 import HistoryView from './settings/HistoryView.tsx'
@@ -11,6 +12,7 @@ import VerbsView from './settings/VerbsView.tsx'
 import VerbView from './settings/VerbView.tsx'
 import type {LanguageConfig, LessonSave} from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
+import { saveLessonToLocalStorage } from '../../utils/localStorage.ts'
 
 type LessonSettingsProps = {
   lesson: LessonSave
@@ -20,6 +22,7 @@ type LessonSettingsProps = {
   currentVerb?: Verb
   onVerbLearntChange: (verbId: number, learnt: boolean) => void
   onReverseDirection: () => void
+  onRestartQuestions: () => void
 }
 
 type SettingsView =
@@ -30,6 +33,7 @@ type SettingsView =
   | 'history'
   | 'close-questions'
   | 'reverse-direction'
+  | 'restart-questions'
 
 export default function LessonSettings({
   lesson,
@@ -39,8 +43,10 @@ export default function LessonSettings({
   currentVerb,
   onVerbLearntChange,
   onReverseDirection,
+  onRestartQuestions,
 }: LessonSettingsProps) {
   const navigate = useNavigate()
+  const toast = useToast()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [viewStack, setViewStack] = useState<SettingsView[]>(['menu'])
   const [verbBeingEdited, setVerbBeingEdited] = useState<Verb | null>(null)
@@ -86,10 +92,20 @@ export default function LessonSettings({
     handleBack()
   }
 
+  const handleConfirmRestartQuestions = () => {
+    onRestartQuestions()
+    handleBack()
+  }
+
   const handleConfirmCloseQuestions = () => {
     setSettingsOpen(false)
     resetNavigation()
     navigate('/lesson')
+  }
+
+  const handleQuickSave = () => {
+    saveLessonToLocalStorage({ ...lesson, name: '_new' })
+    toast.success('Quick save', 'Current lesson quick saved')
   }
 
   const notLearntCount = lesson.verbs.reduce(
@@ -110,6 +126,7 @@ export default function LessonSettings({
     history: `History (${lastVerbsIds.length})`,
     'close-questions': 'Close Questions',
     'reverse-direction': 'Reverse Direction',
+    'restart-questions': 'Restart Questions',
   }
 
   const sheetTitle =
@@ -146,6 +163,7 @@ export default function LessonSettings({
         {currentView === 'menu' ? (
           <div className="flex flex-col gap-2">
             <Button label="Config Summary" onClick={() => pushView('config-summary')} />
+            <Button label="Quick save" onClick={handleQuickSave} />
             <Button label={verbsLabel} onClick={() => pushView('verbs')} />
             <Button
               label={editVerbLabel}
@@ -154,6 +172,7 @@ export default function LessonSettings({
             />
             <Button label={`History (${lastVerbsIds.length})`} onClick={() => pushView('history')} />
             <Button label="Reverse Direction" onClick={() => pushView('reverse-direction')} />
+            <Button label="Restart questions" onClick={() => pushView('restart-questions')} />
             <Button label="Close Questions" onClick={() => pushView('close-questions')} />
           </div>
         ) : null}
@@ -197,6 +216,14 @@ export default function LessonSettings({
           <Confirmation
             message="Switch which language is shown as the question and which as the answer? The current card will update."
             onConfirm={handleConfirmReverseDirection}
+            onCancel={handleBack}
+          />
+        ) : null}
+
+        {currentView === 'restart-questions' ? (
+          <Confirmation
+            message="Reset learnt progress, repeat counts, and history for this session? Nothing will be written to storage."
+            onConfirm={handleConfirmRestartQuestions}
             onCancel={handleBack}
           />
         ) : null}
