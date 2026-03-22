@@ -2,7 +2,12 @@ import { useNavigate } from 'react-router-dom'
 
 import Button from '../components/shared/Button.tsx'
 import { loadCurrentLessonFromLocalStorage } from '../utils/localStorage.ts'
-import {LESSON_PAGE_URL, MARKED_VERBS_PAGE_URL, PREPARE_LESSON_PAGE_URL} from "../consts/urls.ts";
+import {
+  LESSON_PAGE_URL,
+  LIBRARY_PAGE_URL,
+  MARKED_VERBS_PAGE_URL,
+  PREPARE_LESSON_PAGE_URL,
+} from '../consts/urls.ts'
 
 export default function Page() {
   const navigate = useNavigate()
@@ -17,6 +22,7 @@ export default function Page() {
           ) : null}
           <Button onClick={() => navigate(PREPARE_LESSON_PAGE_URL)} label="New Lesson" />
           <Button onClick={() => navigate(MARKED_VERBS_PAGE_URL)} label="Marked Verbs" />
+          <Button onClick={() => navigate(LIBRARY_PAGE_URL)} label="Library" />
         </div>
       </div>
     </div>

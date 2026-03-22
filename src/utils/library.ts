@@ -330,3 +330,67 @@ export async function removeMatchingVerbsFromLibraryEntry(
   const entry = saveLibraryEntry(language, body, nameForSave, description)
   return { entry, removedVerbCount }
 }
+
+export function deleteLibraryEntry(language: Language, name: string): boolean {
+  const library = loadLibraryFromLocalStorage(language)
+  const key = name.trim().toLowerCase()
+  const next = library.lessons.filter((l) => (l.name?.trim() ?? '').toLowerCase() !== key)
+  if (next.length === library.lessons.length) return false
+  saveLibraryToLocalStorage({ language, lessons: next })
+  return true
+}
+
+export type UpdateLibraryEntryMetadataResult =
+  | { ok: true; entry: LessonSave }
+  | { ok: false; reason: 'not_found' | 'duplicate_name' | 'invalid_name' }
+
+/**
+ * Updates an entry’s display name and/or description only.
+ * `verbs`, `learnt`, `repeated`, and `config` are copied as-is (no reset).
+ * `newName` must not duplicate another save (trimmed, case-insensitive), except the entry being edited.
+ */
+export function updateLibraryEntryMetadata(
+  language: Language,
+  originalName: string,
+  newName: string,
+  description: string,
+): UpdateLibraryEntryMetadataResult {
+  const library = loadLibraryFromLocalStorage(language)
+  const origKey = originalName.trim().toLowerCase()
+  const idx = library.lessons.findIndex(
+    (l) => (l.name?.trim() ?? '').toLowerCase() === origKey,
+  )
+  if (idx === -1) return { ok: false, reason: 'not_found' }
+
+  const trimmedNewName = newName.trim().slice(0, LIBRARY_SAVE_NAME_MAX_LEN)
+  if (!trimmedNewName) return { ok: false, reason: 'invalid_name' }
+
+  const trimmedDesc = description.trim().slice(0, LIBRARY_SAVE_NOTES_MAX_LEN)
+
+  const newKey = trimmedNewName.toLowerCase()
+  const duplicate = library.lessons.some(
+    (l, i) => i !== idx && (l.name?.trim() ?? '').toLowerCase() === newKey,
+  )
+  if (duplicate) return { ok: false, reason: 'duplicate_name' }
+
+  const lesson = library.lessons[idx]!
+  const entry: LessonSave = {
+    config: { ...lesson.config },
+    verbs: lesson.verbs.slice(),
+    learnt: lesson.learnt.slice(),
+    repeated: lesson.repeated.slice(),
+    name: trimmedNewName,
+  }
+  if (trimmedDesc) {
+    entry.description = trimmedDesc
+  } else {
+    delete entry.description
+  }
+
+  const others = library.lessons.filter((_, i) => i !== idx)
+  const lessons = [...others, entry].sort((a, b) =>
+    libraryLessonNameOrder.compare(a.name?.trim() ?? '', b.name?.trim() ?? ''),
+  )
+  saveLibraryToLocalStorage({ language, lessons })
+  return { ok: true, entry }
+}

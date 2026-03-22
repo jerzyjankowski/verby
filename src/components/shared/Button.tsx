@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
-export type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'className'> & {
+export type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & {
   label?: string
   icon?: ReactNode
   fullWidth?: boolean
@@ -8,7 +8,16 @@ export type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'childre
   rounded?: boolean
 }
 
-export default function Button({ label, icon, fullWidth = true, main = false, rounded = false, type = 'button', ...props }: ButtonProps) {
+export default function Button({
+  label,
+  icon,
+  fullWidth = true,
+  main = false,
+  rounded = false,
+  type = 'button',
+  className,
+  ...props
+}: ButtonProps) {
   const hasOnlyIcon = !!icon && !label
 
   return (
@@ -24,8 +33,11 @@ export default function Button({ label, icon, fullWidth = true, main = false, ro
             ? `flex h-10 items-center justify-center px-0 py-0 ${rounded ? 'rounded-full' : 'rounded-lg'}`
             : `inline-flex size-10 items-center justify-center px-0 py-0 ${rounded ? 'rounded-full' : 'rounded-lg'}`
           : '',
-        icon && label ? 'flex flex-row items-center gap-2' : ''
-      ].join(' ')}
+        icon && label ? 'flex flex-row items-center gap-2' : '',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       {...props}
     >
       {icon ? <span>{icon}</span> : null}

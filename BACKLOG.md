@@ -1,7 +1,8 @@
 - saving functionality
-    - display all saves per language - let remove them (from main page, see saves, edit name, description, etc.)
+    - 
     - starting lesson select pool ALL or one of saves
-
+- sort ES verbs by MAIN, A0, etc, add ids again
+- 
 - deploy
 
 - remember save position in verbs lists when going into single verb and going back
