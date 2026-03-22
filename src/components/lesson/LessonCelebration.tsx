@@ -136,29 +136,19 @@ export default function LessonCelebration() {
           </div>
         </div>
 
-        <h2 className="text-xl font-semibold tracking-tight text-primary-text">
-          Lesson completed
-        </h2>
-        <p className="mt-2 max-w-xs text-sm text-primary-text/80">
-          You have worked through every verb in this lesson.
-        </p>
-
-        <div className="mt-10 flex shrink-0 gap-2" aria-hidden>
-          {(
-            [
-              'bg-primary-text/55',
-              'bg-text-error/55',
-              'bg-text-success/55',
-              'bg-primary-text/45',
-              'bg-text-success/45',
-            ] as const
-          ).map((cls, i) => (
-            <span
-              key={i}
-              className={`size-2 rounded-full animate-bounce ${cls}`}
-              style={{ animationDelay: `${i * 90}ms` }}
-            />
-          ))}
+        <div className="relative mt-2 inline-block max-w-full animate-bounce px-1">
+          <span
+            className="pointer-events-none absolute inset-x-[-0.85rem] inset-y-[-0.4rem] -z-20 rounded-full bg-text-success/25 animate-ping"
+            style={{ animationDuration: '2.2s' }}
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-x-[-0.55rem] inset-y-[-0.3rem] -z-10 rounded-2xl border border-text-success/50 bg-text-success/15 shadow-[0_0_28px_-6px] shadow-text-success/35"
+            aria-hidden
+          />
+          <h2 className="relative z-10 text-xl font-semibold tracking-tight text-text-success">
+            Lesson completed
+          </h2>
         </div>
       </div>
     </div>

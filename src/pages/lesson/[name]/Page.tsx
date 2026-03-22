@@ -65,7 +65,7 @@ export default function Page() {
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
               <LessonCelebration />
             </div>
-            <Button label="Complete" main onClick={handleComplete} />
+            <Button label="Close" main onClick={handleComplete} />
           </>
         ) : (
           <>
