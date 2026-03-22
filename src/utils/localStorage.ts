@@ -28,6 +28,14 @@ export function loadLessonFromLocalStorage(lessonName: string): LessonSave | nul
   }
 }
 
+export function removeLessonFromLocalStorage(lessonName: string): void {
+  try {
+    localStorage.removeItem(lessonStorageKey(lessonName))
+  } catch {
+    // ignore
+  }
+}
+
 function parseMarkedVerbs(raw: string): MarkedVerb[] {
   try {
     const parsed = JSON.parse(raw) as unknown

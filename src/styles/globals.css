@@ -49,6 +49,53 @@
   .verby-card {
     @apply bg-primary border border-primary-darkest rounded-xl;
   }
+
+  .verby-firework-particle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 9999px;
+    animation-name: verby-firework-particle;
+    animation-timing-function: cubic-bezier(0.08, 0.72, 0.18, 1);
+    animation-iteration-count: 1;
+    /* Hide during animation-delay (stagger); avoid static dots before each burst. */
+    animation-fill-mode: both;
+    will-change: transform, opacity;
+  }
+
+  .verby-firework-particle[data-fw-tone='primary'] {
+    box-shadow: 0 0 24px 8px color-mix(in srgb, var(--color-primary-text) 32%, transparent),
+      0 0 14px 4px color-mix(in srgb, var(--color-primary-text) 72%, transparent),
+      0 0 8px 3px color-mix(in srgb, var(--color-primary-text) 48%, transparent);
+  }
+
+  .verby-firework-particle[data-fw-tone='error'] {
+    box-shadow: 0 0 24px 8px color-mix(in srgb, var(--color-text-error) 32%, transparent),
+      0 0 14px 4px color-mix(in srgb, var(--color-text-error) 72%, transparent),
+      0 0 8px 3px color-mix(in srgb, var(--color-text-error) 48%, transparent);
+  }
+
+  .verby-firework-particle[data-fw-tone='success'] {
+    box-shadow: 0 0 24px 8px color-mix(in srgb, var(--color-text-success) 32%, transparent),
+      0 0 14px 4px color-mix(in srgb, var(--color-text-success) 72%, transparent),
+      0 0 8px 3px color-mix(in srgb, var(--color-text-success) 48%, transparent);
+  }
+
+  .verby-firework-flash {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    animation-name: verby-firework-flash;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    pointer-events: none;
+  }
 }
 
 @keyframes verby-overlay-in {
@@ -87,3 +134,46 @@
   }
 }
 
+@keyframes verby-celebrate-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Fireworks: each particle uses --fw-deg and --fw-travel (inherited or on element) */
+@keyframes verby-firework-particle {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--fw-deg, 0deg)) translateY(0) scale(0.35);
+  }
+  8% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--fw-deg, 0deg))
+      translateY(calc(-1 * var(--fw-travel, 4rem))) scale(0.12);
+  }
+}
+
+@keyframes verby-firework-flash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  12% {
+    opacity: 0.82;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.5);
+  }
+}

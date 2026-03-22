@@ -65,12 +65,14 @@ export function useLesson(name?: string) {
   const [lesson, setLesson] = useState<LessonSave | null | undefined>()
   const [languageConfig, setLanguageConfig] = useState<LanguageConfig>(getLanguageConfig(undefined))
   const [lastVerbsIds, setLastVerbsIds] = useState<number[]>([])
+  const [isCompleted, setIsCompleted] = useState(false)
   const toast = useToast()
 
   useEffect(() => {
     if (!name) {
       return
     }
+    setIsCompleted(false)
     const lesson = loadLessonFromLocalStorage(name)
     setLesson(lesson)
 
@@ -184,7 +186,10 @@ export function useLesson(name?: string) {
 
     const nextVerb = randomizeVerb(nextLessonAfterLearnt, nextLastVerbsIds)
     if (!nextVerb) {
+      saveLessonToLocalStorage(nextLessonAfterLearnt)
       setLesson(nextLessonAfterLearnt)
+      setRound(undefined)
+      setIsCompleted(true)
       return
     }
     const nextLesson = withRepeatedIncrementedForShownVerb(nextLessonAfterLearnt, nextVerb.id)
@@ -225,6 +230,7 @@ export function useLesson(name?: string) {
 
   const restartQuestions = useCallback(() => {
     if (!lesson) return
+    setIsCompleted(false)
     const resetLesson: LessonSave = {
       ...lesson,
       learnt: lesson.verbs.map(() => false),
@@ -247,6 +253,7 @@ export function useLesson(name?: string) {
     verbs,
     round,
     lastVerbsIds,
+    isCompleted,
     updateRoundHiddenFlags,
     canContinue,
     onContinue,

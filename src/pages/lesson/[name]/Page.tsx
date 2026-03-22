@@ -1,18 +1,22 @@
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { CheckIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 
 import Cards from '../../../components/lesson/Cards'
+import LessonCelebration from '../../../components/lesson/LessonCelebration.tsx'
 import LessonTopBar from '../../../components/lesson/LessonTopBar.tsx'
 import Button from '../../../components/shared/Button.tsx'
 import { useLesson } from '../../../hooks/useLesson.ts'
+import { removeLessonFromLocalStorage } from '../../../utils/localStorage.ts'
 
 export default function Page() {
   const { name } = useParams<{ name: string }>()
+  const navigate = useNavigate()
   const {
     lesson,
     verbs,
     round,
     lastVerbsIds,
+    isCompleted,
     updateRoundHiddenFlags,
     canContinue,
     onContinue,
@@ -21,6 +25,13 @@ export default function Page() {
     reverseDirection,
     restartQuestions,
   } = useLesson(name)
+
+  const handleComplete = () => {
+    if (lesson?.name) {
+      removeLessonFromLocalStorage(lesson.name)
+    }
+    navigate('/')
+  }
 
   const currentVerb = round ? verbs.find((v) => v.id === round.verbId) : undefined
 
@@ -46,31 +57,43 @@ export default function Page() {
         onReverseDirection={reverseDirection}
         onRestartQuestions={restartQuestions}
       />
-      <div className="mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col gap-3 overflow-auto p-4">
-        {round && (
-          <Cards
-            round={round}
-            updateRoundHiddenFlags={updateRoundHiddenFlags}
-            languageConfig={languageConfig}
-          />
-        )}
-
-        {round && (
-          <div className="grid grid-cols-2 gap-3">
-            <Button
-              icon={<ArrowRightIcon className="size-5" />}
-              rounded={false}
-              onClick={() => onContinue(false)}
-              disabled={!canContinue}
-            />
-            <Button
-              icon={<CheckIcon className="size-5" />}
-              rounded={false}
-              main
-              onClick={() => onContinue(true)}
-              disabled={!canContinue}
-            />
-          </div>
+      <div
+        className={`mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col gap-3 p-4 ${isCompleted ? 'overflow-hidden' : 'overflow-auto'}`}
+      >
+        {isCompleted ? (
+          <>
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+              <LessonCelebration />
+            </div>
+            <Button label="Complete" main onClick={handleComplete} />
+          </>
+        ) : (
+          <>
+            {round && (
+              <Cards
+                round={round}
+                updateRoundHiddenFlags={updateRoundHiddenFlags}
+                languageConfig={languageConfig}
+              />
+            )}
+            {round && (
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  icon={<ArrowRightIcon className="size-5" />}
+                  rounded={false}
+                  onClick={() => onContinue(false)}
+                  disabled={!canContinue}
+                />
+                <Button
+                  icon={<CheckIcon className="size-5" />}
+                  rounded={false}
+                  main
+                  onClick={() => onContinue(true)}
+                  disabled={!canContinue}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
