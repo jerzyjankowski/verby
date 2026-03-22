@@ -1,30 +1,57 @@
-import { useMemo, useState } from 'react'
+import { type ReactNode } from 'react'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import { useNavigate } from 'react-router-dom'
 
 import Button from '../../components/shared/Button.tsx'
 import Dropdown from '../../components/shared/Dropdown.tsx'
 import type { DropdownItem } from '../../components/shared/types.ts'
-import {
-  type LessonConfig,
-  type LessonConfigFormState,
-  LANGUAGE_OPTIONS,
-  LANGUAGE_LABELS,
-  REGULARITY_OPTIONS,
-  REGULARITY_LABELS,
-  LEVEL_OPTIONS,
-  LEVEL_LABELS,
-  DIRECTION_OPTIONS,
-  DIRECTION_LABELS,
-  SPEED_OPTIONS,
-  SPEED_LABELS,
-  BATCH_OPTIONS,
-  BATCH_LABELS, EXTRA_OPTIONS, EXTRA_LABELS,
-} from '../../types/config.ts'
-import { getLanguageConfig } from '../../configs/languageConfigMap.ts'
-import { initLesson } from '../../utils/initLesson.ts'
-import { loadCurrentLessonFromLocalStorage } from '../../utils/localStorage.ts'
-import {LESSON_PAGE_URL, MAIN_PAGE_URL} from "../../consts/urls.ts";
+import Confirmation from '../../components/lesson/settings/Confirmation.tsx'
+import Sheet from '../../components/shared/Sheet.tsx'
+import { usePrepareLesson } from '../../hooks/usePrepareLesson.ts'
+import type { LessonConfig } from '../../types/config.ts'
+import { MAIN_PAGE_URL } from '../../consts/urls.ts'
+
+function StartLessonConfirmBody({
+  lessonVerbCount,
+  availableVerbCountBeforeBatch,
+  batch,
+}: {
+  lessonVerbCount: number
+  availableVerbCountBeforeBatch: number
+  batch: LessonConfig['batch']
+}): ReactNode {
+  const shortfall =
+    typeof batch === 'number' && availableVerbCountBeforeBatch < batch
+
+  return (
+    <>
+      <p>
+        This lesson will include <strong>{lessonVerbCount}</strong>{' '}
+        {lessonVerbCount === 1 ? 'verb' : 'verbs'}.
+      </p>
+      <p>
+        <strong>{availableVerbCountBeforeBatch}</strong>{' '}
+        {availableVerbCountBeforeBatch === 1 ? 'verb' : 'verbs'} matched your filters.
+      </p>
+      {shortfall ? (
+        <p>
+          You selected a batch of <strong>{batch}</strong>, but only{' '}
+          <strong>{availableVerbCountBeforeBatch}</strong>{' '}
+          {availableVerbCountBeforeBatch === 1 ? 'verb' : 'verbs'} matched your settings, so the
+          lesson has fewer cards than that batch size.
+        </p>
+      ) : null}
+    </>
+  )
+}
+
+function NoVerbsFoundSheetBody(): ReactNode {
+  return (
+    <p>
+      You cannot start a lesson without any verbs. Change your filters so at least one verb matches.
+    </p>
+  )
+}
 
 function ConfigRow({
   label,
@@ -59,147 +86,133 @@ function ConfigRow({
 
 export default function Page() {
   const navigate = useNavigate()
-  const [isStarting, setIsStarting] = useState(false)
-  const [form, setForm] = useState<LessonConfigFormState>(() => {
-    const savedLesson = loadCurrentLessonFromLocalStorage()
-    return savedLesson?.config ?? {}
-  })
+  const {
+    form,
+    hasExtraChoices,
+    options,
+    labels,
+    setLanguage,
+    setLevel,
+    setDirection,
+    setExtra,
+    setConjugation,
+    setRegularity,
+    setSpeed,
+    setBatch,
+    isStarting,
+    pendingStart,
+    startConfirmOpen,
+    handleStart,
+    handleStartConfirmOpenChange,
+    confirmStartLesson,
+    cancelStartLesson,
+    startDisabled,
+  } = usePrepareLesson()
 
-  const languageConfig = useMemo(() => getLanguageConfig(form.language), [form.language])
-  const conjugationLabels = languageConfig.languageLabels.conjugationsLabels
-  const conjugationOptions = conjugationLabels.map((_, idx) => idx)
-  const conjugationLabelMap: Record<string, string> = Object.fromEntries(
-    conjugationLabels.map((label, idx) => [String(idx), label]),
-  )
-
-  const setLanguage = (v: string) =>
-    setForm((prev) => ({
-      ...prev,
-      language: v as LessonConfig['language'],
-      conjugation: undefined,
-    }))
-  const setLevel = (v: string) =>
-    setForm((prev) => ({ ...prev, level: v as LessonConfig['level'] }))
-  const setDirection = (v: string) =>
-    setForm((prev) => ({ ...prev, direction: v as LessonConfig['direction'] }))
-  const setExtra = (v: string) =>
-    setForm((prev) => ({
-      ...prev,
-      extra: v as LessonConfig['extra'],
-      conjugation: v === 'conjugation' ? prev.conjugation : undefined,
-      regularity: v === 'no' ? 'all' : prev.regularity,
-    }))
-  const setConjugation = (v: string) =>
-    setForm((prev) => ({ ...prev, conjugation: Number(v) }))
-  const setRegularity = (v: string) =>
-    setForm((prev) => ({ ...prev, regularity: v as LessonConfig['regularity'] }))
-  const setSpeed = (v: string) =>
-    setForm((prev) => ({ ...prev, speed: v as LessonConfig['speed'] }))
-  const setBatch = (v: string) =>
-    setForm((prev) => ({
-      ...prev,
-      batch: (v === 'ALL' ? 'ALL' : Number(v)) as LessonConfig['batch'],
-    }))
-
-  const allSelected =
-    form.language &&
-    form.level &&
-    form.direction &&
-    form.extra &&
-    (form.extra !== 'conjugation' || form.conjugation !== undefined) &&
-    (form.extra === 'no' || form.regularity !== undefined) &&
-    form.speed &&
-    form.batch !== undefined
-
-  const handleStart = async () => {
-    if (!allSelected || isStarting) return
-    const lessonConfig: LessonConfig = {
-      language: form.language!,
-      level: form.level!,
-      direction: form.direction!,
-      extra: form.extra!,
-      regularity: form.extra === 'no' ? 'all' : form.regularity!,
-      conjugation: form.extra === 'conjugation' ? form.conjugation : undefined,
-      speed: form.speed!,
-      batch: form.batch!,
-    }
-    try {
-      setIsStarting(true)
-      await initLesson(lessonConfig, languageConfig)
-      navigate(LESSON_PAGE_URL)
-    } finally {
-      setIsStarting(false)
-    }
-  }
+  const sheetHasVerbs = pendingStart ? pendingStart.lesson.verbs.length > 0 : false
 
   return (
     <div className="min-h-screen bg-primary text-primary-text p-4">
+      {pendingStart ? (
+        <Sheet
+          open={startConfirmOpen}
+          onOpenChange={handleStartConfirmOpenChange}
+          title={sheetHasVerbs ? 'Start lesson?' : 'No verbs found'}
+        >
+          <Confirmation
+            message={
+              sheetHasVerbs ? (
+                <StartLessonConfirmBody
+                  lessonVerbCount={pendingStart.lesson.verbs.length}
+                  availableVerbCountBeforeBatch={pendingStart.availableVerbCountBeforeBatch}
+                  batch={pendingStart.batch}
+                />
+              ) : (
+                <NoVerbsFoundSheetBody />
+              )
+            }
+            onConfirm={confirmStartLesson}
+            onCancel={cancelStartLesson}
+            confirmLabel="Start lesson"
+            cancelLabel="Back"
+            confirmDisabled={!sheetHasVerbs}
+          />
+        </Sheet>
+      ) : null}
+
       <div className="mx-auto max-w-2xl">
         <div className="verby-card grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4 p-4 bg-primary-darkest">
           <ConfigRow
             label="language:"
             value={form.language}
-            options={LANGUAGE_OPTIONS}
-            labelMap={LANGUAGE_LABELS as Record<string, string>}
+            options={options.language}
+            labelMap={labels.language}
             onSelect={setLanguage}
           />
           <ConfigRow
             label="level:"
             value={form.level}
-            options={LEVEL_OPTIONS}
-            labelMap={LEVEL_LABELS as Record<string, string>}
+            options={options.level}
+            labelMap={labels.level}
             onSelect={setLevel}
           />
           <ConfigRow
             label="direction:"
             value={form.direction}
-            options={DIRECTION_OPTIONS}
-            labelMap={DIRECTION_LABELS as Record<string, string>}
+            options={options.direction}
+            labelMap={labels.direction}
             onSelect={setDirection}
           />
-          <ConfigRow
-            label="extra:"
-            value={form.extra}
-            options={EXTRA_OPTIONS}
-            labelMap={EXTRA_LABELS as Record<string, string>}
-            onSelect={setExtra}
-          />
+          {hasExtraChoices ? (
+            <ConfigRow
+              label="extra:"
+              value={form.extra}
+              options={options.extra}
+              labelMap={labels.extra}
+              onSelect={setExtra}
+            />
+          ) : null}
           {form.extra === 'conjugation' && (
             <ConfigRow
               label="conjugation:"
               value={form.conjugation}
-              options={conjugationOptions}
-              labelMap={conjugationLabelMap}
+              options={options.conjugation}
+              labelMap={labels.conjugation}
               onSelect={setConjugation}
             />
           )}
-          {form.extra === 'conjugation' || form.extra === 'forms' && (
+          {(form.extra === 'conjugation' || form.extra === 'forms') && (
             <ConfigRow
               label="regularity:"
               value={form.regularity}
-              options={REGULARITY_OPTIONS}
-              labelMap={REGULARITY_LABELS as Record<string, string>}
+              options={options.regularity}
+              labelMap={labels.regularity}
               onSelect={setRegularity}
             />
           )}
           <ConfigRow
             label="speed:"
             value={form.speed}
-            options={SPEED_OPTIONS}
-            labelMap={SPEED_LABELS as Record<string, string>}
+            options={options.speed}
+            labelMap={labels.speed}
             onSelect={setSpeed}
           />
           <ConfigRow
             label="batch:"
             value={form.batch}
-            options={BATCH_OPTIONS}
-            labelMap={BATCH_LABELS as Record<string, string>}
+            options={options.batch}
+            labelMap={labels.batch}
             onSelect={setBatch}
           />
 
           <div className="col-span-2 mt-4 flex items-center gap-3">
             <Button onClick={() => navigate(MAIN_PAGE_URL)} label="Back" icon={<ArrowLeftIcon className="size-4" />} fullWidth={false} />
-            <Button onClick={handleStart} disabled={!allSelected || isStarting} label={isStarting ? 'Starting...' : 'Start'} main />
+            <Button
+              onClick={handleStart}
+              disabled={startDisabled}
+              label={isStarting ? 'Starting...' : 'Start lesson'}
+              main
+            />
           </div>
         </div>
       </div>

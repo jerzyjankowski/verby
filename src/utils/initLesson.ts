@@ -2,27 +2,63 @@ import type { LanguageConfig, LessonConfig, LessonSave } from '../types/config.t
 import { shuffle } from 'lodash'
 
 import { loadVerbsFromJson } from './jsonVerbsLoader'
-import { saveLessonAsCurrentToLocalStorage } from './localStorage'
 import type { Verb } from '../types/verb.ts'
 
-export async function initLesson(
+/** Verbs matching level and regularity filters (before shuffle / batch cap). */
+export function filterVerbsMatchingLessonConfig(
+  verbsData: Verb[],
   config: LessonConfig,
   languageConfig: LanguageConfig,
-): Promise<LessonSave> {
-  const verbsData = await loadVerbsFromJson(languageConfig.verbsFilePath)
-
-  const filteredVerbsByLevels = config.level === 'ALL' ? [...verbsData]
-    : config.level === 'MAIN' ? verbsData.filter(verb => verb.sublevel === 'main')
-      : config.level === 'A0' ? verbsData.filter(verb => verb.sublevel === 'main' || verb.sublevel === 'A0')
-        : verbsData.filter(verb => verb.level === config.level)
-  const filteredVerbsByRegularity = filteredVerbsByLevels.filter(verb => {
+): Verb[] {
+  const filteredVerbsByLevels =
+    config.level === 'ALL'
+      ? [...verbsData]
+      : config.level === 'MAIN'
+        ? verbsData.filter((verb) => verb.sublevel === 'main')
+        : config.level === 'A0'
+          ? verbsData.filter(
+              (verb) => verb.sublevel === 'main' || verb.sublevel === 'A0',
+            )
+          : verbsData.filter((verb) => verb.level === config.level)
+  return filteredVerbsByLevels.filter((verb) => {
     const irregular = languageConfig.isIrregular(
       verb,
       config.extra,
       config.extra === 'conjugation' ? config.conjugation : undefined,
     )
-    return config.regularity === 'irregular' ? irregular : config.regularity === 'regular' ? !irregular : true
+    return config.regularity === 'irregular'
+      ? irregular
+      : config.regularity === 'regular'
+        ? !irregular
+        : true
   })
+}
+
+export async function countVerbsMatchingLessonConfig(
+  config: LessonConfig,
+  languageConfig: LanguageConfig,
+): Promise<number> {
+  const verbsData = await loadVerbsFromJson(languageConfig.verbsFilePath)
+  return filterVerbsMatchingLessonConfig(verbsData, config, languageConfig).length
+}
+
+/** Verbs matching level/regularity filters, before shuffle batch cap. */
+export type InitLessonResult = {
+  lesson: LessonSave
+  availableVerbCountBeforeBatch: number
+}
+
+export async function initLesson(
+  config: LessonConfig,
+  languageConfig: LanguageConfig,
+): Promise<InitLessonResult> {
+  const verbsData = await loadVerbsFromJson(languageConfig.verbsFilePath)
+  const filteredVerbsByRegularity = filterVerbsMatchingLessonConfig(
+    verbsData,
+    config,
+    languageConfig,
+  )
+  const availableVerbCountBeforeBatch = filteredVerbsByRegularity.length
 
   const filteredVerbs: Verb[] = []
   const shuffled = shuffle(filteredVerbsByRegularity)
@@ -37,13 +73,13 @@ export async function initLesson(
   const learnt: boolean[] = filteredVerbs.map(() => false)
   const repeated: number[] = filteredVerbs.map(() => 0)
 
-  const lesson: LessonSave = {
-    config,
-    verbs,
-    learnt,
-    repeated,
+  return {
+    lesson: {
+      config,
+      verbs,
+      learnt,
+      repeated,
+    },
+    availableVerbCountBeforeBatch,
   }
-
-  saveLessonAsCurrentToLocalStorage(lesson)
-  return lesson
 }

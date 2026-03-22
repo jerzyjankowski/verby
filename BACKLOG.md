@@ -1,4 +1,5 @@
-- if there are no verbs don't let start a lesson - show modal, if there are less verbs than batch selected ask to continue, or maybe always show the modal to tell how much would be if batch ALL
+- only available levels
+- select one or more levels at the same time
 
 - saving functionality
     - save new save or add to old one or replace old one
@@ -8,12 +9,9 @@
 
 - deploy
 
-- no extra option if arrays are empty
 - [TECH] linter, prettier, TS check on commit
-- go back to previous question or change decision for previous question (or for any question) or click verb from verbs or history and then see details, level, edit learnt
 - conjugation display as one column - UI settings
 - show irregular mark after answer or before - UI settings
-- select one or more levels at the same time
 
 WILD IDEAS:
 - [TECH] unit tests
