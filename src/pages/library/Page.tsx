@@ -1,0 +1,416 @@
+import { useEffect, useMemo, useState } from 'react'
+import { ArrowLeftIcon } from '@radix-ui/react-icons'
+import * as Switch from '@radix-ui/react-switch'
+import { useNavigate } from 'react-router-dom'
+
+import Confirmation from '../../components/lesson/settings/Confirmation.tsx'
+import Button from '../../components/shared/Button.tsx'
+import Dropdown from '../../components/shared/Dropdown.tsx'
+import Sheet from '../../components/shared/Sheet.tsx'
+import TextArea from '../../components/shared/TextArea.tsx'
+import TextField from '../../components/shared/TextField.tsx'
+import type { DropdownItem } from '../../components/shared/types.ts'
+import { useToast } from '../../components/shared/Toast.tsx'
+import {
+  LIBRARY_SAVE_NAME_MAX_LEN,
+  LIBRARY_SAVE_NOTES_MAX_LEN,
+} from '../../consts/librarySave.ts'
+import { MAIN_PAGE_URL } from '../../consts/urls.ts'
+import {
+  type Language,
+  LANGUAGE_LABELS,
+  LANGUAGE_OPTIONS,
+} from '../../types/config.ts'
+import type { Verb } from '../../types/verb.ts'
+import { loadVerbsForLanguage } from '../../utils/jsonVerbsLoader.ts'
+import { loadCurrentLessonFromLocalStorage } from '../../utils/localStorage.ts'
+import {
+  deleteLibraryEntry,
+  getLibraryLessonByName,
+  getLibraryLessonNames,
+  updateLibraryEntryMetadata,
+} from '../../utils/library.ts'
+
+function defaultLanguageFromNewLesson(): Language | undefined {
+  const lesson = loadCurrentLessonFromLocalStorage()
+  const lang = lesson?.config?.language
+  if (lang !== undefined && LANGUAGE_OPTIONS.includes(lang)) {
+    return lang
+  }
+  return undefined
+}
+
+type DetailView = 'edit' | 'confirmDelete'
+
+function verbLevelDisplayLabel(v: Verb): string {
+  const sub = v.sublevel.toLowerCase()
+  if (sub === 'main') return 'MAIN'
+  if (sub === 'a0') return 'A0'
+  return v.level
+}
+
+export default function Page() {
+  const navigate = useNavigate()
+  const toast = useToast()
+  const [language, setLanguage] = useState<Language | undefined>(defaultLanguageFromNewLesson)
+  const [listVersion, setListVersion] = useState(0)
+
+  const [detailOpen, setDetailOpen] = useState(false)
+  const [detailView, setDetailView] = useState<DetailView>('edit')
+  const [selectedName, setSelectedName] = useState<string | null>(null)
+
+  const [draftName, setDraftName] = useState('')
+  const [draftDesc, setDraftDesc] = useState('')
+  const [baselineName, setBaselineName] = useState('')
+  const [baselineDesc, setBaselineDesc] = useState('')
+
+  const [displayVerbs, setDisplayVerbs] = useState(false)
+  const [verbsById, setVerbsById] = useState<Map<number, Verb>>(new Map())
+  const [verbsLoading, setVerbsLoading] = useState(false)
+  const [verbsError, setVerbsError] = useState<string | null>(null)
+
+  const languageItems: DropdownItem[] = LANGUAGE_OPTIONS.map((code) => ({
+    key: code,
+    label: LANGUAGE_LABELS[code],
+    onSelect: () => setLanguage(code),
+  }))
+
+  const entryNames = useMemo(() => {
+    if (language === undefined) return []
+    return getLibraryLessonNames(language)
+  }, [language, listVersion])
+
+  const detailLesson = useMemo(() => {
+    if (language === undefined || !selectedName) return null
+    return getLibraryLessonByName(language, selectedName)
+  }, [language, selectedName, listVersion])
+
+  const verbCount = detailLesson?.verbs.length ?? 0
+
+  useEffect(() => {
+    setDisplayVerbs(false)
+  }, [selectedName])
+
+  useEffect(() => {
+    if (!detailOpen || detailView !== 'edit' || language === undefined || !displayVerbs) {
+      return
+    }
+
+    let cancelled = false
+    setVerbsLoading(true)
+    setVerbsError(null)
+    loadVerbsForLanguage(language)
+      .then((verbs) => {
+        if (!cancelled) {
+          setVerbsById(new Map(verbs.map((v) => [v.id, v])))
+        }
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) {
+          setVerbsById(new Map())
+          setVerbsError(e instanceof Error ? e.message : 'Failed to load verbs.')
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setVerbsLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [detailOpen, detailView, language, displayVerbs])
+
+  useEffect(() => {
+    if (!detailOpen || language === undefined || !selectedName) return
+    const entry = getLibraryLessonByName(language, selectedName)
+    if (!entry) {
+      setDetailOpen(false)
+      setSelectedName(null)
+      return
+    }
+    setDetailView('edit')
+    const n = entry.name?.trim() ?? ''
+    const d = (entry.description ?? '').trim()
+    setDraftName(entry.name ?? '')
+    setDraftDesc(entry.description ?? '')
+    setBaselineName(n)
+    setBaselineDesc(d)
+  }, [detailOpen, language, selectedName])
+
+  const trimmedDraftName = draftName.trim()
+  const trimmedDraftDesc = draftDesc.trim()
+
+  const nameDuplicate = useMemo(() => {
+    if (!language || trimmedDraftName.length === 0) return false
+    const key = trimmedDraftName.toLowerCase()
+    const baselineKey = baselineName.toLowerCase()
+    return entryNames.some((n) => n.toLowerCase() !== baselineKey && n.toLowerCase() === key)
+  }, [language, trimmedDraftName, baselineName, entryNames])
+
+  const dirty =
+    language !== undefined &&
+    selectedName !== null &&
+    (trimmedDraftName !== baselineName || trimmedDraftDesc !== baselineDesc)
+
+  const canSave =
+    dirty &&
+    trimmedDraftName.length > 0 &&
+    !nameDuplicate &&
+    draftName.length <= LIBRARY_SAVE_NAME_MAX_LEN &&
+    draftDesc.length <= LIBRARY_SAVE_NOTES_MAX_LEN
+
+  const nameAtLimit = draftName.length >= LIBRARY_SAVE_NAME_MAX_LEN
+  const notesAtLimit = draftDesc.length >= LIBRARY_SAVE_NOTES_MAX_LEN
+
+  const openEntry = (name: string) => {
+    setSelectedName(name)
+    setDetailOpen(true)
+  }
+
+  const handleDetailOpenChange = (open: boolean) => {
+    setDetailOpen(open)
+    if (!open) {
+      setSelectedName(null)
+      setDetailView('edit')
+      setDisplayVerbs(false)
+      setVerbsById(new Map())
+      setVerbsError(null)
+    }
+  }
+
+  const handleSave = () => {
+    if (!language || !selectedName || !canSave) return
+    const result = updateLibraryEntryMetadata(
+      language,
+      selectedName,
+      draftName,
+      draftDesc,
+    )
+    if (!result.ok) {
+      if (result.reason === 'duplicate_name') {
+        toast.error('Library', 'That name is already used by another save.')
+      } else if (result.reason === 'not_found') {
+        toast.error('Library', 'This save was removed or renamed elsewhere.')
+      } else {
+        toast.error('Library', 'Enter a name for this save.')
+      }
+      return
+    }
+    const nextName = result.entry.name?.trim() ?? ''
+    const nextDesc = (result.entry.description ?? '').trim()
+    setBaselineName(nextName)
+    setBaselineDesc(nextDesc)
+    setDraftName(result.entry.name ?? '')
+    setDraftDesc(result.entry.description ?? '')
+    setSelectedName(nextName)
+    setListVersion((v) => v + 1)
+    toast.success('Library', 'Save updated.')
+  }
+
+  const handleConfirmDelete = () => {
+    if (!language || !selectedName) return
+    const ok = deleteLibraryEntry(language, selectedName)
+    if (!ok) {
+      toast.error('Library', 'Could not delete this save.')
+      return
+    }
+    setDetailOpen(false)
+    setSelectedName(null)
+    setDetailView('edit')
+    setListVersion((v) => v + 1)
+    toast.success('Library', 'Save deleted.')
+  }
+
+  const nameDescribedBy = [
+    nameDuplicate ? 'library-edit-name-dup' : null,
+    nameAtLimit ? 'library-edit-name-limit' : null,
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  return (
+    <div className="min-h-screen bg-primary text-primary-text">
+      <header className="border-b border-primary-darkest bg-primary-darkest">
+        <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
+          <Button
+            onClick={() => navigate(MAIN_PAGE_URL)}
+            label="Back"
+            icon={<ArrowLeftIcon className="size-4" />}
+            fullWidth={false}
+          />
+          <div className="min-w-0 flex-1">
+            <Dropdown
+              selectedLabel={language !== undefined ? LANGUAGE_LABELS[language] : undefined}
+              placeholder="Select Language..."
+              triggerVariant="onDark"
+              items={languageItems}
+              align="start"
+            />
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-2xl p-4">
+        <div className="verby-card bg-primary-darkest flex flex-col gap-4 p-4">
+          {language === undefined ? (
+            <p className="text-sm text-primary-text/80">No language selected yet.</p>
+          ) : entryNames.length === 0 ? (
+            <p className="text-sm text-primary-text/80">No library saves for this language.</p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {entryNames.map((name) => (
+                <li key={name}>
+                  <Button
+                    label={name}
+                    onClick={() => openEntry(name)}
+                    className="text-left text-sm font-medium"
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <Sheet
+        open={detailOpen}
+        onOpenChange={handleDetailOpenChange}
+        title={detailView === 'confirmDelete' ? 'Delete library save?' : 'Library save'}
+        footer={
+          detailView === 'edit' ? (
+            <div className="flex flex-col gap-2">
+              <Button label="Save" main onClick={handleSave} disabled={!canSave} />
+              <Button
+                label="Delete"
+                onClick={() => setDetailView('confirmDelete')}
+                disabled={!language || !selectedName}
+              />
+            </div>
+          ) : null
+        }
+      >
+        {detailView === 'confirmDelete' ? (
+          <Confirmation
+            message={
+              <p>
+                Delete <strong>{selectedName ?? ''}</strong> from your library? This cannot be undone.
+              </p>
+            }
+            onConfirm={handleConfirmDelete}
+            onCancel={() => setDetailView('edit')}
+            confirmLabel="Delete"
+            cancelLabel="Cancel"
+          />
+        ) : (
+          <div className="flex flex-col gap-4 text-sm text-primary-text">
+            <label className="flex flex-col gap-1.5 font-medium">
+              <span>Name</span>
+              <TextField
+                type="text"
+                value={draftName}
+                maxLength={LIBRARY_SAVE_NAME_MAX_LEN}
+                onChange={(e) => setDraftName(e.target.value)}
+                autoComplete="off"
+                aria-invalid={nameDuplicate}
+                aria-describedby={nameDescribedBy || undefined}
+              />
+              {nameDuplicate ? (
+                <span id="library-edit-name-dup" className="font-normal text-text-error">
+                  That name is already used by another save.
+                </span>
+              ) : null}
+              {nameAtLimit ? (
+                <span id="library-edit-name-limit" className="font-normal text-primary-text/70">
+                  Max {LIBRARY_SAVE_NAME_MAX_LEN} characters.
+                </span>
+              ) : null}
+            </label>
+            <label className="flex flex-col gap-1.5 font-medium">
+              <span>Description</span>
+              <TextArea
+                value={draftDesc}
+                maxLength={LIBRARY_SAVE_NOTES_MAX_LEN}
+                onChange={(e) => setDraftDesc(e.target.value)}
+                rows={4}
+                placeholder="Optional notes…"
+              />
+              {notesAtLimit ? (
+                <span className="font-normal text-primary-text/70">
+                  Max {LIBRARY_SAVE_NOTES_MAX_LEN} characters.
+                </span>
+              ) : null}
+            </label>
+
+            <label className="flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
+              <span>Display verbs ({verbCount})</span>
+              <Switch.Root
+                checked={displayVerbs}
+                onCheckedChange={setDisplayVerbs}
+                className="relative h-6 w-11 shrink-0 rounded-full bg-primary-darkest transition-colors data-[state=checked]:bg-primary-text"
+              >
+                <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-primary transition-transform data-[state=checked]:translate-x-[22px]" />
+              </Switch.Root>
+            </label>
+
+            {displayVerbs ? (
+              <div className="flex flex-col gap-2">
+                {verbsLoading ? (
+                  <p className="text-sm text-primary-text/80">Loading verbs…</p>
+                ) : verbsError ? (
+                  <p className="text-sm text-text-error">{verbsError}</p>
+                ) : verbCount === 0 ? (
+                  <p className="text-sm text-primary-text/80">No verbs in this save.</p>
+                ) : (
+                  <div className="max-h-[min(50vh,24rem)] overflow-auto rounded-lg border border-primary-darkest">
+                    <table className="w-full border-collapse text-left text-sm">
+                      <thead className="sticky top-0 bg-primary-darker">
+                        <tr className="border-b border-primary-darkest">
+                          <th
+                            scope="col"
+                            className="w-14 min-w-[3.25rem] whitespace-nowrap px-2 py-2 font-semibold tabular-nums"
+                          >
+                            id
+                          </th>
+                          <th
+                            scope="col"
+                            className="w-16 min-w-[3.5rem] max-w-[4.5rem] whitespace-nowrap px-2 py-2 font-semibold"
+                          >
+                            level
+                          </th>
+                          <th scope="col" className="min-w-0 px-2 py-2 font-semibold">
+                            verb
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...(detailLesson?.verbs ?? [])]
+                          .sort((a, b) => a - b)
+                          .map((id) => {
+                          const v = verbsById.get(id)
+                          return (
+                            <tr
+                              key={id}
+                              className="border-b border-primary-darkest/80 last:border-b-0"
+                            >
+                              <td className="w-14 min-w-[3.25rem] whitespace-nowrap px-2 py-1.5 tabular-nums text-primary-text/90">
+                                {id}
+                              </td>
+                              <td className="w-16 min-w-[3.5rem] max-w-[4.5rem] whitespace-nowrap px-2 py-1.5 text-primary-text/90">
+                                {v ? verbLevelDisplayLabel(v) : '—'}
+                              </td>
+                              <td className="min-w-0 break-words px-2 py-1.5">{v?.verb ?? '—'}</td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            ) : null}
+          </div>
+        )}
+      </Sheet>
+    </div>
+  )
+}
