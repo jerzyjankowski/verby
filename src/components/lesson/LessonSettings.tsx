@@ -8,6 +8,7 @@ import { useToast } from '../shared/Toast.tsx'
 import ConfigSummary from './settings/ConfigSummary.tsx'
 import Confirmation from './settings/Confirmation.tsx'
 import HistoryView from './settings/HistoryView.tsx'
+import LibraryManagement from './settings/LibraryManagement.tsx'
 import VerbsView from './settings/VerbsView.tsx'
 import VerbView from './settings/VerbView.tsx'
 import type {LanguageConfig, LessonSave} from '../../types/config.ts'
@@ -29,6 +30,7 @@ type LessonSettingsProps = {
 type SettingsView =
   | 'menu'
   | 'config-summary'
+  | 'library-management'
   | 'verbs'
   | 'verb-edit'
   | 'history'
@@ -122,6 +124,7 @@ export default function LessonSettings({
   const titleByView: Record<SettingsView, string> = {
     menu: 'Lesson settings',
     'config-summary': 'Config Summary',
+    'library-management': 'Manage library',
     verbs: verbsLabel,
     'verb-edit': 'Edit verb',
     history: `History (${lastVerbsIds.length})`,
@@ -164,6 +167,7 @@ export default function LessonSettings({
         {currentView === 'menu' ? (
           <div className="flex flex-col gap-2">
             <Button label="Config Summary" onClick={() => pushView('config-summary')} />
+            <Button label="Manage Library" onClick={() => pushView('library-management')} />
             <Button label="Quick save" onClick={handleQuickSave} />
             <Button label={verbsLabel} onClick={() => pushView('verbs')} />
             <Button
@@ -179,6 +183,8 @@ export default function LessonSettings({
         ) : null}
 
         {currentView === 'config-summary' ? <ConfigSummary lesson={lesson} languageConfig={languageConfig} /> : null}
+
+        {currentView === 'library-management' ? <LibraryManagement /> : null}
 
         {currentView === 'verbs' ? (
           <VerbsView

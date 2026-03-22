@@ -3,14 +3,21 @@
     - display all saves per language - let remove them (from main page, see saves, edit name, description, etc.)
     - starting lesson select pool ALL or one of saves
     - let continue from save
+    - remove single verb from save
+    - quicksaves saves also in library save
 
 - deploy
 
-- [TECH] linter, prettier, TS check on commit
+- remember save position in verbs lists when going into single verb and going back
+- UI settings from main menu and from lesson settings
+- main menu split continue and start (top) from the settings (bottom)
 - conjugation display as one column and limit to only few (not all yo, tu, el, ...), (for example because of smaller screens) - UI settings
 - show irregular mark after answer or before - UI settings
+- [TECH] linter, prettier, TS check on commit
+- remove subtypes, Main and A0 can be removed from A1? (or maybe subtype will be useful later?)
 
 WILD IDEAS:
+- PL version of this app
 - [TECH] unit tests
 - wybieranie poziomów słów (easy, medium, hard)
 - change lesson conjugation mid lesson
