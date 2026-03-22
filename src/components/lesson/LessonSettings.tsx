@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react'
 import { ArrowLeftIcon, GearIcon } from '@radix-ui/react-icons'
 import { useNavigate } from 'react-router-dom'
 
-import { useToast } from '../shared/Toast.tsx'
 import Button from '../shared/Button.tsx'
 import Sheet from '../shared/Sheet.tsx'
 import ConfigSummary from './settings/ConfigSummary.tsx'
@@ -20,9 +19,17 @@ type LessonSettingsProps = {
   languageConfig: LanguageConfig
   currentVerb?: Verb
   onVerbLearntChange: (verbId: number, learnt: boolean) => void
+  onReverseDirection: () => void
 }
 
-type SettingsView = 'menu' | 'config-summary' | 'verbs' | 'verb-edit' | 'history' | 'close-questions'
+type SettingsView =
+  | 'menu'
+  | 'config-summary'
+  | 'verbs'
+  | 'verb-edit'
+  | 'history'
+  | 'close-questions'
+  | 'reverse-direction'
 
 export default function LessonSettings({
   lesson,
@@ -31,9 +38,9 @@ export default function LessonSettings({
   languageConfig,
   currentVerb,
   onVerbLearntChange,
+  onReverseDirection,
 }: LessonSettingsProps) {
   const navigate = useNavigate()
-  const toast = useToast()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [viewStack, setViewStack] = useState<SettingsView[]>(['menu'])
   const [verbBeingEdited, setVerbBeingEdited] = useState<Verb | null>(null)
@@ -74,10 +81,9 @@ export default function LessonSettings({
     setSettingsOpen(true)
   }
 
-  const handleReverseDirection = () => {
-    toast.success('Reverse Direction', 'Reversed direction mocked.')
-    setSettingsOpen(false)
-    resetNavigation()
+  const handleConfirmReverseDirection = () => {
+    onReverseDirection()
+    handleBack()
   }
 
   const handleConfirmCloseQuestions = () => {
@@ -103,6 +109,7 @@ export default function LessonSettings({
     'verb-edit': 'Edit verb',
     history: `History (${lastVerbsIds.length})`,
     'close-questions': 'Close Questions',
+    'reverse-direction': 'Reverse Direction',
   }
 
   const sheetTitle =
@@ -146,7 +153,7 @@ export default function LessonSettings({
               disabled={!currentVerb}
             />
             <Button label={`History (${lastVerbsIds.length})`} onClick={() => pushView('history')} />
-            <Button label="Reverse Direction" onClick={handleReverseDirection} />
+            <Button label="Reverse Direction" onClick={() => pushView('reverse-direction')} />
             <Button label="Close Questions" onClick={() => pushView('close-questions')} />
           </div>
         ) : null}
@@ -182,6 +189,14 @@ export default function LessonSettings({
           <Confirmation
             message="Are you sure you want to close this lesson and return to the lessons page?"
             onConfirm={handleConfirmCloseQuestions}
+            onCancel={handleBack}
+          />
+        ) : null}
+
+        {currentView === 'reverse-direction' ? (
+          <Confirmation
+            message="Switch which language is shown as the question and which as the answer? The current card will update."
+            onConfirm={handleConfirmReverseDirection}
             onCancel={handleBack}
           />
         ) : null}

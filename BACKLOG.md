@@ -1,5 +1,3 @@
-- modal when turn changes (in same speed mode)
-- reverse direction mid lesson
 - restart questions
 - zakończenie lekcji kiedy słówka się skończyły
 - /init and /lesson, no need for lesson name in url since always will start with _new? (rename _new)

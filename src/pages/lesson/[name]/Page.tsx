@@ -18,6 +18,7 @@ export default function Page() {
     onContinue,
     languageConfig,
     setVerbLearnt,
+    reverseDirection,
   } = useLesson(name)
 
   const currentVerb = round ? verbs.find((v) => v.id === round.verbId) : undefined
@@ -41,6 +42,7 @@ export default function Page() {
         languageConfig={languageConfig}
         currentVerb={currentVerb}
         onVerbLearntChange={setVerbLearnt}
+        onReverseDirection={reverseDirection}
       />
       <div className="mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col gap-3 overflow-auto p-4">
         {round && (

@@ -209,6 +209,20 @@ export function useLesson(name?: string) {
     })
   }, [])
 
+  const reverseDirection = useCallback(() => {
+    if (!lesson || !round) return
+    const nextDirection =
+      lesson.config.direction === 'to_foreign' ? 'to_native' : 'to_foreign'
+    const nextConfig: LessonConfig = { ...lesson.config, direction: nextDirection }
+    const nextLesson: LessonSave = { ...lesson, config: nextConfig }
+    saveLessonToLocalStorage(nextLesson)
+    setLesson(nextLesson)
+    const verb = verbs.find((v) => v.id === round.verbId)
+    if (verb) {
+      setRound(prepareRound(verb, nextConfig, languageConfig))
+    }
+  }, [lesson, round, verbs, languageConfig])
+
   return {
     lesson,
     verbs,
@@ -219,5 +233,6 @@ export function useLesson(name?: string) {
     onContinue,
     languageConfig,
     setVerbLearnt,
+    reverseDirection,
   }
 }
