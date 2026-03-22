@@ -3,6 +3,7 @@ import { shuffle } from 'lodash'
 
 import { loadVerbsFromJson } from './jsonVerbsLoader'
 import type { Verb } from '../types/verb.ts'
+import { getLibraryLessonByName } from './library.ts'
 
 export function verbMatchesLessonLevel(verb: Verb, level: Level): boolean {
   if (level === 'MAIN') return verb.sublevel === 'main'
@@ -48,13 +49,28 @@ export type InitLessonResult = {
   availableVerbCountBeforeBatch: number
 }
 
+export type InitLessonOptions = {
+  /** Library save name (trimmed, case-insensitive match). When set and found, only those verb ids are considered before other filters. */
+  libraryLessonSaveName?: string
+}
+
 export async function initLesson(
   config: LessonConfig,
   languageConfig: LanguageConfig,
+  options?: InitLessonOptions,
 ): Promise<InitLessonResult> {
   const verbsData = await loadVerbsFromJson(languageConfig.verbsFilePath)
+  let pool = verbsData
+  const name = options?.libraryLessonSaveName?.trim()
+  if (name) {
+    const entry = getLibraryLessonByName(config.language, name)
+    if (entry?.verbs?.length) {
+      const allow = new Set(entry.verbs)
+      pool = verbsData.filter((v) => allow.has(v.id))
+    }
+  }
   const filteredVerbsByRegularity = filterVerbsMatchingLessonConfig(
-    verbsData,
+    pool,
     config,
     languageConfig,
   )

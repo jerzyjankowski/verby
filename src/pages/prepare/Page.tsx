@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { ArrowLeftIcon } from '@radix-ui/react-icons'
+import { type ReactNode, useState } from 'react'
+import { ArrowLeftIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
 import { useNavigate } from 'react-router-dom'
 
 import Button from '../../components/shared/Button.tsx'
@@ -7,7 +7,7 @@ import Dropdown from '../../components/shared/Dropdown.tsx'
 import type { DropdownItem } from '../../components/shared/types.ts'
 import Confirmation from '../../components/lesson/settings/Confirmation.tsx'
 import Sheet from '../../components/shared/Sheet.tsx'
-import { usePrepareLesson } from '../../hooks/usePrepareLesson.ts'
+import { PREPARE_SOURCE_ALL_KEY, usePrepareLesson } from '../../hooks/usePrepareLesson.ts'
 import type { LessonConfig, Level } from '../../types/config.ts'
 import { MAIN_PAGE_URL } from '../../consts/urls.ts'
 
@@ -84,6 +84,28 @@ function ConfigRow({
   )
 }
 
+function SourceHelpPanel({
+  allVerbs,
+  description,
+}: {
+  allVerbs: boolean
+  description: string | undefined
+}) {
+  if (allVerbs) {
+    return (
+      <p className="text-sm leading-relaxed text-primary-text/90">
+        Every verb from the default full language list can be included.
+      </p>
+    )
+  }
+  const desc = description?.trim() ?? ''
+  return (
+    <p className="whitespace-pre-line text-sm leading-relaxed text-primary-text/90">
+      {`Use verbs configured in the selected save.\nDescription: "${desc}"`}
+    </p>
+  )
+}
+
 function LevelConfigRow({
   label,
   selected,
@@ -135,6 +157,7 @@ export default function Page() {
     options,
     labels,
     setLanguage,
+    setLibrarySource,
     toggleLevel,
     setDirection,
     setExtra,
@@ -152,6 +175,8 @@ export default function Page() {
     startDisabled,
   } = usePrepareLesson()
 
+  const [sourceHelpOpen, setSourceHelpOpen] = useState(false)
+
   const sheetHasVerbs = pendingStart ? pendingStart.lesson.verbs.length > 0 : false
 
   const languageItems: DropdownItem[] = options.language.map((opt) => ({
@@ -159,6 +184,15 @@ export default function Page() {
     label: labels.language[String(opt)],
     onSelect: () => setLanguage(String(opt)),
   }))
+
+  const sourceItems: DropdownItem[] = options.source.map((opt) => ({
+    key: String(opt),
+    label: labels.source[String(opt)],
+    onSelect: () => setLibrarySource(String(opt)),
+  }))
+
+  const sourceIsAllVerbs =
+    form.libraryLessonSaveName == null || form.libraryLessonSaveName.trim() === ''
 
   return (
     <div className="min-h-screen bg-primary text-primary-text pb-28">
@@ -211,65 +245,112 @@ export default function Page() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-2xl p-4">
-        <div className="verby-card grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4 p-4 bg-primary-darkest">
-          <LevelConfigRow
-            label="levels:"
-            selected={form.levels}
-            options={options.level}
-            labelMap={labels.level}
-            onToggle={toggleLevel}
-          />
-          <ConfigRow
-            label="direction:"
-            value={form.direction}
-            options={options.direction}
-            labelMap={labels.direction}
-            onSelect={setDirection}
-          />
-          {hasExtraChoices ? (
-            <ConfigRow
-              label="extra:"
-              value={form.extra}
-              options={options.extra}
-              labelMap={labels.extra}
-              onSelect={setExtra}
+      {form.language ? (
+        <div className="mx-auto max-w-2xl p-4">
+          <div className="verby-card grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-4 p-4 bg-primary-darkest">
+            <span className="flex h-10 shrink-0 items-center self-start text-sm text-primary-text">
+              source:
+            </span>
+            <div className="flex min-w-0 items-center gap-2 self-start">
+              <div className="min-w-0 flex-1">
+                <Dropdown
+                  selectedLabel={
+                    labels.source[
+                      String(form.libraryLessonSaveName ?? PREPARE_SOURCE_ALL_KEY)
+                    ]
+                  }
+                  placeholder="Select…"
+                  items={sourceItems}
+                  align="start"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setSourceHelpOpen((open) => !open)}
+                aria-expanded={sourceHelpOpen}
+                aria-label="About verb source"
+                className={[
+                  'inline-flex size-10 shrink-0 items-center justify-center rounded-lg border transition-colors',
+                  'border-primary-darkest bg-primary text-primary-text/80',
+                  'hover:bg-primary-darker hover:text-primary-text',
+                  sourceHelpOpen
+                    ? 'border-primary-text/40 bg-primary-darker text-primary-text'
+                    : '',
+                ].join(' ')}
+              >
+                <QuestionMarkCircledIcon className="size-5" aria-hidden />
+              </button>
+            </div>
+            {sourceHelpOpen ? (
+              <div className="col-span-2 rounded-lg border border-primary-darkest bg-primary px-3 py-3">
+                <SourceHelpPanel allVerbs={sourceIsAllVerbs} description={form.description} />
+              </div>
+            ) : null}
+            <LevelConfigRow
+              label="levels:"
+              selected={form.levels}
+              options={options.level}
+              labelMap={labels.level}
+              onToggle={toggleLevel}
             />
-          ) : null}
-          {form.extra === 'conjugation' && (
             <ConfigRow
-              label="conjugation:"
-              value={form.conjugation}
-              options={options.conjugation}
-              labelMap={labels.conjugation}
-              onSelect={setConjugation}
+              label="direction:"
+              value={form.direction}
+              options={options.direction}
+              labelMap={labels.direction}
+              onSelect={setDirection}
             />
-          )}
-          {(form.extra === 'conjugation' || form.extra === 'forms') && (
+            {hasExtraChoices ? (
+              <ConfigRow
+                label="extra:"
+                value={form.extra}
+                options={options.extra}
+                labelMap={labels.extra}
+                onSelect={setExtra}
+              />
+            ) : null}
+            {form.extra === 'conjugation' && (
+              <ConfigRow
+                label="conjugation:"
+                value={form.conjugation}
+                options={options.conjugation}
+                labelMap={labels.conjugation}
+                onSelect={setConjugation}
+              />
+            )}
+            {(form.extra === 'conjugation' || form.extra === 'forms') && (
+              <ConfigRow
+                label="regularity:"
+                value={form.regularity}
+                options={options.regularity}
+                labelMap={labels.regularity}
+                onSelect={setRegularity}
+              />
+            )}
             <ConfigRow
-              label="regularity:"
-              value={form.regularity}
-              options={options.regularity}
-              labelMap={labels.regularity}
-              onSelect={setRegularity}
+              label="speed:"
+              value={form.speed}
+              options={options.speed}
+              labelMap={labels.speed}
+              onSelect={setSpeed}
             />
-          )}
-          <ConfigRow
-            label="speed:"
-            value={form.speed}
-            options={options.speed}
-            labelMap={labels.speed}
-            onSelect={setSpeed}
-          />
-          <ConfigRow
-            label="batch:"
-            value={form.batch}
-            options={options.batch}
-            labelMap={labels.batch}
-            onSelect={setBatch}
-          />
+            <ConfigRow
+              label="batch:"
+              value={form.batch}
+              options={options.batch}
+              labelMap={labels.batch}
+              onSelect={setBatch}
+            />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="mx-auto max-w-2xl p-4">
+          <p className="text-sm leading-relaxed text-primary-text/80">
+            Select a language in the header first. Then you can choose source, levels, and other
+            lesson options here.
+          </p>
+        </div>
+      )}
 
       <div className="fixed bottom-0 left-0 right-0 z-[var(--z-sticky)] border-t border-primary-darkest bg-primary-darkest p-4">
         <div className="mx-auto max-w-2xl">

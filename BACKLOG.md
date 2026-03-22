@@ -1,8 +1,4 @@
-- saving functionality
-    - 
-    - starting lesson select pool ALL or one of saves
 - sort ES verbs by MAIN, A0, etc, add ids again
-- 
 - deploy
 
 - remember save position in verbs lists when going into single verb and going back

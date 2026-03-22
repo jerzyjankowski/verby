@@ -19,8 +19,12 @@ export default function ConfigSummary({ lesson, languageConfig }: ConfigSummaryP
       ? languageConfig.languageLabels.conjugationsLabels[lesson.config.conjugation]
       : undefined
 
+  const sourceName =
+    lesson.name != null && lesson.name.trim() !== '' ? lesson.name.trim() : 'All verbs'
+
   const rows: Array<{ label: string; value: string | number }> = [
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
+    { label: 'source', value: sourceName },
     {
       label: 'levels',
       value: lesson.config.levels.map((l) => LEVEL_LABELS[l]).join(', '),

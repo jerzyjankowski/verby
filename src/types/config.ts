@@ -114,6 +114,9 @@ export type LessonConfigFormState = {
   conjugation?: number
   speed?: Speed
   batch?: Batch
+  libraryLessonSaveName?: string
+  name?: string
+  description?: string
 }
 
 export type LessonSave = {

@@ -25,7 +25,7 @@ import {
   saveLibraryEntry,
 } from '../../utils/library.ts'
 import { saveLessonAsCurrentToLocalStorage } from '../../utils/localStorage.ts'
-import {PREPARE_LESSON_PAGE_URL} from "../../consts/urls.ts";
+import { MAIN_PAGE_URL } from "../../consts/urls.ts";
 
 type LessonSettingsProps = {
   lesson: LessonSave
@@ -115,7 +115,7 @@ export default function LessonSettings({
   const handleConfirmCloseQuestions = () => {
     setSettingsOpen(false)
     resetNavigation()
-    navigate(PREPARE_LESSON_PAGE_URL)
+    navigate(MAIN_PAGE_URL)
   }
 
   const handleQuickSave = () => {

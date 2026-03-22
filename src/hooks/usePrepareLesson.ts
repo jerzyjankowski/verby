@@ -26,6 +26,7 @@ import {
 } from '../types/config.ts'
 import type { Verb, VerbLevel } from '../types/verb.ts'
 import { initLesson } from '../utils/initLesson.ts'
+import { getLibraryLessonByName, getLibraryLessonNames } from '../utils/library.ts'
 import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
 import {
   loadCurrentLessonFromLocalStorage,
@@ -63,6 +64,7 @@ export type PrepareLessonPendingStart = {
 
 export type UsePrepareLessonLabels = {
   language: Record<string, string>
+  source: Record<string, string>
   level: Record<string, string>
   direction: Record<string, string>
   extra: Record<string, string>
@@ -72,8 +74,11 @@ export type UsePrepareLessonLabels = {
   conjugation: Record<string, string>
 }
 
+export const PREPARE_SOURCE_ALL_KEY = '__all__' as const
+
 export type UsePrepareLessonOptions = {
   language: readonly LanguageConfig['code'][]
+  source: readonly string[]
   level: readonly Level[]
   direction: readonly LessonConfig['direction'][]
   extra: readonly Extra[]
@@ -88,7 +93,16 @@ export function usePrepareLesson() {
 
   const [form, setForm] = useState<LessonConfigFormState>(() => {
     const savedLesson = loadCurrentLessonFromLocalStorage()
-    return savedLesson?.config ?? {}
+    const cfg = savedLesson?.config ?? {}
+    return {
+      ...cfg,
+      ...(savedLesson?.name != null && String(savedLesson.name).trim() !== ''
+        ? { name: savedLesson.name }
+        : {}),
+      ...(savedLesson?.description != null && String(savedLesson.description).trim() !== ''
+        ? { description: savedLesson.description }
+        : {}),
+    }
   })
 
   const [isStarting, setIsStarting] = useState(false)
@@ -159,7 +173,43 @@ export function usePrepareLesson() {
       ...prev,
       language: v as LessonConfig['language'],
       conjugation: undefined,
+      libraryLessonSaveName: undefined,
+      name: undefined,
+      description: undefined,
     }))
+
+  const setLibrarySource = (key: string) => {
+    if (key === PREPARE_SOURCE_ALL_KEY) {
+      setForm((prev) => ({
+        ...prev,
+        libraryLessonSaveName: undefined,
+        name: undefined,
+        description: undefined,
+      }))
+      return
+    }
+    setForm((prev) => {
+      const lang = prev.language
+      if (!lang) return prev
+      const entry = getLibraryLessonByName(lang, key)
+      if (!entry) return prev
+      const c = entry.config
+      const trimmedName = entry.name?.trim() ?? key.trim()
+      return {
+        ...prev,
+        levels: c.levels,
+        direction: c.direction,
+        extra: c.extra,
+        regularity: c.regularity,
+        conjugation: c.conjugation,
+        speed: c.speed,
+        batch: c.batch,
+        libraryLessonSaveName: trimmedName,
+        name: trimmedName,
+        description: entry.description,
+      }
+    })
+  }
   const toggleLevel = (v: string) => {
     const level = v as Level
     setForm((prev) => {
@@ -280,9 +330,25 @@ export function usePrepareLesson() {
 
   const startDisabled = !lessonConfig || isStarting
 
+  const sourceOptions = useMemo((): string[] => {
+    if (!form.language) return [PREPARE_SOURCE_ALL_KEY]
+    return [PREPARE_SOURCE_ALL_KEY, ...getLibraryLessonNames(form.language)]
+  }, [form.language])
+
+  const sourceLabelMap = useMemo((): Record<string, string> => {
+    const map: Record<string, string> = {
+      [PREPARE_SOURCE_ALL_KEY]: 'All verbs',
+    }
+    for (const n of sourceOptions) {
+      if (n !== PREPARE_SOURCE_ALL_KEY) map[n] = n
+    }
+    return map
+  }, [sourceOptions])
+
   const options: UsePrepareLessonOptions = useMemo(
     () => ({
       language: LANGUAGE_OPTIONS,
+      source: sourceOptions,
       level: availableLevelOptions,
       direction: DIRECTION_OPTIONS,
       extra: extraOptions,
@@ -291,7 +357,7 @@ export function usePrepareLesson() {
       batch: BATCH_OPTIONS,
       conjugation: conjugationOptions,
     }),
-    [availableLevelOptions, extraOptions, conjugationOptions],
+    [availableLevelOptions, extraOptions, conjugationOptions, sourceOptions],
   )
 
   const labels: UsePrepareLessonLabels = useMemo(
@@ -304,8 +370,9 @@ export function usePrepareLesson() {
       speed: SPEED_LABELS as Record<string, string>,
       batch: BATCH_LABELS as Record<string, string>,
       conjugation: conjugationLabelMap,
+      source: sourceLabelMap,
     }),
-    [conjugationLabelMap],
+    [conjugationLabelMap, sourceLabelMap],
   )
 
   const handleStart = async () => {
@@ -315,9 +382,19 @@ export function usePrepareLesson() {
       const { lesson, availableVerbCountBeforeBatch } = await initLesson(
         lessonConfig,
         languageConfig,
+        form.libraryLessonSaveName?.trim()
+          ? { libraryLessonSaveName: form.libraryLessonSaveName }
+          : undefined,
       )
+      const trimmedName = form.name?.trim()
+      const trimmedDesc = form.description?.trim()
+      const lessonWithMeta: LessonSave = { ...lesson }
+      if (trimmedName) lessonWithMeta.name = trimmedName
+      else delete lessonWithMeta.name
+      if (trimmedDesc) lessonWithMeta.description = trimmedDesc
+      else delete lessonWithMeta.description
       setPendingStart({
-        lesson,
+        lesson: lessonWithMeta,
         availableVerbCountBeforeBatch,
         batch: lessonConfig.batch,
       })
@@ -355,6 +432,7 @@ export function usePrepareLesson() {
     options,
     labels,
     setLanguage,
+    setLibrarySource,
     toggleLevel,
     setDirection,
     setExtra,
