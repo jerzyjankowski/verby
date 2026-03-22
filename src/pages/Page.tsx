@@ -15,9 +15,9 @@ export default function Page() {
             <Button onClick={() => navigate('/lesson/_new')} label="Continue" />
           ) : null}
           <Button onClick={() => navigate('/lesson')} label="New Lesson" />
+          <Button onClick={() => navigate('/marked-verbs')} label="Marked Verbs" />
         </div>
       </div>
     </div>
   )
 }
-

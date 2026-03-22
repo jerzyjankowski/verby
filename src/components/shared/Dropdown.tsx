@@ -1,20 +1,59 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { useState, type ReactElement } from 'react'
+import { useState } from 'react'
 
 import type { DropdownItem } from './types'
 
+export type DropdownTriggerVariant = 'default' | 'onDark'
+
 export type DropdownProps = {
-  trigger: ReactElement
   items: DropdownItem[]
   align?: 'start' | 'center' | 'end'
+  /** Optional left label (e.g. grid cell before the field). */
+  label?: string
+  /**
+   * Trigger text when a value is selected.
+   * If empty/undefined, `placeholder` is shown (muted).
+   */
+  selectedLabel?: string
+  /** Shown when `selectedLabel` is empty. */
+  placeholder?: string
+  /** Border contrast for the trigger button. */
+  triggerVariant?: DropdownTriggerVariant
 }
 
-export default function Dropdown({ trigger, items, align = 'start' }: DropdownProps) {
+const triggerButtonClasses: Record<DropdownTriggerVariant, string> = {
+  default: 'border-primary-darkest',
+  onDark: 'border-primary-darker',
+}
+
+export default function Dropdown({
+  items,
+  align = 'start',
+  label,
+  selectedLabel,
+  placeholder = 'Select…',
+  triggerVariant = 'default',
+}: DropdownProps) {
   const [open, setOpen] = useState(false)
 
-  return (
+  const menu = (
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
-      <DropdownMenu.Trigger asChild>{trigger}</DropdownMenu.Trigger>
+      <DropdownMenu.Trigger asChild>
+        <button
+          type="button"
+          className={[
+            'w-full min-w-0 truncate rounded-lg border bg-primary px-3 py-2 text-left text-primary-text transition-colors',
+            'cursor-pointer hover:bg-primary-darker focus:bg-primary-darker',
+            triggerButtonClasses[triggerVariant],
+          ].join(' ')}
+        >
+          {selectedLabel ? (
+            selectedLabel
+          ) : (
+            <span className="text-primary-text/50">{placeholder}</span>
+          )}
+        </button>
+      </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
@@ -46,5 +85,15 @@ export default function Dropdown({ trigger, items, align = 'start' }: DropdownPr
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   )
-}
 
+  if (label !== undefined && label !== '') {
+    return (
+      <>
+        <span className="text-sm text-primary-text">{label}</span>
+        <div className="min-w-0">{menu}</div>
+      </>
+    )
+  }
+
+  return menu
+}

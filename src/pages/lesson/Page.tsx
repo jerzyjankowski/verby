@@ -46,23 +46,13 @@ function ConfigRow({
   }))
 
   return (
-    <>
-      <span className="text-sm text-primary-text">{label}</span>
-      <div className="min-w-0">
-        <Dropdown
-          trigger={
-            <button
-              type="button"
-              className="w-full min-w-0 truncate text-left cursor-pointer rounded-lg border border-primary-darkest bg-primary px-3 py-2 text-primary-text transition-colors hover:bg-primary-darker focus:bg-primary-darker"
-            >
-              {displayValue ?? 'Select…'}
-            </button>
-          }
-          items={items}
-          align="start"
-        />
-      </div>
-    </>
+    <Dropdown
+      label={label}
+      selectedLabel={displayValue}
+      placeholder="Select…"
+      items={items}
+      align="start"
+    />
   )
 }
 
