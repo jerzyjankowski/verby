@@ -1,5 +1,5 @@
 - saving functionality
-    - save new save or add to old one or replace old one
+    - save new save or add to old one
     - display all saves per language - let remove them (from main page, see saves, edit name, description, etc.)
     - starting lesson select pool ALL or one of saves
     - let continue from save

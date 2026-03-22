@@ -1,20 +1,29 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { LIBRARY_SAVE_NOTES_MAX_LEN } from '../../../../consts/librarySave.ts'
-import type { Language } from '../../../../types/config.ts'
-import { getLibraryLessonByName, getLibraryLessonNames } from '../../../../utils/library.ts'
+import { LIBRARY_SAVE_NOTES_MAX_LEN, type LibraryVerbScope } from '../../../../consts/librarySave.ts'
+import type { Language, LessonSave } from '../../../../types/config.ts'
+import {
+  buildLessonSaveForLibrary,
+  getLibraryLessonByName,
+  getLibraryLessonNames,
+  getLibraryVerbScopeCounts,
+  getLibraryVerbScopeMenuSpec,
+  getLibraryVerbScopeTriggerLabel,
+} from '../../../../utils/library.ts'
 import Button from '../../../shared/Button.tsx'
 import Dropdown from '../../../shared/Dropdown.tsx'
 import TextArea from '../../../shared/TextArea.tsx'
 
 type ReplaceOtherSaveViewProps = {
   language: Language
-  onSave?: (payload: { name: string; notes: string }) => void
+  lesson: LessonSave
+  onSave?: (payload: { name: string; notes: string; whichVerbs: LibraryVerbScope }) => void
 }
 
-export default function ReplaceOtherSaveView({ language, onSave }: ReplaceOtherSaveViewProps) {
+export default function ReplaceOtherSaveView({ language, lesson, onSave }: ReplaceOtherSaveViewProps) {
   const [selectedName, setSelectedName] = useState('')
   const [notes, setNotes] = useState('')
+  const [whichVerbs, setWhichVerbs] = useState<LibraryVerbScope>('all')
 
   const existingNames = useMemo(() => getLibraryLessonNames(language), [language])
 
@@ -32,8 +41,27 @@ export default function ReplaceOtherSaveView({ language, onSave }: ReplaceOtherS
     [existingNames, language],
   )
 
+  const scopeCounts = useMemo(() => getLibraryVerbScopeCounts(lesson), [lesson])
+
+  useEffect(() => {
+    if (whichVerbs === 'not_learnt' && scopeCounts.notLearnt === 0) setWhichVerbs('all')
+    if (whichVerbs === 'learnt' && scopeCounts.learnt === 0) setWhichVerbs('all')
+  }, [whichVerbs, scopeCounts.notLearnt, scopeCounts.learnt])
+
+  const verbScopeDropdownItems = useMemo(
+    () =>
+      getLibraryVerbScopeMenuSpec(scopeCounts).map(({ key, label, disabled }) => ({
+        key,
+        label,
+        disabled,
+        onSelect: () => setWhichVerbs(key),
+      })),
+    [scopeCounts],
+  )
+
   const notesAtLimit = notes.length >= LIBRARY_SAVE_NOTES_MAX_LEN
-  const canSave = selectedName.trim().length > 0
+  const hasVerbsForScope = buildLessonSaveForLibrary(lesson, whichVerbs) != null
+  const canSave = selectedName.trim().length > 0 && hasVerbsForScope
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden rounded-xl border border-primary-darkest bg-primary-darker p-4 text-sm text-primary-text">
@@ -76,11 +104,28 @@ export default function ReplaceOtherSaveView({ language, onSave }: ReplaceOtherS
         ) : null}
       </label>
 
+      <div className="flex flex-col gap-1.5 text-sm font-medium">
+        <Dropdown
+          label="Which verbs"
+          items={verbScopeDropdownItems}
+          selectedLabel={getLibraryVerbScopeTriggerLabel(whichVerbs, scopeCounts)}
+          placeholder="Choose which verbs…"
+          triggerVariant="onDark"
+        />
+        {!hasVerbsForScope ? (
+          <p className="text-sm font-normal text-text-warning" role="status">
+            No verbs match this filter. Choose another option or update progress in the lesson.
+          </p>
+        ) : null}
+      </div>
+
       <Button
         label="Save"
         main
         disabled={!canSave}
-        onClick={() => onSave?.({ name: selectedName.trim(), notes: notes.trim() })}
+        onClick={() =>
+          onSave?.({ name: selectedName.trim(), notes: notes.trim(), whichVerbs })
+        }
       />
     </div>
   )

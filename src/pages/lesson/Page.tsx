@@ -24,7 +24,6 @@ export default function Page() {
     reverseDirection,
     restartQuestions,
     resetProgressAndSave,
-    setCurrentLessonFromSave,
   } = useLesson()
   console.log('[JJ]lesson.name', lesson?.name)
 
@@ -57,7 +56,6 @@ export default function Page() {
         onVerbLearntChange={setVerbLearnt}
         onReverseDirection={reverseDirection}
         onRestartQuestions={restartQuestions}
-        onCurrentLessonSave={setCurrentLessonFromSave}
       />
       <div
         className={`mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col gap-3 p-4 ${isCompleted ? 'overflow-hidden' : 'overflow-auto'}`}

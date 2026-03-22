@@ -1,21 +1,34 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { LIBRARY_SAVE_NAME_MAX_LEN, LIBRARY_SAVE_NOTES_MAX_LEN } from '../../../../consts/librarySave.ts'
-import type { Language } from '../../../../types/config.ts'
-import { getLibraryLessonNames } from '../../../../utils/library.ts'
+import {
+  LIBRARY_SAVE_NAME_MAX_LEN,
+  LIBRARY_SAVE_NOTES_MAX_LEN,
+  type LibraryVerbScope,
+} from '../../../../consts/librarySave.ts'
+import type { Language, LessonSave } from '../../../../types/config.ts'
+import {
+  buildLessonSaveForLibrary,
+  getLibraryLessonNames,
+  getLibraryVerbScopeCounts,
+  getLibraryVerbScopeMenuSpec,
+  getLibraryVerbScopeTriggerLabel,
+} from '../../../../utils/library.ts'
 import Button from '../../../shared/Button.tsx'
+import Dropdown from '../../../shared/Dropdown.tsx'
 import TextArea from '../../../shared/TextArea.tsx'
 import TextField from '../../../shared/TextField.tsx'
 
 type CreateNewSaveViewProps = {
   language: Language
-  onSave?: (payload: { name: string; notes: string }) => void
+  lesson: LessonSave
+  onSave?: (payload: { name: string; notes: string; whichVerbs: LibraryVerbScope }) => void
 }
 
-export default function CreateNewSaveView({ language, onSave }: CreateNewSaveViewProps) {
+export default function CreateNewSaveView({ language, lesson, onSave }: CreateNewSaveViewProps) {
   const [name, setName] = useState('')
   const [notes, setNotes] = useState('')
-  
+  const [whichVerbs, setWhichVerbs] = useState<LibraryVerbScope>('all')
+
   const trimmedName = name.trim()
   const existingNames = useMemo(() => getLibraryLessonNames(language), [language])
 
@@ -25,7 +38,26 @@ export default function CreateNewSaveView({ language, onSave }: CreateNewSaveVie
   }, [trimmedName, existingNames])
   const nameAtLimit = name.length >= LIBRARY_SAVE_NAME_MAX_LEN
   const notesAtLimit = notes.length >= LIBRARY_SAVE_NOTES_MAX_LEN
-  const canSave = trimmedName.length > 0 && !nameTaken
+  const hasVerbsForScope = buildLessonSaveForLibrary(lesson, whichVerbs) != null
+  const canSave = trimmedName.length > 0 && !nameTaken && hasVerbsForScope
+
+  const scopeCounts = useMemo(() => getLibraryVerbScopeCounts(lesson), [lesson])
+
+  useEffect(() => {
+    if (whichVerbs === 'not_learnt' && scopeCounts.notLearnt === 0) setWhichVerbs('all')
+    if (whichVerbs === 'learnt' && scopeCounts.learnt === 0) setWhichVerbs('all')
+  }, [whichVerbs, scopeCounts.notLearnt, scopeCounts.learnt])
+
+  const verbScopeDropdownItems = useMemo(
+    () =>
+      getLibraryVerbScopeMenuSpec(scopeCounts).map(({ key, label, disabled }) => ({
+        key,
+        label,
+        disabled,
+        onSelect: () => setWhichVerbs(key),
+      })),
+    [scopeCounts],
+  )
 
   const nameDescribedBy = [
     nameTaken ? 'library-new-save-name-error' : null,
@@ -84,11 +116,26 @@ export default function CreateNewSaveView({ language, onSave }: CreateNewSaveVie
         ) : null}
       </label>
 
+      <div className="flex flex-col gap-1.5 text-sm font-medium">
+        <Dropdown
+          label="Which verbs"
+          items={verbScopeDropdownItems}
+          selectedLabel={getLibraryVerbScopeTriggerLabel(whichVerbs, scopeCounts)}
+          placeholder="Choose which verbs…"
+          triggerVariant="onDark"
+        />
+        {!hasVerbsForScope ? (
+          <p className="text-sm font-normal text-text-warning" role="status">
+            No verbs match this filter. Choose another option or update progress in the lesson.
+          </p>
+        ) : null}
+      </div>
+
       <Button
         label="Save"
         main
         disabled={!canSave}
-        onClick={() => onSave?.({ name: trimmedName, notes: notes.trim() })}
+        onClick={() => onSave?.({ name: trimmedName, notes: notes.trim(), whichVerbs })}
       />
     </div>
   )

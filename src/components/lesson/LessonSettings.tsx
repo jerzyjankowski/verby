@@ -19,7 +19,7 @@ import VerbsView from './settings/VerbsView.tsx'
 import VerbView from './settings/VerbView.tsx'
 import type {LanguageConfig, LessonSave} from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
-import { saveLibraryEntry } from '../../utils/library.ts'
+import { buildLessonSaveForLibrary, saveLibraryEntry } from '../../utils/library.ts'
 import { saveLessonAsCurrentToLocalStorage } from '../../utils/localStorage.ts'
 import {PREPARE_LESSON_PAGE_URL} from "../../consts/urls.ts";
 
@@ -32,7 +32,6 @@ type LessonSettingsProps = {
   onVerbLearntChange: (verbId: number, learnt: boolean) => void
   onReverseDirection: () => void
   onRestartQuestions: () => void
-  onCurrentLessonSave: (lesson: LessonSave) => void
 }
 
 type SettingsView =
@@ -56,7 +55,6 @@ export default function LessonSettings({
   onVerbLearntChange,
   onReverseDirection,
   onRestartQuestions,
-  onCurrentLessonSave,
 }: LessonSettingsProps) {
   const navigate = useNavigate()
   const toast = useToast()
@@ -202,10 +200,11 @@ export default function LessonSettings({
         {currentView === 'library-create-new' ? (
           <CreateNewSaveView
             language={lesson.config.language}
-            onSave={({ name, notes }) => {
-              const saved = saveLibraryEntry(lesson.config.language, lesson, name, notes)
-              saveLessonAsCurrentToLocalStorage(saved)
-              onCurrentLessonSave(saved)
+            lesson={lesson}
+            onSave={({ name, notes, whichVerbs }) => {
+              const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs)
+              if (!snapshot) return
+              saveLibraryEntry(lesson.config.language, snapshot, name, notes)
               toast.success('Library', 'Lesson saved to your library.')
               handleBack()
             }}
@@ -216,10 +215,11 @@ export default function LessonSettings({
         {currentView === 'library-replace-other' ? (
           <ReplaceOtherSaveView
             language={lesson.config.language}
-            onSave={({ name, notes }) => {
-              const saved = saveLibraryEntry(lesson.config.language, lesson, name, notes)
-              saveLessonAsCurrentToLocalStorage(saved)
-              onCurrentLessonSave(saved)
+            lesson={lesson}
+            onSave={({ name, notes, whichVerbs }) => {
+              const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs)
+              if (!snapshot) return
+              saveLibraryEntry(lesson.config.language, snapshot, name, notes)
               toast.success('Library', 'Library save replaced with the current lesson.')
               handleBack()
             }}

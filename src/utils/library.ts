@@ -1,4 +1,10 @@
-import { LIBRARY_SAVE_NAME_MAX_LEN, LIBRARY_SAVE_NOTES_MAX_LEN } from '../consts/librarySave.ts'
+import {
+  LIBRARY_SAVE_NAME_MAX_LEN,
+  LIBRARY_SAVE_NOTES_MAX_LEN,
+  LIBRARY_VERB_SCOPE_LABELS,
+  LIBRARY_VERB_SCOPE_OPTIONS,
+  type LibraryVerbScope,
+} from '../consts/librarySave.ts'
 import type { Language, LessonSave, Library } from '../types/config.ts'
 import { getLibraryStorageKey } from '../consts/localStorage.ts'
 import { normalizeLessonConfigLevels } from './localStorage.ts'
@@ -53,6 +59,93 @@ export function getLibraryLessonNames(language: Language): string[] {
   return library.lessons
     .map((l) => l.name?.trim())
     .filter((n): n is string => n != null && n.length > 0)
+}
+
+export type LibraryVerbScopeCounts = {
+  total: number
+  notLearnt: number
+  learnt: number
+}
+
+/** Counts verbs by learnt state (requires `learnt.length === verbs.length`; otherwise notLearnt/learnt are 0). */
+export function getLibraryVerbScopeCounts(lesson: LessonSave): LibraryVerbScopeCounts {
+  const { verbs, learnt } = lesson
+  const n = verbs.length
+  if (learnt.length !== n) {
+    return { total: n, notLearnt: 0, learnt: 0 }
+  }
+  let notLearnt = 0
+  let learntCount = 0
+  for (let i = 0; i < n; i++) {
+    if (learnt[i]) learntCount += 1
+    else notLearnt += 1
+  }
+  return { total: n, notLearnt, learnt: learntCount }
+}
+
+/** Trigger text for the library “which verbs” control (includes counts for not-learnt / learnt). */
+export function getLibraryVerbScopeTriggerLabel(
+  scope: LibraryVerbScope,
+  counts: LibraryVerbScopeCounts,
+): string {
+  if (scope === 'all') return LIBRARY_VERB_SCOPE_LABELS.all
+  if (scope === 'not_learnt') {
+    return `${LIBRARY_VERB_SCOPE_LABELS.not_learnt} (${counts.notLearnt})`
+  }
+  return `${LIBRARY_VERB_SCOPE_LABELS.learnt} (${counts.learnt})`
+}
+
+/** Menu rows: “Not learnt” / “Learnt” show counts; those rows are disabled when the count is 0. “All” disabled when there are no verbs. */
+export function getLibraryVerbScopeMenuSpec(counts: LibraryVerbScopeCounts): {
+  key: LibraryVerbScope
+  label: string
+  disabled: boolean
+}[] {
+  return LIBRARY_VERB_SCOPE_OPTIONS.map((key) => {
+    const disabled =
+      key === 'all'
+        ? counts.total === 0
+        : key === 'not_learnt'
+          ? counts.notLearnt === 0
+          : counts.learnt === 0
+    const label =
+      key === 'all'
+        ? LIBRARY_VERB_SCOPE_LABELS.all
+        : key === 'not_learnt'
+          ? `${LIBRARY_VERB_SCOPE_LABELS.not_learnt} (${counts.notLearnt})`
+          : `${LIBRARY_VERB_SCOPE_LABELS.learnt} (${counts.learnt})`
+    return { key, label, disabled }
+  })
+}
+
+/**
+ * Builds a lesson snapshot for storing in the library: optional filter by learnt state,
+ * then `repeated` → 0 and `learnt` → false for every included verb.
+ * Returns `null` if no verbs match the scope.
+ */
+export function buildLessonSaveForLibrary(
+  lesson: LessonSave,
+  scope: LibraryVerbScope,
+): LessonSave | null {
+  const { verbs, learnt, repeated, config } = lesson
+  const n = verbs.length
+  if (learnt.length !== n || repeated.length !== n) return null
+
+  const indices: number[] = []
+  for (let i = 0; i < n; i++) {
+    if (scope === 'all') indices.push(i)
+    else if (scope === 'not_learnt' && !learnt[i]) indices.push(i)
+    else if (scope === 'learnt' && learnt[i]) indices.push(i)
+  }
+
+  if (indices.length === 0) return null
+
+  return {
+    config: { ...config },
+    verbs: indices.map((i) => verbs[i]!),
+    learnt: indices.map(() => false),
+    repeated: indices.map(() => 0),
+  }
 }
 
 /** Library entry whose `name` matches `name` when trimmed (case-insensitive). */
