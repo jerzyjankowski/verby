@@ -8,7 +8,7 @@ import type { DropdownItem } from '../../components/shared/types.ts'
 import Confirmation from '../../components/lesson/settings/Confirmation.tsx'
 import Sheet from '../../components/shared/Sheet.tsx'
 import { usePrepareLesson } from '../../hooks/usePrepareLesson.ts'
-import type { LessonConfig } from '../../types/config.ts'
+import type { LessonConfig, Level } from '../../types/config.ts'
 import { MAIN_PAGE_URL } from '../../consts/urls.ts'
 
 function StartLessonConfirmBody({
@@ -84,6 +84,49 @@ function ConfigRow({
   )
 }
 
+function LevelConfigRow({
+  label,
+  selected,
+  options,
+  labelMap,
+  onToggle,
+}: {
+  label: string
+  selected: Level[] | undefined
+  options: readonly Level[]
+  labelMap: Record<string, string>
+  onToggle: (key: string) => void
+}) {
+  return (
+    <>
+      <span className="flex h-10 shrink-0 items-center self-start text-sm text-primary-text">
+        {label}
+      </span>
+      <div className="flex min-w-0 flex-wrap gap-2 self-start">
+        {options.map((opt) => {
+          const key = String(opt)
+          const on = selected?.includes(opt) ?? false
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => onToggle(key)}
+              className={[
+                'rounded-lg border px-3 py-2 text-sm transition-colors',
+                on
+                  ? 'border-primary-text/40 bg-primary-darker text-primary-text'
+                  : 'border-primary-darkest bg-primary text-primary-text/70 hover:bg-primary-darker',
+              ].join(' ')}
+            >
+              {labelMap[key]}
+            </button>
+          )
+        })}
+      </div>
+    </>
+  )
+}
+
 export default function Page() {
   const navigate = useNavigate()
   const {
@@ -92,7 +135,7 @@ export default function Page() {
     options,
     labels,
     setLanguage,
-    setLevel,
+    toggleLevel,
     setDirection,
     setExtra,
     setConjugation,
@@ -149,12 +192,12 @@ export default function Page() {
             labelMap={labels.language}
             onSelect={setLanguage}
           />
-          <ConfigRow
+          <LevelConfigRow
             label="level:"
-            value={form.level}
+            selected={form.level}
             options={options.level}
             labelMap={labels.level}
-            onSelect={setLevel}
+            onToggle={toggleLevel}
           />
           <ConfigRow
             label="direction:"

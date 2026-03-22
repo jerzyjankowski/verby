@@ -21,7 +21,10 @@ export default function ConfigSummary({ lesson, languageConfig }: ConfigSummaryP
 
   const rows: Array<{ label: string; value: string | number }> = [
     { label: 'language', value: LANGUAGE_LABELS[lesson.config.language] },
-    { label: 'level', value: LEVEL_LABELS[lesson.config.level] },
+    {
+      label: 'level',
+      value: lesson.config.level.map((l) => LEVEL_LABELS[l]).join(', '),
+    },
     { label: 'direction', value: DIRECTION_LABELS[lesson.config.direction] },
     { label: 'extra', value: EXTRA_LABELS[lesson.config.extra] },
     { label: 'regularity', value: REGULARITY_LABELS[lesson.config.regularity] },

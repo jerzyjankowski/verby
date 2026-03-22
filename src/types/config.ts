@@ -64,7 +64,7 @@ export const LEVEL_OPTIONS: Level[] = ['MAIN', 'A0', 'A1', 'A2', 'B1', 'B2', 'C1
 export const DIRECTION_OPTIONS: Direction[] = ['to_foreign', 'to_native']
 export const EXTRA_OPTIONS: Extra[] = ['no', 'conjugation', 'forms']
 export const SPEED_OPTIONS: Speed[] = ['same', 'random']
-export const BATCH_OPTIONS: Batch[] = [10, 20, 30, 40, 50, 'ALL']
+export const BATCH_OPTIONS: Batch[] = ['ALL', 10, 20, 30, 40, 50]
 
 export type LanguageConfigLabels = {
   personsLabels: {
@@ -97,7 +97,7 @@ export type LanguageConfig = {
 export type LessonConfig = {
   language: Language
   regularity: Regularity
-  level: Level
+  level: Level[]
   direction: Direction
   extra: Extra
   conjugation?: number
@@ -108,7 +108,7 @@ export type LessonConfig = {
 export type LessonConfigFormState = {
   language?: Language
   regularity?: Regularity
-  level?: Level
+  level?: Level[]
   direction?: Direction
   extra?: Extra
   conjugation?: number

@@ -74,7 +74,7 @@ export type UsePrepareLessonLabels = {
 
 export type UsePrepareLessonOptions = {
   language: readonly LanguageConfig['code'][]
-  level: readonly LessonConfig['level'][]
+  level: readonly Level[]
   direction: readonly LessonConfig['direction'][]
   extra: readonly Extra[]
   regularity: readonly LessonConfig['regularity'][]
@@ -160,8 +160,15 @@ export function usePrepareLesson() {
       language: v as LessonConfig['language'],
       conjugation: undefined,
     }))
-  const setLevel = (v: string) =>
-    setForm((prev) => ({ ...prev, level: v as LessonConfig['level'] }))
+  const toggleLevel = (v: string) => {
+    const level = v as Level
+    setForm((prev) => {
+      const cur = prev.level ?? []
+      const has = cur.includes(level)
+      const next = has ? cur.filter((x) => x !== level) : [...cur, level]
+      return { ...prev, level: next }
+    })
+  }
   const setDirection = (v: string) =>
     setForm((prev) => ({ ...prev, direction: v as LessonConfig['direction'] }))
   const setExtra = (v: string) =>
@@ -222,16 +229,19 @@ export function usePrepareLesson() {
   }, [form.language])
 
   useEffect(() => {
-    if (form.level === undefined) return
+    if (form.level === undefined || form.level.length === 0) return
     if (levelsResolvedForLanguage !== form.language) return
-    if (availableLevelOptions.includes(form.level)) return
-    const fallback = availableLevelOptions[0] ?? 'MAIN'
+    const valid = form.level.filter((l) => availableLevelOptions.includes(l))
+    if (valid.length === form.level.length) return
+    const fallback =
+      valid.length > 0 ? valid : [availableLevelOptions[0] ?? 'MAIN']
     setForm((prev) => ({ ...prev, level: fallback }))
   }, [availableLevelOptions, form.level, form.language, levelsResolvedForLanguage])
 
   const allSelected = Boolean(
     form.language &&
       form.level &&
+      form.level.length > 0 &&
       form.direction &&
       form.speed &&
       form.batch !== undefined &&
@@ -345,7 +355,7 @@ export function usePrepareLesson() {
     options,
     labels,
     setLanguage,
-    setLevel,
+    toggleLevel,
     setDirection,
     setExtra,
     setConjugation,

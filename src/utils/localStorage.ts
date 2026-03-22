@@ -1,5 +1,33 @@
-import type { Language, LessonSave } from '../types/config.ts'
+import type { Language, LessonSave, Level } from '../types/config.ts'
+import { LEVEL_OPTIONS } from '../types/config.ts'
 import type { MarkedVerb } from '../types/verb.ts'
+
+function isLevel(value: string): value is Level {
+  return LEVEL_OPTIONS.includes(value as Level)
+}
+
+/** Migrate legacy `level` string (or invalid data) to `Level[]`. */
+function normalizeLessonConfigLevels(config: LessonSave['config']): LessonSave['config'] {
+  const raw = config.level as unknown
+  if (raw === 'ALL') {
+    return { ...config, level: ['MAIN'] }
+  }
+  if (Array.isArray(raw)) {
+    const seen = new Set<Level>()
+    const level: Level[] = []
+    for (const x of raw) {
+      if (typeof x === 'string' && isLevel(x) && !seen.has(x)) {
+        seen.add(x)
+        level.push(x)
+      }
+    }
+    return level.length > 0 ? { ...config, level } : { ...config, level: ['MAIN'] }
+  }
+  if (typeof raw === 'string' && isLevel(raw)) {
+    return { ...config, level: [raw] }
+  }
+  return { ...config, level: ['MAIN'] }
+}
 
 export const CURRENT_LESSON_STORAGE_KEY = 'current-lesson'
 const MARKED_VERBS_KEY_SUFFIX = 'marked-verbs'
@@ -17,11 +45,8 @@ export function loadCurrentLessonFromLocalStorage(): LessonSave | null {
     const raw = localStorage.getItem(CURRENT_LESSON_STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw) as LessonSave
-    if (parsed?.config && (parsed.config as { level?: string }).level === 'ALL') {
-      return {
-        ...parsed,
-        config: { ...parsed.config, level: 'MAIN' },
-      }
+    if (parsed?.config) {
+      return { ...parsed, config: normalizeLessonConfigLevels(parsed.config) }
     }
     return parsed
   } catch {
@@ -33,13 +58,7 @@ function parseMarkedVerbs(raw: string): MarkedVerb[] {
   try {
     const parsed = JSON.parse(raw) as unknown
     if (!Array.isArray(parsed)) return []
-    return parsed.filter(
-      (v): v is MarkedVerb =>
-        v != null &&
-        typeof v === 'object' &&
-        typeof (v as MarkedVerb).id === 'number' &&
-        typeof (v as MarkedVerb).description === 'string',
-    )
+    return parsed.filter((v): v is MarkedVerb => v != null && typeof v === 'object')
   } catch {
     return []
   }

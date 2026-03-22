@@ -1,8 +1,15 @@
-import type { LanguageConfig, LessonConfig, LessonSave } from '../types/config.ts'
+import type { LanguageConfig, LessonConfig, LessonSave, Level } from '../types/config.ts'
 import { shuffle } from 'lodash'
 
 import { loadVerbsFromJson } from './jsonVerbsLoader'
 import type { Verb } from '../types/verb.ts'
+
+function verbMatchesLessonLevel(verb: Verb, level: Level): boolean {
+  if (level === 'MAIN') return verb.sublevel === 'main'
+  if (level === 'A0')
+    return verb.sublevel === 'main' || verb.sublevel === 'A0'
+  return verb.level === level
+}
 
 /** Verbs matching level and regularity filters (before shuffle / batch cap). */
 export function filterVerbsMatchingLessonConfig(
@@ -10,14 +17,9 @@ export function filterVerbsMatchingLessonConfig(
   config: LessonConfig,
   languageConfig: LanguageConfig,
 ): Verb[] {
-  const filteredVerbsByLevels =
-    config.level === 'MAIN'
-      ? verbsData.filter((verb) => verb.sublevel === 'main')
-      : config.level === 'A0'
-        ? verbsData.filter(
-            (verb) => verb.sublevel === 'main' || verb.sublevel === 'A0',
-          )
-        : verbsData.filter((verb) => verb.level === config.level)
+  const filteredVerbsByLevels = verbsData.filter((verb) =>
+    config.level.some((level) => verbMatchesLessonLevel(verb, level)),
+  )
   return filteredVerbsByLevels.filter((verb) => {
     const irregular = languageConfig.isIrregular(
       verb,
