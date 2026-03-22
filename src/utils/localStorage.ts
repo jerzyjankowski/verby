@@ -1,6 +1,10 @@
 import type { Language, LessonSave, Level } from '../types/config.ts'
 import { LEVEL_OPTIONS } from '../types/config.ts'
 import type { MarkedVerb } from '../types/verb.ts'
+import {
+  CURRENT_LESSON_STORAGE_KEY,
+  getMarkedVerbsStorageKey,
+} from "../consts/localStorage.ts";
 
 function isLevel(value: string): value is Level {
   return LEVEL_OPTIONS.includes(value as Level)
@@ -9,9 +13,6 @@ function isLevel(value: string): value is Level {
 /** Migrate legacy `level` string (or invalid data) to `Level[]`. */
 function normalizeLessonConfigLevels(config: LessonSave['config']): LessonSave['config'] {
   const raw = config.level as unknown
-  if (raw === 'ALL') {
-    return { ...config, level: ['MAIN'] }
-  }
   if (Array.isArray(raw)) {
     const seen = new Set<Level>()
     const level: Level[] = []
@@ -27,13 +28,6 @@ function normalizeLessonConfigLevels(config: LessonSave['config']): LessonSave['
     return { ...config, level: [raw] }
   }
   return { ...config, level: ['MAIN'] }
-}
-
-export const CURRENT_LESSON_STORAGE_KEY = 'current-lesson'
-const MARKED_VERBS_KEY_SUFFIX = 'marked-verbs'
-
-export function getMarkedVerbsKey(language: Language): string {
-  return `${language}-${MARKED_VERBS_KEY_SUFFIX}`
 }
 
 export function saveLessonAsCurrentToLocalStorage(lesson: LessonSave): void {
@@ -66,7 +60,7 @@ function parseMarkedVerbs(raw: string): MarkedVerb[] {
 
 export function loadMarkedVerbsFromLocalStorage(language: Language): MarkedVerb[] {
   try {
-    const key = getMarkedVerbsKey(language)
+    const key = getMarkedVerbsStorageKey(language)
     const raw = localStorage.getItem(key)
     if (!raw) return []
     return parseMarkedVerbs(raw)
@@ -76,7 +70,7 @@ export function loadMarkedVerbsFromLocalStorage(language: Language): MarkedVerb[
 }
 
 export function saveMarkedVerbsToLocalStorage(language: Language, verbs: MarkedVerb[]): void {
-  const key = getMarkedVerbsKey(language)
+  const key = getMarkedVerbsStorageKey(language)
   localStorage.setItem(key, JSON.stringify(verbs))
 }
 

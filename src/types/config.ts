@@ -121,4 +121,11 @@ export type LessonSave = {
   verbs: number[]
   learnt: boolean[]
   repeated: number[]
+  name?: string
+  description?: string
+}
+
+export type Library = {
+  language: Language
+  lessons: LessonSave[]
 }

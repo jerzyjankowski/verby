@@ -7,13 +7,13 @@
 - deploy
 
 - [TECH] linter, prettier, TS check on commit
-- conjugation display as one column - UI settings
+- conjugation display as one column and limit to only few (not all yo, tu, el, ...), (for example because of smaller screens) - UI settings
 - show irregular mark after answer or before - UI settings
 
 WILD IDEAS:
 - [TECH] unit tests
 - wybieranie poziomów słów (easy, medium, hard)
-- change lesson config like conjugation mid lesson
+- change lesson conjugation mid lesson
 - gramatyka podstawy odnośnie czasów, podpięte z przykładami do odmiany regularnej i ważniejsze od nieregularnej
 - course - powtórki, ustawianie celu
 - chrome connects to local folder and play sounds?
