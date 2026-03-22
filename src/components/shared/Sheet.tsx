@@ -3,7 +3,7 @@ import { Cross1Icon } from '@radix-ui/react-icons'
 import type { ReactNode } from 'react'
 
 import Button from './Button.tsx'
-import { ui } from '../../locales/index.ts'
+import { ui } from '../../locales'
 
 type SheetHeaderAction = {
   ariaLabel: string

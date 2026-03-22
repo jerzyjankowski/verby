@@ -7,7 +7,7 @@ import LessonTopBar from '../../components/lesson/LessonTopBar.tsx'
 import Button from '../../components/shared/Button.tsx'
 import { useLesson } from '../../hooks/useLesson.ts'
 import { MAIN_PAGE_URL } from '../../consts/urls.ts'
-import { ui } from '../../locales/index.ts'
+import { ui } from '../../locales'
 
 export default function Page() {
   const navigate = useNavigate()

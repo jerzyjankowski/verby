@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 import Button from '../../shared/Button.tsx'
-import { ui } from '../../../locales/index.ts'
+import { ui } from '../../../locales'
 
 type ConfirmationProps = {
   message: ReactNode

@@ -2,7 +2,7 @@ import { Cross1Icon } from '@radix-ui/react-icons'
 import * as ToastPrimitive from '@radix-ui/react-toast'
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 
-import { ui } from '../../locales/index.ts'
+import { ui } from '../../locales'
 
 type ToastVariant = 'error' | 'success'
 

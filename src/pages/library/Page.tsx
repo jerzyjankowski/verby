@@ -16,7 +16,7 @@ import {
   LIBRARY_SAVE_NOTES_MAX_LEN,
 } from '../../consts/librarySave.ts'
 import { MAIN_PAGE_URL } from '../../consts/urls.ts'
-import { LANGUAGE_LABELS, ui } from '../../locales/index.ts'
+import { LANGUAGE_LABELS, ui } from '../../locales'
 import { type Language, LANGUAGE_OPTIONS } from '../../types/config.ts'
 import type { Verb } from '../../types/verb.ts'
 import { loadVerbsForLanguage } from '../../utils/jsonVerbsLoader.ts'

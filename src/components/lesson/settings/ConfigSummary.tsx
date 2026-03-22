@@ -7,7 +7,7 @@ import {
   REGULARITY_LABELS,
   SPEED_LABELS,
   ui,
-} from '../../../locales/index.ts'
+} from '../../../locales'
 import type { LanguageConfig } from '../../../types/config.ts'
 import type { LessonSave } from '../../../types/config.ts'
 

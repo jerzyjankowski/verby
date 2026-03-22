@@ -4,7 +4,7 @@ import {
   LIBRARY_VERB_SCOPE_OPTIONS,
   type LibraryVerbScope,
 } from '../consts/librarySave.ts'
-import { LIBRARY_VERB_SCOPE_LABELS } from '../locales/index.ts'
+import { LIBRARY_VERB_SCOPE_LABELS } from '../locales'
 import type { Language, LessonSave, Library } from '../types/config.ts'
 import { getLibraryStorageKey } from '../consts/localStorage.ts'
 import { normalizeLessonConfigLevels } from './localStorage.ts'

@@ -8,7 +8,7 @@ import TextField from '../../components/shared/TextField.tsx'
 import Dropdown from '../../components/shared/Dropdown.tsx'
 import type { DropdownItem } from '../../components/shared/types.ts'
 import { getLanguageConfig } from '../../configs/languageConfigMap.ts'
-import { LANGUAGE_LABELS, ui } from '../../locales/index.ts'
+import { LANGUAGE_LABELS, ui } from '../../locales'
 import { type Language, LANGUAGE_OPTIONS } from '../../types/config.ts'
 import type { MarkedVerb, Verb } from '../../types/verb.ts'
 import {

@@ -13,7 +13,7 @@ import {
   getLibraryVerbScopeMenuSpec,
   getLibraryVerbScopeTriggerLabel,
 } from '../../../../utils/library.ts'
-import { ui } from '../../../../locales/index.ts'
+import { ui } from '../../../../locales'
 import Button from '../../../shared/Button.tsx'
 import Dropdown from '../../../shared/Dropdown.tsx'
 import TextArea from '../../../shared/TextArea.tsx'

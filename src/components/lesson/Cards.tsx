@@ -4,7 +4,7 @@ import type {Conjugation} from "../../types/verb.ts";
 import AnswerDetails from './settings/AnswerDetails.tsx'
 import ClampText from '../shared/ClampText.tsx'
 import type { LanguageConfig } from '../../types/config.ts'
-import { ui } from '../../locales/index.ts'
+import { ui } from '../../locales'
 
 type CardsProps = {
   round: Round

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 
-import { ui } from '../../locales/index.ts'
+import { ui } from '../../locales'
 import { CheckCircledIcon } from '@radix-ui/react-icons'
 
 type FwTone = 'primary' | 'error' | 'success' | 'warning'

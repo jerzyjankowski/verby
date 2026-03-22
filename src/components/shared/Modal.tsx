@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 
-import { ui } from '../../locales/index.ts'
+import { ui } from '../../locales'
 import type { ReactNode } from 'react'
 
 export type ModalProps = {

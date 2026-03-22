@@ -5,7 +5,7 @@ import Button from '../../shared/Button.tsx'
 import TextField from '../../shared/TextField.tsx'
 import type { LessonSave } from '../../../types/config.ts'
 import type { MarkedVerb, Verb } from '../../../types/verb.ts'
-import { ui } from '../../../locales/index.ts'
+import { ui } from '../../../locales'
 import {
   loadMarkedVerbFromLocalStorage,
   removeMarkedVerbFromLocalStorage,

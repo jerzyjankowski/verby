@@ -11,7 +11,7 @@ import {
   REGULARITY_LABELS,
   SPEED_LABELS,
   ui,
-} from '../locales/index.ts'
+} from '../locales'
 import {
   BATCH_OPTIONS,
   DIRECTION_OPTIONS,

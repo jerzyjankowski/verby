@@ -3,7 +3,7 @@ import { CheckIcon, Cross2Icon } from '@radix-ui/react-icons'
 
 import type { LessonSave } from '../../../types/config.ts'
 import type { Verb } from '../../../types/verb.ts'
-import { ui } from '../../../locales/index.ts'
+import { ui } from '../../../locales'
 
 type HistoryViewProps = {
   lesson: LessonSave

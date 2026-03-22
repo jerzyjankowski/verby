@@ -8,7 +8,7 @@ import type { DropdownItem } from '../../components/shared/types.ts'
 import Confirmation from '../../components/lesson/settings/Confirmation.tsx'
 import Sheet from '../../components/shared/Sheet.tsx'
 import { PREPARE_SOURCE_ALL_KEY, usePrepareLesson } from '../../hooks/usePrepareLesson.ts'
-import { ui } from '../../locales/index.ts'
+import { ui } from '../../locales'
 import type { LessonConfig, Level } from '../../types/config.ts'
 import { MAIN_PAGE_URL } from '../../consts/urls.ts'
 

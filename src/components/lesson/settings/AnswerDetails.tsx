@@ -3,7 +3,7 @@ import * as Switch from '@radix-ui/react-switch'
 
 import type { Round } from '../../../types/lesson.ts'
 import type { Conjugation } from '../../../types/verb.ts'
-import { ui } from '../../../locales/index.ts'
+import { ui } from '../../../locales'
 import Sheet from '../../shared/Sheet.tsx'
 
 type AnswerDetailsProps = {
