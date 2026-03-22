@@ -1,18 +1,15 @@
 import Button from '../../shared/Button.tsx'
+import { LIBRARY_MENU_ITEMS, type LibrarySettingsView } from './library/libraryViews.ts'
 
-const LIBRARY_ACTIONS = [
-  'Create new save',
-  'Edit current save',
-  'Add to other save',
-  'Replace other save',
-  'Remove from save',
-] as const
+type LibraryManagementProps = {
+  onOpenLibraryView: (view: LibrarySettingsView) => void
+}
 
-export default function LibraryManagement() {
+export default function LibraryManagement({ onOpenLibraryView }: LibraryManagementProps) {
   return (
     <div className="flex flex-col gap-2">
-      {LIBRARY_ACTIONS.map((name) => (
-        <Button key={name} label={name} onClick={() => console.log(name)} />
+      {LIBRARY_MENU_ITEMS.map(({ view, label }) => (
+        <Button key={view} label={label} onClick={() => onOpenLibraryView(view)} />
       ))}
     </div>
   )

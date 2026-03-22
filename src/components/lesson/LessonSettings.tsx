@@ -8,6 +8,12 @@ import { useToast } from '../shared/Toast.tsx'
 import ConfigSummary from './settings/ConfigSummary.tsx'
 import Confirmation from './settings/Confirmation.tsx'
 import HistoryView from './settings/HistoryView.tsx'
+import AddToOtherSaveView from './settings/library/AddToOtherSaveView.tsx'
+import CreateNewSaveView from './settings/library/CreateNewSaveView.tsx'
+import EditCurrentSaveView from './settings/library/EditCurrentSaveView.tsx'
+import RemoveFromSaveView from './settings/library/RemoveFromSaveView.tsx'
+import ReplaceOtherSaveView from './settings/library/ReplaceOtherSaveView.tsx'
+import { LIBRARY_VIEW_TITLES, type LibrarySettingsView } from './settings/library/libraryViews.ts'
 import LibraryManagement from './settings/LibraryManagement.tsx'
 import VerbsView from './settings/VerbsView.tsx'
 import VerbView from './settings/VerbView.tsx'
@@ -31,6 +37,7 @@ type SettingsView =
   | 'menu'
   | 'config-summary'
   | 'library-management'
+  | LibrarySettingsView
   | 'verbs'
   | 'verb-edit'
   | 'history'
@@ -125,6 +132,7 @@ export default function LessonSettings({
     menu: 'Lesson settings',
     'config-summary': 'Config Summary',
     'library-management': 'Manage library',
+    ...LIBRARY_VIEW_TITLES,
     verbs: verbsLabel,
     'verb-edit': 'Edit verb',
     history: `History (${lastVerbsIds.length})`,
@@ -184,7 +192,15 @@ export default function LessonSettings({
 
         {currentView === 'config-summary' ? <ConfigSummary lesson={lesson} languageConfig={languageConfig} /> : null}
 
-        {currentView === 'library-management' ? <LibraryManagement /> : null}
+        {currentView === 'library-management' ? (
+          <LibraryManagement onOpenLibraryView={pushView} />
+        ) : null}
+
+        {currentView === 'library-create-new' ? <CreateNewSaveView /> : null}
+        {currentView === 'library-edit-current' ? <EditCurrentSaveView /> : null}
+        {currentView === 'library-add-to-other' ? <AddToOtherSaveView /> : null}
+        {currentView === 'library-replace-other' ? <ReplaceOtherSaveView /> : null}
+        {currentView === 'library-remove-from' ? <RemoveFromSaveView /> : null}
 
         {currentView === 'verbs' ? (
           <VerbsView
