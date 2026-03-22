@@ -17,6 +17,13 @@
 :root {
   color-scheme: dark;
 
+  /* Stacking (higher = closer to user). Use via z-[var(--z-…)] in markup. */
+  --z-sticky: 10;
+  --z-dialog-overlay: 40;
+  --z-dialog: 50;
+  --z-dropdown: 50;
+  --z-toast: 60;
+
   /* Fallbacks for non-tailwind usage */
   --primary: #373958;
   --primary-text: #eae2f3;

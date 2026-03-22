@@ -60,7 +60,7 @@ export default function Dropdown({
           align={align}
           sideOffset={4}
           collisionPadding={8}
-          className="z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] w-[var(--radix-dropdown-menu-trigger-width)] max-w-[calc(100vw-1rem)] overflow-y-auto overscroll-contain rounded-xl border border-primary-darkest bg-primary p-1 text-primary-text shadow-lg"
+          className="z-[var(--z-dropdown)] max-h-[var(--radix-dropdown-menu-content-available-height)] w-[var(--radix-dropdown-menu-trigger-width)] max-w-[calc(100vw-1rem)] overflow-y-auto overscroll-contain rounded-xl border border-primary-darkest bg-primary p-1 text-primary-text shadow-lg"
         >
           {items.map((item) => (
             <DropdownMenu.Item

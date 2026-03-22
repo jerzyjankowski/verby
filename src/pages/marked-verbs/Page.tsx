@@ -208,7 +208,7 @@ export default function Page() {
       </div>
 
       {dirty ? (
-        <div className="fixed bottom-0 left-0 right-0 z-10 border-t border-primary-darkest bg-primary-darkest p-4">
+        <div className="fixed bottom-0 left-0 right-0 z-[var(--z-sticky)] border-t border-primary-darkest bg-primary-darkest p-4">
           <div className="mx-auto max-w-2xl">
             <Button
               label="Save"
