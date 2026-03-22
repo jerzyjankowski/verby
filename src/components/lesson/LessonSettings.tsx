@@ -19,7 +19,12 @@ import VerbsView from './settings/VerbsView.tsx'
 import VerbView from './settings/VerbView.tsx'
 import type {LanguageConfig, LessonSave} from '../../types/config.ts'
 import type {Verb} from "../../types/verb.ts";
-import { buildLessonSaveForLibrary, mergeIntoLibraryEntry, saveLibraryEntry } from '../../utils/library.ts'
+import {
+  buildLessonSaveForLibrary,
+  mergeIntoLibraryEntry,
+  removeMatchingVerbsFromLibraryEntry,
+  saveLibraryEntry,
+} from '../../utils/library.ts'
 import { saveLessonAsCurrentToLocalStorage } from '../../utils/localStorage.ts'
 import {PREPARE_LESSON_PAGE_URL} from "../../consts/urls.ts";
 
@@ -247,7 +252,34 @@ export default function LessonSettings({
             }}
           />
         ) : null}
-        {currentView === 'library-remove-from' ? <RemoveFromSaveView /> : null}
+        {currentView === 'library-remove-from' ? (
+          <RemoveFromSaveView
+            language={lesson.config.language}
+            lesson={lesson}
+            onRemove={async ({ name, notes, whichVerbs }) => {
+              const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs)
+              try {
+                const result = await removeMatchingVerbsFromLibraryEntry(
+                  lesson.config.language,
+                  name,
+                  snapshot,
+                  notes,
+                )
+                if (!result) return
+                const { removedVerbCount } = result
+                toast.success(
+                  'Library',
+                  removedVerbCount > 0
+                    ? `Removed ${removedVerbCount} verb${removedVerbCount === 1 ? '' : 's'} from the library save.`
+                    : 'Library save updated.',
+                )
+                handleBack()
+              } catch {
+                toast.error('Library', 'Could not load verbs to update levels in the library save.')
+              }
+            }}
+          />
+        ) : null}
 
         {currentView === 'verbs' ? (
           <VerbsView

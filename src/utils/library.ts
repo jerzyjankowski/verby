@@ -197,7 +197,6 @@ export function saveLibraryEntry(
 
 export type MergeLibraryEntryResult = {
   entry: LessonSave
-  /** How many verb ids from `snapshot` were appended (duplicates skipped). */
   addedVerbCount: number
 }
 
@@ -250,4 +249,56 @@ export async function mergeIntoLibraryEntry(
 
   const entry = saveLibraryEntry(language, body, nameForSave, description)
   return { entry, addedVerbCount }
+}
+
+export type RemoveFromLibraryEntryResult = {
+  entry: LessonSave
+  removedVerbCount: number
+}
+
+/**
+ * Removes from an existing library lesson every verb id that appears in `snapshot`.
+ * `config.level` is recomputed from the remaining verb ids. Progress rows align with kept verbs.
+ * When `snapshot` is null, only the description is updated.
+ */
+export async function removeMatchingVerbsFromLibraryEntry(
+  language: Language,
+  targetName: string,
+  snapshot: LessonSave | null,
+  description: string,
+): Promise<RemoveFromLibraryEntryResult | null> {
+  const existing = getLibraryLessonByName(language, targetName)
+  if (!existing) return null
+
+  const nameForSave = existing.name?.trim() ?? targetName.trim()
+
+  if (!snapshot) {
+    const entry = saveLibraryEntry(language, existing, nameForSave, description)
+    return { entry, removedVerbCount: 0 }
+  }
+
+  const { verbs: ev, learnt: el, repeated: er, config } = existing
+  if (el.length !== ev.length || er.length !== ev.length) return null
+
+  const { verbs: rv } = snapshot
+  const removeSet = new Set(rv)
+  const keepIndices: number[] = []
+  for (let i = 0; i < ev.length; i++) {
+    if (!removeSet.has(ev[i]!)) keepIndices.push(i)
+  }
+
+  const removedVerbCount = ev.length - keepIndices.length
+  const mergedVerbs = keepIndices.map((i) => ev[i]!)
+
+  const level = await getLessonLevelsForVerbIds(language, mergedVerbs)
+
+  const body: LessonSave = {
+    config: { ...config, level },
+    verbs: mergedVerbs,
+    learnt: mergedVerbs.map(() => false),
+    repeated: mergedVerbs.map(() => 0),
+  }
+
+  const entry = saveLibraryEntry(language, body, nameForSave, description)
+  return { entry, removedVerbCount }
 }

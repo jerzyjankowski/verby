@@ -2,7 +2,7 @@
     - display all saves per language - let remove them (from main page, see saves, edit name, description, etc.)
     - starting lesson select pool ALL or one of saves
     - remove single verb from save
-
+- add close button to Toast
 - deploy
 
 - remember save position in verbs lists when going into single verb and going back
