@@ -220,8 +220,9 @@ export default function LessonSettings({
           <AddToOtherSaveView
             language={lesson.config.language}
             lesson={lesson}
+            currentVerbId={currentVerb?.id}
             onSave={async ({ name, notes, whichVerbs }) => {
-              const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs)
+              const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs, currentVerb?.id)
               try {
                 const result = await mergeIntoLibraryEntry(lesson.config.language, name, snapshot, notes)
                 if (!result) return
@@ -256,8 +257,9 @@ export default function LessonSettings({
           <RemoveFromSaveView
             language={lesson.config.language}
             lesson={lesson}
+            currentVerbId={currentVerb?.id}
             onRemove={async ({ name, notes, whichVerbs }) => {
-              const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs)
+              const snapshot = buildLessonSaveForLibrary(lesson, whichVerbs, currentVerb?.id)
               try {
                 const result = await removeMatchingVerbsFromLibraryEntry(
                   lesson.config.language,

@@ -90,19 +90,39 @@ export function getLibraryVerbScopeTriggerLabel(
   counts: LibraryVerbScopeCounts,
 ): string {
   if (scope === 'all') return LIBRARY_VERB_SCOPE_LABELS.all
+  if (scope === 'current_verb') return LIBRARY_VERB_SCOPE_LABELS.current_verb
   if (scope === 'not_learnt') {
     return `${LIBRARY_VERB_SCOPE_LABELS.not_learnt} (${counts.notLearnt})`
   }
   return `${LIBRARY_VERB_SCOPE_LABELS.learnt} (${counts.learnt})`
 }
 
+export type LibraryVerbScopeMenuSpecOptions = {
+  /** When true, appends “Current verb” (disabled unless `currentVerbInLesson` is true). */
+  includeCurrentVerb?: boolean
+  currentVerbInLesson?: boolean
+}
+
 /** Menu rows: “Not learnt” / “Learnt” show counts; those rows are disabled when the count is 0. “All” disabled when there are no verbs. */
-export function getLibraryVerbScopeMenuSpec(counts: LibraryVerbScopeCounts): {
+export function getLibraryVerbScopeMenuSpec(
+  counts: LibraryVerbScopeCounts,
+  opts?: LibraryVerbScopeMenuSpecOptions,
+): {
   key: LibraryVerbScope
   label: string
   disabled: boolean
 }[] {
-  return LIBRARY_VERB_SCOPE_OPTIONS.map((key) => {
+  const keys = LIBRARY_VERB_SCOPE_OPTIONS.filter(
+    (key) => key !== 'current_verb' || opts?.includeCurrentVerb === true,
+  )
+  return keys.map((key) => {
+    if (key === 'current_verb') {
+      return {
+        key,
+        label: LIBRARY_VERB_SCOPE_LABELS.current_verb,
+        disabled: !opts?.currentVerbInLesson,
+      }
+    }
     const disabled =
       key === 'all'
         ? counts.total === 0
@@ -127,16 +147,24 @@ export function getLibraryVerbScopeMenuSpec(counts: LibraryVerbScopeCounts): {
 export function buildLessonSaveForLibrary(
   lesson: LessonSave,
   scope: LibraryVerbScope,
+  currentVerbId?: number,
 ): LessonSave | null {
   const { verbs, learnt, repeated, config } = lesson
   const n = verbs.length
   if (learnt.length !== n || repeated.length !== n) return null
 
   const indices: number[] = []
-  for (let i = 0; i < n; i++) {
-    if (scope === 'all') indices.push(i)
-    else if (scope === 'not_learnt' && !learnt[i]) indices.push(i)
-    else if (scope === 'learnt' && learnt[i]) indices.push(i)
+  if (scope === 'current_verb') {
+    if (currentVerbId == null) return null
+    const idx = verbs.indexOf(currentVerbId)
+    if (idx === -1) return null
+    indices.push(idx)
+  } else {
+    for (let i = 0; i < n; i++) {
+      if (scope === 'all') indices.push(i)
+      else if (scope === 'not_learnt' && !learnt[i]) indices.push(i)
+      else if (scope === 'learnt' && learnt[i]) indices.push(i)
+    }
   }
 
   if (indices.length === 0) return null

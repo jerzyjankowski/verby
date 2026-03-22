@@ -17,10 +17,12 @@ import TextArea from '../../../shared/TextArea.tsx'
 type AddToOtherSaveViewProps = {
   language: Language
   lesson: LessonSave
+  /** Verb id for the “Current verb” scope (card on screen); omit when unknown. */
+  currentVerbId?: number
   onSave?: (payload: { name: string; notes: string; whichVerbs: LibraryVerbScope }) => void
 }
 
-export default function AddToOtherSaveView({ language, lesson, onSave }: AddToOtherSaveViewProps) {
+export default function AddToOtherSaveView({ language, lesson, currentVerbId, onSave }: AddToOtherSaveViewProps) {
   const [selectedName, setSelectedName] = useState('')
   const [notes, setNotes] = useState('')
   const [whichVerbs, setWhichVerbs] = useState<LibraryVerbScope>('all')
@@ -43,24 +45,33 @@ export default function AddToOtherSaveView({ language, lesson, onSave }: AddToOt
 
   const scopeCounts = useMemo(() => getLibraryVerbScopeCounts(lesson), [lesson])
 
+  const currentVerbInLesson = useMemo(
+    () => currentVerbId != null && lesson.verbs.includes(currentVerbId),
+    [currentVerbId, lesson.verbs],
+  )
+
   useEffect(() => {
     if (whichVerbs === 'not_learnt' && scopeCounts.notLearnt === 0) setWhichVerbs('all')
     if (whichVerbs === 'learnt' && scopeCounts.learnt === 0) setWhichVerbs('all')
-  }, [whichVerbs, scopeCounts.notLearnt, scopeCounts.learnt])
+    if (whichVerbs === 'current_verb' && !currentVerbInLesson) setWhichVerbs('all')
+  }, [whichVerbs, scopeCounts.notLearnt, scopeCounts.learnt, currentVerbInLesson])
 
   const verbScopeDropdownItems = useMemo(
     () =>
-      getLibraryVerbScopeMenuSpec(scopeCounts).map(({ key, label, disabled }) => ({
+      getLibraryVerbScopeMenuSpec(scopeCounts, {
+        includeCurrentVerb: true,
+        currentVerbInLesson,
+      }).map(({ key, label, disabled }) => ({
         key,
         label,
         disabled,
         onSelect: () => setWhichVerbs(key),
       })),
-    [scopeCounts],
+    [scopeCounts, currentVerbInLesson],
   )
 
   const notesAtLimit = notes.length >= LIBRARY_SAVE_NOTES_MAX_LEN
-  const hasVerbsForScope = buildLessonSaveForLibrary(lesson, whichVerbs) != null
+  const hasVerbsForScope = buildLessonSaveForLibrary(lesson, whichVerbs, currentVerbId) != null
 
   const baselineDescription = useMemo(() => {
     if (!selectedName) return ''
