@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import * as Switch from '@radix-ui/react-switch'
 
 import Button from '../../components/shared/Button.tsx'
+import TextField from '../../components/shared/TextField.tsx'
 import Dropdown from '../../components/shared/Dropdown.tsx'
 import type { DropdownItem } from '../../components/shared/types.ts'
 import { getLanguageConfig } from '../../configs/languageConfigMap.ts'
@@ -185,7 +186,7 @@ export default function Page() {
                   </label>
                   {row.active ? (
                     <label className="flex flex-col gap-1.5 text-sm font-medium">
-                      <input
+                      <TextField
                         type="text"
                         value={row.description}
                         onChange={(e) =>
@@ -195,7 +196,6 @@ export default function Page() {
                             ),
                           )
                         }
-                        className="rounded-lg border border-primary-darkest bg-primary px-3 py-2 text-primary-text placeholder:text-primary-text/50"
                         placeholder="Reason for marking..."
                       />
                     </label>

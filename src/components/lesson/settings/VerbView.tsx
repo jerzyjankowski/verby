@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import * as Switch from '@radix-ui/react-switch'
 
 import Button from '../../shared/Button.tsx'
+import TextField from '../../shared/TextField.tsx'
 import type { LessonSave } from '../../../types/config.ts'
 import type { MarkedVerb, Verb } from '../../../types/verb.ts'
 import {
@@ -102,11 +103,10 @@ export default function VerbView({ lesson, verb, onLearntChange }: VerbViewProps
 
       {markedOn ? (
         <label className="flex flex-col gap-1.5 text-sm font-medium">
-          <input
+          <TextField
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="rounded-lg border border-primary-darkest bg-primary px-3 py-2 text-primary-text placeholder:text-primary-text/50"
             placeholder="Reason for marking..."
           />
         </label>
