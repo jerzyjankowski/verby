@@ -36,7 +36,7 @@ const isIrregular = (_verb: Verb, _extra: Extra, _id?: number): boolean => {
   return false
 }
 
-export const spanishConfig: LanguageConfig = {
+export const germanConfig: LanguageConfig = {
   code: 'GER',
   verbsFilePath: '/data/ger/verbs.json',
   languageLabels,

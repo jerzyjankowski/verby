@@ -22,13 +22,38 @@ import {
   type LessonConfig,
   type LessonConfigFormState,
   type LessonSave,
+  type Level,
 } from '../types/config.ts'
+import type { Verb, VerbLevel } from '../types/verb.ts'
 import { initLesson } from '../utils/initLesson.ts'
+import { loadVerbsFromJson } from '../utils/jsonVerbsLoader.ts'
 import {
   loadCurrentLessonFromLocalStorage,
   saveLessonAsCurrentToLocalStorage,
 } from '../utils/localStorage.ts'
 import { LESSON_PAGE_URL } from '../consts/urls.ts'
+
+const LEVELS_FROM_VERB_DATA_FIELDS: ReadonlySet<VerbLevel> = new Set([
+  'A1',
+  'A2',
+  'B1',
+  'B2',
+  'C1',
+  'C2',
+])
+
+/** ALL / MAIN / A0 always; A1–C1 only if at least one verb uses that `level` value. */
+function availableLevelsForVerbs(verbs: Verb[]): Level[] {
+  const present = new Set<Level>()
+  for (const v of verbs) {
+    if (LEVELS_FROM_VERB_DATA_FIELDS.has(v.level)) {
+      present.add(v.level as Level)
+    }
+  }
+  return LEVEL_OPTIONS.filter(
+    (l) => l === 'ALL' || l === 'MAIN' || l === 'A0' || present.has(l),
+  )
+}
 
 export type PrepareLessonPendingStart = {
   lesson: LessonSave
@@ -69,6 +94,11 @@ export function usePrepareLesson() {
   const [isStarting, setIsStarting] = useState(false)
   const [startConfirmOpen, setStartConfirmOpen] = useState(false)
   const [pendingStart, setPendingStart] = useState<PrepareLessonPendingStart | null>(null)
+  const [availableLevelOptions, setAvailableLevelOptions] = useState<Level[]>(LEVEL_OPTIONS)
+  /** When this matches `form.language`, `availableLevelOptions` reflects that language's verb data. */
+  const [levelsResolvedForLanguage, setLevelsResolvedForLanguage] = useState<
+    LessonConfig['language'] | undefined
+  >(undefined)
 
   const languageConfig = useMemo(() => getLanguageConfig(form.language), [form.language])
 
@@ -153,6 +183,51 @@ export function usePrepareLesson() {
       batch: (v === 'ALL' ? 'ALL' : Number(v)) as LessonConfig['batch'],
     }))
 
+  useEffect(() => {
+    if (!form.language) {
+      setAvailableLevelOptions(LEVEL_OPTIONS)
+      setLevelsResolvedForLanguage(undefined)
+      return
+    }
+    const lang = form.language
+    const cfg = getLanguageConfig(lang)
+    if (!cfg.verbsFilePath) {
+      setAvailableLevelOptions(LEVEL_OPTIONS)
+      setLevelsResolvedForLanguage(undefined)
+      return
+    }
+
+    const alwaysOnly: Level[] = ['ALL', 'MAIN', 'A0']
+    setAvailableLevelOptions(alwaysOnly)
+    setLevelsResolvedForLanguage(undefined)
+
+    let cancelled = false
+    ;(async () => {
+      try {
+        const verbs: Verb[] = await loadVerbsFromJson(cfg.verbsFilePath)
+        if (cancelled) return
+        setAvailableLevelOptions(availableLevelsForVerbs(verbs))
+        setLevelsResolvedForLanguage(lang)
+      } catch {
+        if (!cancelled) {
+          setAvailableLevelOptions(alwaysOnly)
+          setLevelsResolvedForLanguage(lang)
+        }
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [form.language])
+
+  useEffect(() => {
+    if (form.level === undefined) return
+    if (levelsResolvedForLanguage !== form.language) return
+    if (availableLevelOptions.includes(form.level)) return
+    setForm((prev) => ({ ...prev, level: 'ALL' }))
+  }, [availableLevelOptions, form.level, form.language, levelsResolvedForLanguage])
+
   const allSelected = Boolean(
     form.language &&
       form.level &&
@@ -197,7 +272,7 @@ export function usePrepareLesson() {
   const options: UsePrepareLessonOptions = useMemo(
     () => ({
       language: LANGUAGE_OPTIONS,
-      level: LEVEL_OPTIONS,
+      level: availableLevelOptions,
       direction: DIRECTION_OPTIONS,
       extra: extraOptions,
       regularity: REGULARITY_OPTIONS,
@@ -205,7 +280,7 @@ export function usePrepareLesson() {
       batch: BATCH_OPTIONS,
       conjugation: conjugationOptions,
     }),
-    [extraOptions, conjugationOptions],
+    [availableLevelOptions, extraOptions, conjugationOptions],
   )
 
   const labels: UsePrepareLessonLabels = useMemo(

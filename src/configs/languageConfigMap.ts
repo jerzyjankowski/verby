@@ -6,12 +6,12 @@ import {
   type LanguageConfigLabels,
 } from '../types/config.ts'
 import type { Conjugation, ConjugationFlags, Verb } from '../types/verb.ts'
-import { spanishConfig as englishLanguageConfig } from './englishConfig.ts'
-import { spanishConfig as frenchLanguageConfig } from './frenchConfig.ts'
-import { spanishConfig as germanLanguageConfig } from './germanConfig.ts'
-import { spanishConfig as italianLanguageConfig } from './italianConfig.ts'
-import { spanishConfig as russianLanguageConfig } from './russianConfig.ts'
-import { spanishConfig as spanishLanguageConfig } from './spanishConfig.ts'
+import { englishConfig } from './englishConfig.ts'
+import { frenchConfig } from './frenchConfig.ts'
+import { germanConfig } from './germanConfig.ts'
+import { italianConfig } from './italianConfig.ts'
+import { russianConfig } from './russianConfig.ts'
+import { spanishConfig } from './spanishConfig.ts'
 
 const emptyLanguageLabels: LanguageConfigLabels = {
   personsLabels: { s1: '', s2: '', s3: '', p1: '', p2: '', p3: '' },
@@ -44,12 +44,12 @@ export const EMPTY_LANGUAGE_CONFIG: LanguageConfig = {
 
 /** Maps each lesson language code to its `configs/*Config` module. */
 export const LANGUAGE_CONFIG_MAP: Record<Language, LanguageConfig> = {
-  ESP: spanishLanguageConfig,
-  ENG: englishLanguageConfig,
-  GER: germanLanguageConfig,
-  ITA: italianLanguageConfig,
-  FRA: frenchLanguageConfig,
-  RUS: russianLanguageConfig,
+  ESP: spanishConfig,
+  ENG: englishConfig,
+  GER: germanConfig,
+  ITA: italianConfig,
+  FRA: frenchConfig,
+  RUS: russianConfig,
 }
 
 function isLanguage(value: string | undefined): value is Language {
