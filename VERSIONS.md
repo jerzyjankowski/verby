@@ -1,5 +1,7 @@
 # 0.1.1
 
+- Versions migration on start
+
 # 0.1.0
 
 ## Tech details
@@ -9,6 +11,11 @@
 - Shared UI foundation with reusable components (buttons, dropdowns, sheets/modals, toast notifications).
 - Theme-driven styling and localized UI texts (EN/PL).
 - Local storage persistence for lesson progress, marked verbs, library saves, and app settings.
+
+## General
+
+- Random motivational quotes on main menu
+- Versions migration on start
 
 ## Lesson setup and settings
 

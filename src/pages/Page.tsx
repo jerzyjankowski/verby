@@ -1,9 +1,11 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import RandomQuote from '../components/menu/RandomQuote.tsx'
 import Button from '../components/shared/Button.tsx'
 import { ui } from '../locales'
 import { loadCurrentLessonFromLocalStorage } from '../utils/localStorage.ts'
+import { runVersionMigrations } from '../utils/versionMigration.utils.ts'
 import {
   LESSON_PAGE_URL,
   LIBRARY_PAGE_URL,
@@ -15,6 +17,10 @@ import {
 export default function Page() {
   const navigate = useNavigate()
   const hasNewLessonToContinue = !!loadCurrentLessonFromLocalStorage()
+
+  useEffect(() => {
+    runVersionMigrations(__APP_VERSION__)
+  }, [])
 
   return (
     <div className="relative min-h-screen bg-primary text-primary-text p-4 pb-36">

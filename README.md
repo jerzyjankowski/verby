@@ -8,6 +8,11 @@
 - Theme-driven styling and localized UI texts (EN/PL).
 - Local storage persistence for lesson progress, marked verbs, library saves, and app settings.
 
+## General
+
+- Random motivational quotes on main menu
+- Versions migration on start
+
 ## Lesson setup and settings
 
 - New lesson setup with language selection and configurable options: source, levels, direction, extras, regularity, speed, and batch size.
