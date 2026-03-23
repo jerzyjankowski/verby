@@ -1,15 +1,17 @@
 import type {Language} from "../types/config.ts";
 
-export const VERSION_STORAGE_KEY = 'version'
-export const SETTINGS_STORAGE_KEY = 'settings'
-export const CURRENT_LESSON_STORAGE_KEY = 'current-lesson'
-const MARKED_VERBS_STORAGE_KEY_SUFFIX = '-marked-verbs'
-const LIBRARY_STORAGE_KEY_SUFFIX = '-library'
+const PROJECT_STORAGE_KEY_PREFIX = 'verby_'
+
+export const VERSION_STORAGE_KEY = `${PROJECT_STORAGE_KEY_PREFIX}version`
+export const SETTINGS_STORAGE_KEY = `${PROJECT_STORAGE_KEY_PREFIX}settings`
+export const CURRENT_LESSON_STORAGE_KEY = `${PROJECT_STORAGE_KEY_PREFIX}current_lesson`
+const MARKED_VERBS_STORAGE_KEY_SUFFIX = '_marked_verbs'
+const LIBRARY_STORAGE_KEY_SUFFIX = '_library'
 
 export function getMarkedVerbsStorageKey(language: Language): string {
-  return `${language}${MARKED_VERBS_STORAGE_KEY_SUFFIX}`
+  return `${PROJECT_STORAGE_KEY_PREFIX}${language}${MARKED_VERBS_STORAGE_KEY_SUFFIX}`
 }
 
 export function getLibraryStorageKey(language: Language): string {
-  return `${language}${LIBRARY_STORAGE_KEY_SUFFIX}`
+  return `${PROJECT_STORAGE_KEY_PREFIX}${language}${LIBRARY_STORAGE_KEY_SUFFIX}`
 }
