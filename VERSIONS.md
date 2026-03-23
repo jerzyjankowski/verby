@@ -1,4 +1,6 @@
-# What is Verby? 
+# 0.1.1
+
+# 0.1.0
 
 ## Tech details
 
@@ -37,13 +39,3 @@
 
 - Settings page with persisted application language selection (EN/PL).
 
-# Commands
-
-run locally:
-`pnpm run dev`
-
-build:
-`pnpm run build`
-
-deploy after push:
-`pnpm run deploy`
