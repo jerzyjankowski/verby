@@ -23,12 +23,10 @@ export default function Page() {
     setVerbLearnt,
     reverseDirection,
     restartQuestions,
-    resetProgressAndSave,
     quickSave,
   } = useLesson()
 
   const handleComplete = () => {
-    resetProgressAndSave()
     navigate(MAIN_PAGE_URL)
   }
 

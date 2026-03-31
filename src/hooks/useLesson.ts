@@ -211,7 +211,6 @@ export function useLesson() {
     const nextVerb = randomizeVerb(nextLessonAfterLearnt, history)
     if (!nextVerb) {
       const completed: LessonSave = { ...nextLessonAfterLearnt, lastVerbId: undefined }
-      saveLessonAsCurrentToLocalStorage(completed)
       setLesson(completed)
       setRound(undefined)
       setIsCompleted(true)
@@ -268,21 +267,6 @@ export function useLesson() {
     })
   }, [round])
 
-  const resetProgressAndSave = useCallback(() => {
-    setLesson((current) => {
-      if (!current) return current
-      const next: LessonSave = {
-        ...current,
-        learnt: current.verbs.map(() => false),
-        repeated: current.verbs.map(() => 0),
-        history: [],
-        lastVerbId: undefined,
-      }
-      saveLessonAsCurrentToLocalStorage(next)
-      return next
-    })
-  }, [])
-
   const restartQuestions = useCallback(() => {
     if (!lesson) return
     setIsCompleted(false)
@@ -319,7 +303,6 @@ export function useLesson() {
     setVerbLearnt,
     reverseDirection,
     restartQuestions,
-    resetProgressAndSave,
     quickSave,
   }
 }
