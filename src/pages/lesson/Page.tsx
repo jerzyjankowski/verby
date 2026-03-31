@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { CheckIcon, ArrowRightIcon } from '@radix-ui/react-icons'
+import { CheckIcon, Cross2Icon } from '@radix-ui/react-icons'
 
 import Cards from '../../components/lesson/Cards.tsx'
 import LessonCelebration from '../../components/lesson/LessonCelebration.tsx'
@@ -77,10 +77,11 @@ export default function Page() {
             {round && (
               <div className="grid grid-cols-2 gap-3">
                 <Button
-                  icon={<ArrowRightIcon className="size-5" />}
+                  icon={<Cross2Icon className="size-5" />}
                   rounded={false}
                   onClick={() => onContinue(false)}
                   disabled={!canContinue}
+                  bigger
                 />
                 <Button
                   icon={<CheckIcon className="size-5" />}
@@ -88,6 +89,7 @@ export default function Page() {
                   main
                   onClick={() => onContinue(true)}
                   disabled={!canContinue}
+                  bigger
                 />
               </div>
             )}
