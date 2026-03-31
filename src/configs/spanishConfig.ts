@@ -1,6 +1,7 @@
 import type {Extra, LanguageConfig, LanguageConfigLabels} from "../types/config.ts";
 import type {Conjugation, ConjugationFlags, Verb} from "../types/verb.ts";
 
+const IMPERATIFE_NEGATIVE_CONJUGATION_ID = 10
 
 const languageLabels: LanguageConfigLabels = {
   personsLabels: {
@@ -241,6 +242,7 @@ const conjugate = (verb: Verb, conjugationId: number): {
 } => {
   const irregularConjugation = verb.irregularConjugations[conjugationId]
   const endings = (conjugationEndings[verb.conjugation as SpanishConjugation] as Conjugation[])[conjugationId]
+  const noPrefix = conjugationId === IMPERATIFE_NEGATIVE_CONJUGATION_ID ? 'no ' : ''
   const root = verb.root
 
   const irregularity = {
@@ -253,12 +255,12 @@ const conjugate = (verb: Verb, conjugationId: number): {
   }
 
   const conjugation = {
-    s1: irregularity.s1 ? irregularConjugation.s1 : `${endings.s1 ? `${root}${endings.s1}` : '---'}`,
-    s2: irregularity.s2 ? irregularConjugation.s2 : `${root}${endings.s2}`,
-    s3: irregularity.s3 ? irregularConjugation.s3 : `${root}${endings.s3}`,
-    p1: irregularity.p1 ? irregularConjugation.p1 : `${root}${endings.p1}`,
-    p2: irregularity.p2 ? irregularConjugation.p2 : `${root}${endings.p2}`,
-    p3: irregularity.p3 ? irregularConjugation.p3 : `${root}${endings.p3}`,
+    s1: irregularity.s1 ? irregularConjugation.s1 : `${noPrefix}${endings.s1 ? `${root}${endings.s1}` : '---'}`,
+    s2: irregularity.s2 ? irregularConjugation.s2 : `${noPrefix}${root}${endings.s2}`,
+    s3: irregularity.s3 ? irregularConjugation.s3 : `${noPrefix}${root}${endings.s3}`,
+    p1: irregularity.p1 ? irregularConjugation.p1 : `${noPrefix}${root}${endings.p1}`,
+    p2: irregularity.p2 ? irregularConjugation.p2 : `${noPrefix}${root}${endings.p2}`,
+    p3: irregularity.p3 ? irregularConjugation.p3 : `${noPrefix}${root}${endings.p3}`,
   }
 
   return {
