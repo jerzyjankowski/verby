@@ -180,22 +180,30 @@ export default function LessonSettings({
       >
         {currentView === 'menu' ? (
           <div className="flex flex-col gap-2">
-            <Button label={ui.lesson.configSummaryButton} onClick={() => pushView('config-summary')} />
-            <Button label={ui.lesson.manageLibraryButton} onClick={() => pushView('library-management')} />
-            <Button label={ui.lesson.quickSave} onClick={handleQuickSave} />
-            <Button label={verbsLabel} onClick={() => pushView('verbs')} />
-            <Button
-              label={editVerbLabel}
-              onClick={() => openVerbEdit(currentVerb)}
-              disabled={!currentVerb}
-            />
-            <Button
-              label={ui.lesson.historyLabel(historyLength)}
-              onClick={() => pushView('history')}
-            />
-            <Button label={ui.lesson.reverseDirection} onClick={() => pushView('reverse-direction')} />
-            <Button label={ui.lesson.restartQuestions} onClick={() => pushView('restart-questions')} />
-            <Button label={ui.lesson.closeQuestions} onClick={() => pushView('close-questions')} />
+            <div className="verby-card bg-primary-darkest p-2 flex flex-col gap-2">
+              <Button label={ui.lesson.quickSave} onClick={handleQuickSave} />
+              <Button label={ui.lesson.manageLibraryButton} onClick={() => pushView('library-management')} />
+              <Button
+                label={editVerbLabel}
+                onClick={() => openVerbEdit(currentVerb)}
+                disabled={!currentVerb}
+              />
+            </div>
+            <div className="verby-card bg-primary-darkest p-2 flex flex-col gap-2">
+              <Button label={ui.lesson.reverseDirection} onClick={() => pushView('reverse-direction')} />
+              <Button label={ui.lesson.restartQuestions} onClick={() => pushView('restart-questions')} />
+            </div>
+            <div className="verby-card bg-primary-darkest p-2 flex flex-col gap-2">
+              <Button
+                label={ui.lesson.historyLabel(historyLength)}
+                onClick={() => pushView('history')}
+              />
+              <Button label={verbsLabel} onClick={() => pushView('verbs')} />
+              <Button label={ui.lesson.configSummaryButton} onClick={() => pushView('config-summary')} />
+            </div>
+            <div className="verby-card bg-primary-darkest p-2 flex flex-col gap-2">
+              <Button label={ui.lesson.closeQuestions} onClick={() => pushView('close-questions')} />
+            </div>
           </div>
         ) : null}
 

@@ -1,9 +1,4 @@
 TODO EARLIER:
-- reorder, clean-up, add icons, add sections, add hierarchy - do sth with Lesson Settings, 9 options is too much; maybe that sections: (each in seaparate card? line separator?)
-  - quick save, manage library, 
-  - edit question, reverse direction, restart questions
-  - History, verbs, config summary
-  - close questions
 - show irregular mark after answer or before - UI settings
 - show level - UI settings
 - change lesson conjugation mid lesson
