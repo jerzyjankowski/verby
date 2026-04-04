@@ -303,5 +303,7 @@ export const ui = {
     question: 'Question',
     answer: 'Answer',
     showAll: 'Show all',
+    irregularMarkLegend:
+      'The warning mark indicates a form that is irregular compared with the usual conjugation or pattern for this verb.',
   },
 } as const

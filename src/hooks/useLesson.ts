@@ -12,6 +12,7 @@ import {getLanguageConfig} from "../configs/languageConfigMap.ts";
 const prepareRound = (verb: Verb, lessonConfig: LessonConfig, languageConfig: LanguageConfig): Round => {
   const defaultValues: Round = {
     verbId: verb.id,
+    level: verb.level,
     question: lessonConfig.direction === 'to_foreign' ? verb.meaning : verb.verb,
     answer: lessonConfig.direction === 'to_foreign' ? verb.verb : verb.meaning,
     isConjugation: false,

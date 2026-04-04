@@ -1,12 +1,10 @@
 TODO EARLIER:
-- show irregular mark after answer or before - UI settings
-- show level - UI settings
 - change lesson conjugation mid lesson
 - suggest save name (levels, conjugation/forms PL->XX or XX->PL, datetime)
+- history table scrollable horizontally (but ES verb can be also multiline)
+- verify quotes and authors (english and polish)
 
 TODO:
-- verify quotes and authors (english and polish)
-- history table scrollable horizontally (but ES verb can be also multiline)
 - don't ask before quitting if just saved
 - bigger letters in question or answer after PL if no extra
 - remember scroll position in verbs lists when going into single verb and going back

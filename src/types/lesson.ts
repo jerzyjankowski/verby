@@ -1,7 +1,8 @@
-import type {Conjugation, ConjugationFlags} from "./verb.ts";
+import type {Conjugation, ConjugationFlags, VerbLevel} from "./verb.ts";
 
 export type Round = {
   verbId: number,
+  level: VerbLevel
   question: string,
   isConjugation: boolean,
   isForms: boolean,

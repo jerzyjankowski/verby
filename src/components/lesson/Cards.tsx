@@ -1,3 +1,4 @@
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import type {Round, UpdateRoundHiddenFlags} from '../../types/lesson.ts'
 import { useState } from 'react'
 import type {Conjugation} from "../../types/verb.ts";
@@ -5,6 +6,7 @@ import AnswerDetails from './settings/AnswerDetails.tsx'
 import ClampText from '../shared/ClampText.tsx'
 import type { LanguageConfig } from '../../types/config.ts'
 import { ui } from '../../locales'
+import { readStoredSettings } from '../../utils/settings.ts'
 
 type CardsProps = {
   round: Round
@@ -16,6 +18,9 @@ type ConjugationAnswerCardProps = {
   placeholder: string
   answer: string
   isHidden: boolean
+  isIrregular: boolean
+  showIrregularMarkBeforeAnswer: boolean
+  showIrregularMarkAfterAnswer: boolean
   onClick: () => void
 }
 
@@ -23,14 +28,38 @@ function getCardTextSize(text: string, defaultSize: string) {
   return text.length > 40 ? 'text-2xl' : defaultSize
 }
 
-function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: ConjugationAnswerCardProps) {
+function IrregularCornerPill() {
+  return (
+    <span
+      className="pointer-events-none absolute top-2 right-2 z-[1] flex items-center justify-center rounded-full border border-primary-darkest bg-primary-darkest p-1"
+      aria-hidden
+    >
+      <ExclamationTriangleIcon className="size-3.5 shrink-0 text-text-warning" />
+    </span>
+  )
+}
+
+function ConjugationAnswerCard({
+  placeholder,
+  answer,
+  isHidden,
+  isIrregular,
+  showIrregularMarkBeforeAnswer,
+  showIrregularMarkAfterAnswer,
+  onClick,
+}: ConjugationAnswerCardProps) {
   const answerTextSize = getCardTextSize(answer, 'text-2xl')
+  const showIrregularPill =
+    isIrregular &&
+    ((showIrregularMarkBeforeAnswer && isHidden) ||
+      (showIrregularMarkAfterAnswer && !isHidden))
 
   return (
     <div
-      className="bg-primary-darker border border-primary-darkest rounded-xl flex min-h-20 items-center justify-center p-4 cursor-pointer"
+      className="relative bg-primary-darker border border-primary-darkest rounded-xl flex min-h-20 items-center justify-center p-4 cursor-pointer"
       onClick={onClick}
     >
+      {showIrregularPill ? <IrregularCornerPill /> : null}
       {isHidden ? (
         <p className="text-center text-lg italic">{placeholder}</p>
       ) : (
@@ -41,10 +70,15 @@ function ConjugationAnswerCard({ placeholder, answer, isHidden, onClick }: Conju
 }
 
 export default function Cards({ round, updateRoundHiddenFlags, languageConfig }: CardsProps) {
+  const { showLevel, showIrregularMarkBeforeAnswer, showIrregularMarkAfterAnswer } = readStoredSettings()
   const personsLabels: Conjugation = languageConfig.languageLabels.personsLabels
   const formsLabels: string[] = languageConfig.languageLabels.formsLabels
   const questionTextSize = getCardTextSize(round.question, 'text-4xl')
   const answerTextSize = getCardTextSize(round.answer, round.isConjugation || round.isForms ? 'text-2xl' : 'text-4xl')
+  const showMainAnswerIrregularPill =
+    round.answerIrregular &&
+    ((showIrregularMarkBeforeAnswer && round.answerHidden) ||
+      (showIrregularMarkAfterAnswer && !round.answerHidden))
   const [isFullTextSheetOpen, setIsFullTextSheetOpen] = useState(false)
   const [fullText, setFullText] = useState('')
   const [fullTextTitle, setFullTextTitle] = useState<string>(ui.cards.fullTextTitle)
@@ -58,14 +92,19 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div
-        className="bg-primary-darker border border-primary-darkest rounded-xl flex flex-1 cursor-pointer items-center justify-center p-4"
+        className="relative bg-primary-darker border border-primary-darkest rounded-xl flex flex-1 cursor-pointer items-center justify-center p-4"
         onClick={() => openFullTextSheet(round.question, ui.cards.question)}
       >
+        {showLevel ? (
+          <span className="pointer-events-none absolute top-2 right-2 z-[1] rounded-full border border-primary-darkest bg-primary-darkest px-2 py-0.5 text-xs font-semibold tabular-nums text-primary-text">
+            {round.level}
+          </span>
+        ) : null}
         <ClampText className={`w-full overflow-hidden text-center ${questionTextSize} leading-normal font-semibold`} text={round.question} lines={round.isConjugation ? 2 : 3}/>
       </div>
 
       <div
-        className={`bg-primary-darker border border-primary-darkest rounded-xl flex cursor-pointer items-center justify-center p-4 ${
+        className={`relative bg-primary-darker border border-primary-darkest rounded-xl flex cursor-pointer items-center justify-center p-4 ${
           round.isConjugation || round.isForms ? 'min-h-20' : 'flex-1'
         }`}
         onClick={() => {
@@ -77,6 +116,7 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
           openFullTextSheet(round.answer, ui.cards.answer)
         }}
       >
+        {showMainAnswerIrregularPill ? <IrregularCornerPill /> : null}
         {round.answerHidden ? (
           <p className="text-center text-lg italic">{ui.cards.hiddenAnswer}</p>
         ) : (
@@ -90,6 +130,9 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
             placeholder={personsLabels.s1}
             answer={round.conjugationAnswers.s1}
             isHidden={round.conjugationAnswersHidden.s1}
+            isIrregular={round.conjugationAnswersIrregulars.s1}
+            showIrregularMarkBeforeAnswer={showIrregularMarkBeforeAnswer}
+            showIrregularMarkAfterAnswer={showIrregularMarkAfterAnswer}
             onClick={() => {
               if (round.conjugationAnswersHidden.s1) {
                 updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s1: false }, round.formsAnswersHidden)
@@ -103,6 +146,9 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
             placeholder={personsLabels.p1}
             answer={round.conjugationAnswers.p1}
             isHidden={round.conjugationAnswersHidden.p1}
+            isIrregular={round.conjugationAnswersIrregulars.p1}
+            showIrregularMarkBeforeAnswer={showIrregularMarkBeforeAnswer}
+            showIrregularMarkAfterAnswer={showIrregularMarkAfterAnswer}
             onClick={() => {
               if (round.conjugationAnswersHidden.p1) {
                 updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p1: false }, round.formsAnswersHidden)
@@ -116,6 +162,9 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
             placeholder={personsLabels.s2}
             answer={round.conjugationAnswers.s2}
             isHidden={round.conjugationAnswersHidden.s2}
+            isIrregular={round.conjugationAnswersIrregulars.s2}
+            showIrregularMarkBeforeAnswer={showIrregularMarkBeforeAnswer}
+            showIrregularMarkAfterAnswer={showIrregularMarkAfterAnswer}
             onClick={() => {
               if (round.conjugationAnswersHidden.s2) {
                 updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s2: false }, round.formsAnswersHidden)
@@ -129,6 +178,9 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
             placeholder={personsLabels.p2}
             answer={round.conjugationAnswers.p2}
             isHidden={round.conjugationAnswersHidden.p2}
+            isIrregular={round.conjugationAnswersIrregulars.p2}
+            showIrregularMarkBeforeAnswer={showIrregularMarkBeforeAnswer}
+            showIrregularMarkAfterAnswer={showIrregularMarkAfterAnswer}
             onClick={() => {
               if (round.conjugationAnswersHidden.p2) {
                 updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p2: false }, round.formsAnswersHidden)
@@ -142,6 +194,9 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
             placeholder={personsLabels.s3}
             answer={round.conjugationAnswers.s3}
             isHidden={round.conjugationAnswersHidden.s3}
+            isIrregular={round.conjugationAnswersIrregulars.s3}
+            showIrregularMarkBeforeAnswer={showIrregularMarkBeforeAnswer}
+            showIrregularMarkAfterAnswer={showIrregularMarkAfterAnswer}
             onClick={() => {
               if (round.conjugationAnswersHidden.s3) {
                 updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, s3: false }, round.formsAnswersHidden)
@@ -155,6 +210,9 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
             placeholder={personsLabels.p3}
             answer={round.conjugationAnswers.p3}
             isHidden={round.conjugationAnswersHidden.p3}
+            isIrregular={round.conjugationAnswersIrregulars.p3}
+            showIrregularMarkBeforeAnswer={showIrregularMarkBeforeAnswer}
+            showIrregularMarkAfterAnswer={showIrregularMarkAfterAnswer}
             onClick={() => {
               if (round.conjugationAnswersHidden.p3) {
                 updateRoundHiddenFlags(round.answerHidden, { ...round.conjugationAnswersHidden, p3: false }, round.formsAnswersHidden)
@@ -175,6 +233,9 @@ export default function Cards({ round, updateRoundHiddenFlags, languageConfig }:
               placeholder={formsLabels[index] ?? ui.cards.formFallback(index)}
               answer={answer}
               isHidden={round.formsAnswersHidden[index] ?? true}
+              isIrregular={round.formsAnswersIrregulars[index] ?? false}
+              showIrregularMarkBeforeAnswer={showIrregularMarkBeforeAnswer}
+              showIrregularMarkAfterAnswer={showIrregularMarkAfterAnswer}
               onClick={() => {
                 if (round.formsAnswersHidden[index]) {
                   const nextHidden = [...round.formsAnswersHidden]

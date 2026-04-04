@@ -89,6 +89,16 @@ export default function Page() {
           </h2>
 
           <label className="col-span-2 flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
+            <span>{ui.settings.showLevel}</span>
+            <Switch.Root
+              checked={showLevel}
+              onCheckedChange={setShowLevel}
+              className="relative h-6 w-11 shrink-0 rounded-full bg-primary-darkest transition-colors data-[state=checked]:bg-primary-text"
+            >
+              <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-primary transition-transform data-[state=checked]:translate-x-[22px]" />
+            </Switch.Root>
+          </label>
+          <label className="col-span-2 flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
             <span>{ui.settings.showIrregularMarkBeforeAnswer}</span>
             <Switch.Root
               checked={showIrregularMarkBeforeAnswer}
@@ -103,16 +113,6 @@ export default function Page() {
             <Switch.Root
               checked={showIrregularMarkAfterAnswer}
               onCheckedChange={setShowIrregularMarkAfterAnswer}
-              className="relative h-6 w-11 shrink-0 rounded-full bg-primary-darkest transition-colors data-[state=checked]:bg-primary-text"
-            >
-              <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-primary transition-transform data-[state=checked]:translate-x-[22px]" />
-            </Switch.Root>
-          </label>
-          <label className="col-span-2 flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
-            <span>{ui.settings.showLevel}</span>
-            <Switch.Root
-              checked={showLevel}
-              onCheckedChange={setShowLevel}
               className="relative h-6 w-11 shrink-0 rounded-full bg-primary-darkest transition-colors data-[state=checked]:bg-primary-text"
             >
               <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-primary transition-transform data-[state=checked]:translate-x-[22px]" />

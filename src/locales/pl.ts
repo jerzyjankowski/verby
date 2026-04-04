@@ -299,5 +299,7 @@ export const ui = {
     question: 'Pytanie',
     answer: 'Odpowiedź',
     showAll: 'Pokaż wszystko',
+    irregularMarkLegend:
+      'Ostrzeżenie oznacza formę nieregularną względem zwykłej odmiany lub wzorca dla tego czasownika.',
   },
 } as const
