@@ -4,20 +4,19 @@ TODO EARLIER:
   - edit question, reverse direction, restart questions
   - History, verbs, config summary
   - close questions
-- version, version log md, commits with version, display version
-
-TODO:
+- show irregular mark after answer or before - UI settings
+- show level - UI settings
 - change lesson conjugation mid lesson
 - suggest save name (levels, conjugation/forms PL->XX or XX->PL, datetime)
+
+TODO:
+- verify quotes and authors (english and polish)
 - history table scrollable horizontally (but ES verb can be also multiline)
 - don't ask before quitting if just saved
 - bigger letters in question or answer after PL if no extra
 - remember scroll position in verbs lists when going into single verb and going back
 - UI settings from main menu and from lesson settings
-- main menu split continue and start (top) from the settings (bottom)
 - conjugation display as one column and limit to only few (not all yo, tu, el, ...), (for example because of smaller screens) - UI settings
-- show irregular mark after answer or before - UI settings
-- show level - UI settings
 - [TECH] linter, prettier, TS check on commit
 
 DEEP BACKLOG:
