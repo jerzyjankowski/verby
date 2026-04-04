@@ -109,6 +109,7 @@ export const ui = {
     notLastAppearance: 'Not last appearance',
     learnt: 'Learnt',
     notLearnt: 'Not learnt',
+    clearTextField: 'Clear field',
   },
   toast: {
     libraryTitle: 'Library',

@@ -107,6 +107,7 @@ export const ui = {
     notLastAppearance: 'Nie ostatnie pokazanie',
     learnt: 'Nauczone',
     notLearnt: 'Nienauczone',
+    clearTextField: 'Wyczyść pole',
   },
   toast: {
     libraryTitle: 'Biblioteka',
