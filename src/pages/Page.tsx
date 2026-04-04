@@ -23,7 +23,7 @@ export default function Page() {
   }, [])
 
   return (
-    <div className="relative min-h-screen bg-primary text-primary-text p-4 pb-36">
+    <div className="relative min-h-dvh bg-primary text-primary-text p-4 pb-36">
       <div className="mx-auto max-w-2xl">
         <div className="verby-card bg-primary-darkest p-4 flex flex-col gap-3">
           {hasNewLessonToContinue ? (
