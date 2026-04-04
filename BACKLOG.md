@@ -1,7 +1,6 @@
 TODO EARLIER:
 - change lesson conjugation mid lesson
 - suggest save name (levels, conjugation/forms PL->XX or XX->PL, datetime)
-- history table scrollable horizontally (but ES verb can be also multiline)
 - verify quotes and authors (english and polish)
 
 TODO:
