@@ -140,6 +140,10 @@ export const ui = {
     applicationLanguage: 'Application language',
     langEnglish: 'English',
     langPolish: 'Polish',
+    lessonCardSection: 'Lesson card',
+    showIrregularMarkBeforeAnswer: 'Irregular mark before answer',
+    showIrregularMarkAfterAnswer: 'Irregular mark after answer',
+    showLevel: 'Verb level',
   },
   prepare: {
     selectLanguagePlaceholder: 'Select Language...',

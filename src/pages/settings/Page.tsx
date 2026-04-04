@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
+import * as Switch from '@radix-ui/react-switch'
 import { useNavigate } from 'react-router-dom'
 
 import Button from '../../components/shared/Button.tsx'
@@ -19,8 +20,19 @@ export default function Page() {
   const [applicationLanguage, setApplicationLanguage] = useState<ApplicationLanguage>(
     () => stored.applicationLanguage,
   )
+  const [showIrregularMarkBeforeAnswer, setShowIrregularMarkBeforeAnswer] = useState(
+    () => stored.showIrregularMarkBeforeAnswer,
+  )
+  const [showIrregularMarkAfterAnswer, setShowIrregularMarkAfterAnswer] = useState(
+    () => stored.showIrregularMarkAfterAnswer,
+  )
+  const [showLevel, setShowLevel] = useState(() => stored.showLevel)
 
-  const dirty = applicationLanguage !== stored.applicationLanguage
+  const dirty =
+    applicationLanguage !== stored.applicationLanguage ||
+    showIrregularMarkBeforeAnswer !== stored.showIrregularMarkBeforeAnswer ||
+    showIrregularMarkAfterAnswer !== stored.showIrregularMarkAfterAnswer ||
+    showLevel !== stored.showLevel
 
   const labelByLang: Record<ApplicationLanguage, string> = {
     EN: ui.settings.langEnglish,
@@ -34,7 +46,13 @@ export default function Page() {
   }))
 
   const handleSave = () => {
-    writeStoredSettings({ applicationLanguage })
+    writeStoredSettings({
+      ...stored,
+      applicationLanguage,
+      showIrregularMarkBeforeAnswer,
+      showIrregularMarkAfterAnswer,
+      showLevel,
+    })
     window.location.reload()
   }
 
@@ -65,6 +83,42 @@ export default function Page() {
               align="start"
             />
           </div>
+
+          <h2 className="col-span-2 mt-2 border-t border-primary pt-4 text-sm font-semibold text-primary-text">
+            {ui.settings.lessonCardSection}
+          </h2>
+
+          <label className="col-span-2 flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
+            <span>{ui.settings.showIrregularMarkBeforeAnswer}</span>
+            <Switch.Root
+              checked={showIrregularMarkBeforeAnswer}
+              onCheckedChange={setShowIrregularMarkBeforeAnswer}
+              className="relative h-6 w-11 shrink-0 rounded-full bg-primary-darkest transition-colors data-[state=checked]:bg-primary-text"
+            >
+              <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-primary transition-transform data-[state=checked]:translate-x-[22px]" />
+            </Switch.Root>
+          </label>
+          <label className="col-span-2 flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
+            <span>{ui.settings.showIrregularMarkAfterAnswer}</span>
+            <Switch.Root
+              checked={showIrregularMarkAfterAnswer}
+              onCheckedChange={setShowIrregularMarkAfterAnswer}
+              className="relative h-6 w-11 shrink-0 rounded-full bg-primary-darkest transition-colors data-[state=checked]:bg-primary-text"
+            >
+              <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-primary transition-transform data-[state=checked]:translate-x-[22px]" />
+            </Switch.Root>
+          </label>
+          <label className="col-span-2 flex cursor-pointer items-center justify-between gap-3 text-sm font-medium">
+            <span>{ui.settings.showLevel}</span>
+            <Switch.Root
+              checked={showLevel}
+              onCheckedChange={setShowLevel}
+              className="relative h-6 w-11 shrink-0 rounded-full bg-primary-darkest transition-colors data-[state=checked]:bg-primary-text"
+            >
+              <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-primary transition-transform data-[state=checked]:translate-x-[22px]" />
+            </Switch.Root>
+          </label>
+
           <div className="col-span-2">
             <Button main disabled={!dirty} onClick={handleSave} label={ui.common.save} />
           </div>

@@ -140,6 +140,10 @@ export const ui = {
     applicationLanguage: 'Język aplikacji',
     langEnglish: 'Angielski',
     langPolish: 'Polski',
+    lessonCardSection: 'Karta lekcji',
+    showIrregularMarkBeforeAnswer: 'Oznaczenie nieregularności przed odpowiedzią',
+    showIrregularMarkAfterAnswer: 'Oznaczenie nieregularności po odpowiedzi',
+    showLevel: 'Poziom czasownika',
   },
   prepare: {
     selectLanguagePlaceholder: 'Wybierz język…',

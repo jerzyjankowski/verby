@@ -9,24 +9,44 @@ function isApplicationLanguage(value: unknown): value is ApplicationLanguage {
   return value === 'EN' || value === 'PL'
 }
 
+function storedBoolean(value: unknown): boolean {
+  return typeof value === 'boolean' ? value : false
+}
+
+const defaultSettings: Settings = {
+  applicationLanguage: DEFAULT_APPLICATION_LANGUAGE,
+  showIrregularMarkBeforeAnswer: false,
+  showIrregularMarkAfterAnswer: false,
+  showLevel: false,
+}
 /** Read persisted app settings from `localStorage` (safe defaults if missing or invalid). */
 export function readStoredSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_STORAGE_KEY)
     if (!raw) {
-      return { applicationLanguage: DEFAULT_APPLICATION_LANGUAGE }
+      return defaultSettings
     }
     const parsed = JSON.parse(raw) as unknown
     if (parsed && typeof parsed === 'object' && 'applicationLanguage' in parsed) {
-      const lang = (parsed as { applicationLanguage: unknown }).applicationLanguage
-      if (isApplicationLanguage(lang)) {
-        return { applicationLanguage: lang }
+      const applicationLanguage = (parsed as { applicationLanguage: unknown }).applicationLanguage
+      if (isApplicationLanguage(applicationLanguage)) {
+        const p = parsed as Record<string, unknown>
+        return {
+          applicationLanguage,
+          showIrregularMarkBeforeAnswer: storedBoolean(
+            p.showIrregularMarkBeforeAnswer
+          ),
+          showIrregularMarkAfterAnswer: storedBoolean(
+            p.showIrregularMarkAfterAnswer
+          ),
+          showLevel: storedBoolean(p.showLevel),
+        }
       }
     }
   } catch {
     // ignore corrupt storage
   }
-  return { applicationLanguage: DEFAULT_APPLICATION_LANGUAGE }
+  return defaultSettings
 }
 
 /** Stored UI locale (`EN` | `PL`). Resolved when `locales/index.ts` loads. */
