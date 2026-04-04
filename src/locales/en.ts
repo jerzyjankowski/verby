@@ -110,6 +110,7 @@ export const ui = {
     learnt: 'Learnt',
     notLearnt: 'Not learnt',
     clearTextField: 'Clear field',
+    suggestLibrarySaveName: 'Suggest name from lesson (verbs, levels, direction, mode, date)',
   },
   toast: {
     libraryTitle: 'Library',

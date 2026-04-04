@@ -1,6 +1,6 @@
 TODO EARLIER:
+- update version notes for 0.2.1
 - change lesson conjugation mid lesson
-- suggest save name (levels, conjugation/forms PL->XX or XX->PL, datetime)
 - verify quotes and authors (english and polish)
 
 TODO:

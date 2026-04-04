@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { MagicWandIcon } from '@radix-ui/react-icons'
 
 import {
   LIBRARY_SAVE_NAME_MAX_LEN,
@@ -13,7 +14,9 @@ import {
   getLibraryVerbScopeMenuSpec,
   getLibraryVerbScopeTriggerLabel,
 } from '../../../../utils/library.ts'
+import { buildSuggestedLibrarySaveName } from '../../../../utils/suggestedLibrarySaveName.ts'
 import { ui } from '../../../../locales'
+
 import Button from '../../../shared/Button.tsx'
 import Dropdown from '../../../shared/Dropdown.tsx'
 import TextArea from '../../../shared/TextArea.tsx'
@@ -76,16 +79,38 @@ export default function CreateNewSaveView({ language, lesson, onSave }: CreateNe
 
       <label className="flex flex-col gap-1.5 text-sm font-medium">
         <span>{ui.libraryPage.nameLabel}</span>
-        <TextField
-          type="text"
-          value={name}
-          maxLength={LIBRARY_SAVE_NAME_MAX_LEN}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={ui.libraryForms.namePlaceholderExample}
-          autoComplete="off"
-          aria-invalid={nameTaken}
-          aria-describedby={nameDescribedBy || undefined}
-        />
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <TextField
+              type="text"
+              value={name}
+              maxLength={LIBRARY_SAVE_NAME_MAX_LEN}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={ui.libraryForms.namePlaceholderExample}
+              autoComplete="off"
+              aria-invalid={nameTaken}
+              aria-describedby={nameDescribedBy || undefined}
+            />
+          </div>
+          <Button
+            type="button"
+            fullWidth={false}
+            disabled={!hasVerbsForScope}
+            icon={<MagicWandIcon className="size-4" aria-hidden />}
+            aria-label={ui.aria.suggestLibrarySaveName}
+            title={ui.aria.suggestLibrarySaveName}
+            className="shrink-0"
+            onClick={() =>
+              setName(
+                buildSuggestedLibrarySaveName({
+                  lesson,
+                  scope: whichVerbs,
+                  language,
+                }),
+              )
+            }
+          />
+        </div>
         {nameTaken ? (
           <p id="library-new-save-name-error" className="text-sm font-normal text-text-error" role="alert">
             {ui.libraryForms.nameTaken}

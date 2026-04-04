@@ -108,6 +108,8 @@ export const ui = {
     learnt: 'Nauczone',
     notLearnt: 'Nienauczone',
     clearTextField: 'Wyczyść pole',
+    suggestLibrarySaveName:
+      'Zaproponuj nazwę z lekcji (czasowniki, poziomy, kierunek, tryb, data)',
   },
   toast: {
     libraryTitle: 'Biblioteka',
