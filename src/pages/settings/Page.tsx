@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { ArrowLeftIcon } from '@radix-ui/react-icons'
 import * as Switch from '@radix-ui/react-switch'
 import { useNavigate } from 'react-router-dom'
@@ -12,27 +12,28 @@ import {
 } from '../../consts/settings.ts'
 import { MAIN_PAGE_URL } from '../../consts/urls.ts'
 import { ui } from '../../locales'
+import type { Settings } from '../../types/settings.ts'
 import { readStoredSettings, writeStoredSettings } from '../../utils/settings.ts'
 
 export default function Page() {
   const navigate = useNavigate()
-  const stored = useMemo(() => readStoredSettings(), [])
+  const [baseline, setBaseline] = useState<Settings>(() => readStoredSettings())
   const [applicationLanguage, setApplicationLanguage] = useState<ApplicationLanguage>(
-    () => stored.applicationLanguage,
+    () => baseline.applicationLanguage,
   )
   const [showIrregularMarkBeforeAnswer, setShowIrregularMarkBeforeAnswer] = useState(
-    () => stored.showIrregularMarkBeforeAnswer,
+    () => baseline.showIrregularMarkBeforeAnswer,
   )
   const [showIrregularMarkAfterAnswer, setShowIrregularMarkAfterAnswer] = useState(
-    () => stored.showIrregularMarkAfterAnswer,
+    () => baseline.showIrregularMarkAfterAnswer,
   )
-  const [showLevel, setShowLevel] = useState(() => stored.showLevel)
+  const [showLevel, setShowLevel] = useState(() => baseline.showLevel)
 
   const dirty =
-    applicationLanguage !== stored.applicationLanguage ||
-    showIrregularMarkBeforeAnswer !== stored.showIrregularMarkBeforeAnswer ||
-    showIrregularMarkAfterAnswer !== stored.showIrregularMarkAfterAnswer ||
-    showLevel !== stored.showLevel
+    applicationLanguage !== baseline.applicationLanguage ||
+    showIrregularMarkBeforeAnswer !== baseline.showIrregularMarkBeforeAnswer ||
+    showIrregularMarkAfterAnswer !== baseline.showIrregularMarkAfterAnswer ||
+    showLevel !== baseline.showLevel
 
   const labelByLang: Record<ApplicationLanguage, string> = {
     EN: ui.settings.langEnglish,
@@ -46,14 +47,20 @@ export default function Page() {
   }))
 
   const handleSave = () => {
-    writeStoredSettings({
-      ...stored,
+    const next: Settings = {
+      ...baseline,
       applicationLanguage,
       showIrregularMarkBeforeAnswer,
       showIrregularMarkAfterAnswer,
       showLevel,
-    })
-    window.location.reload()
+    }
+    writeStoredSettings(next)
+    if (applicationLanguage !== baseline.applicationLanguage) {
+      const base = import.meta.env.BASE_URL
+      window.location.assign(base.endsWith('/') ? base : `${base}/`)
+    } else {
+      setBaseline(next)
+    }
   }
 
   return (
